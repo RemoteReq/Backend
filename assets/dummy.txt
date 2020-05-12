@@ -1,0 +1,19 @@
+This dummy is mainly here to commit empty folders to git and give you a rundown on how aliases work:
+
+Feel free to delete this file once this folder starts to contain actual assets:
+
+Just be sure to separate them into appropriate subfolder for fonts and images and the such
+
+You can add images into this folder.
+
+I've added the assets folder to an alias in webpack to prevent relative path hell.
+
+  what relative path looks like:
+
+  `import imageName from '../../../../assets/image.png';`
+
+You can reference files in this folder by using the alias like so:
+
+  look how awesome aliases are:
+
+  `import imageName from '@assets/image.png';`

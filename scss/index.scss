@@ -1,0 +1,20 @@
+/*
+
+  This should be the only file that gets imported into `index.jsx`.
+  Webpack will automatically compile scss/sass files as inline styling
+  within the output file `dist/bundle.js` using `sass-loader`
+
+  Add more styling by create a partial file first with the underscore naming convention
+  and import it into this file using @rules. 
+
+*/
+
+// import variables partial files
+@import './partials/variables/_variables.scss';
+@import './partials/variables/_defaults.scss';
+
+// import element partials files
+@import './partials/elements/_sample.scss';
+
+// import container partials files
+@import './partials/containers/_sampleContainer.scss';
