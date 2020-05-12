@@ -14,7 +14,6 @@ What's also neat is that this markdown also comes with a badge to show whether o
 
 - `build:dev`
   - uses `webpack-dev-server` to run the app in memory and enables `hot module reloading` to automatically refresh the application and display graphical changes in real time. 
-    - I'm unsure if this preserves state or not. But we'll see
 
 - `build:pro`
   - compliles and outputs the application into a `dist` folder that includes a `bundle.js` and appropriately tagged `index.html` file. This folder is then served by the express server.
