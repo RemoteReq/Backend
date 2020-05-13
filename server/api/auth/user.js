@@ -6,7 +6,7 @@ const router = express.Router();
 const {
   addUser,
   listUsers,
-} = require('../../../database/controllers/User.js');
+} = require('../../../database/controllers/user.js');
 
 // route handlers
 

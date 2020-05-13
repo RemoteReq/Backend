@@ -11,7 +11,7 @@ const route = express.Router();
 */
 
 // import handler
-const { authenticate } = require('../../../database/controllers/User.js');
+const { authenticate } = require('../../../database/controllers/user.js');
 
 route.post('/', (req, res) => {
   console.log('incoming request for: ', req.body);

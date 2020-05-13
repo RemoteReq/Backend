@@ -9,7 +9,7 @@ const route = express.Router();
 */
 
 // import handler
-const { addUser } = require('../../../database/controllers/User.js');
+const { addUser } = require('../../../database/controllers/user.js');
 
 route.post('/', (req, res) => {
   console.log('incoming request for: ', req.body);

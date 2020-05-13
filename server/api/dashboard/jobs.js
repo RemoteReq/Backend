@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // Removed until DB queries are establshed
-const { getFirstFiveJobs } = require('../../../database/Controllers/Jobs.js');
+const { getFirstFiveJobs } = require('../../../database/controllers/jobs.js');
 
 router.get('/', (req, res) => {
   getFirstFiveJobs((err, data) => {
