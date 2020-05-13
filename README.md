@@ -1,4 +1,4 @@
-# RemoteReq template repo    
+# RemoteReq Backend Repo 
 [![Build Status](https://travis-ci.org/RemoteReq/Template.svg?branch=master)](https://travis-ci.org/RemoteReq/Template)
 
 In this Repo you'll find all the neccessary software needed to develop features and tools for RemoteReq. 
@@ -12,12 +12,6 @@ What's also neat is that this markdown also comes with a badge to show whether o
 - `server` 
   - will start up the app on a Node-Express server to server the dist folder after building in Webpack's production mode. It also serves as the backend that will handle API requests
 
-- `build:dev`
-  - uses `webpack-dev-server` to run the app in memory and enables `hot module reloading` to automatically refresh the application and display graphical changes in real time. 
-
-- `build:pro`
-  - compliles and outputs the application into a `dist` folder that includes a `bundle.js` and appropriately tagged `index.html` file. This folder is then served by the express server.
-
 - `dockerize`
   - a script that automates the docker build and run commands. It's configured to run and map the app from port 3030 of `server.js` to a desired port.
 
@@ -25,7 +19,8 @@ What's also neat is that this markdown also comes with a badge to show whether o
       - `-t` to an appropiate tag name
       - `--name` to an appropriate image name
       - `-d` to the corresponding image name
-      - `p xxxx:3030` to an unoccupied port
+      - all names must be the same and lower cased
+      - `p xxxx:3030` to an unoccupied port, where  xxxx is the port number mapped to the docker daemon
 
 # Gotchas:
 
