@@ -15,8 +15,6 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-RUN npm run build:pro
-
 EXPOSE 3030
 
 CMD [ "npm", "run", "server" ]
