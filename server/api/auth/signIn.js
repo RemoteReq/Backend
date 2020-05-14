@@ -1,30 +1,22 @@
 const express = require('express');
-
 const route = express.Router();
-
-/*
-  Pseudocode:
-
-  input: user credentials
-  output: json web token
-
-*/
+const { check, validationResult } = require('express-validator');
 
 // import handler
-const { authenticate } = require('../../../database/controllers/user.js');
+const { verifyCredentials } = require('../../../database/controllers/user.js');
 
-route.post('/', (req, res) => {
-  console.log('incoming request for: ', req.body);
+route.post('/',[
+check('username','Username is required').not().isEmpty(),
+check('password','Password is required').not().isEmpty()
+], (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ 
+      status:422,
+      errors: errors.array() 
+    })
+  }
 
-  authenticate(req.body.body, (error, data) => {
-    if (error || data === false) {
-      console.log('database returned with an error', error);
-      res.status(400).send('Error: No Such User');
-    } else {
-      console.log('successful login attempt!!');
-      // Issue a jwt token here
-      res.status(200).redirect('http://localhost:82/dashboard');
-    }
-  });
+  verifyCredentials(req, res)
 });
 module.exports = route;

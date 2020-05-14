@@ -11,6 +11,8 @@ console.log(`Connecting to IP: ${DB_ADDRESS}, Database: ${DB_NAME}`);
 mongoose.connect(`mongodb://${DB_ADDRESS}/${DB_NAME}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false
 });
 
 const db = mongoose.connection;

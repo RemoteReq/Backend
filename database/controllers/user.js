@@ -1,135 +1,89 @@
 const User = require('../models/User.js');
 const bcrypt = require('bcrypt');
-/*
-  CRUD handlers
+const authorisation = require('../../server/authentication')
+const saltRounds = 10;
+const addUser = async(req, res) => {
+  try {
+    let salt = await bcrypt.genSalt(saltRounds);
+    let hashPassword = await bcrypt.hash(req.body.credentials.password, salt);
+    
+    const user = new User({
+      credentials: {
+        username: req.body.credentials.username,
+        password: hashPassword,
+        firstName: req.body.credentials.firstname,
+        lastName: req.body.credentials.lastname,
+        email: req.body.credentials.email,
+        authSignature: ''
+      },
+      profile:{
+        fluentInEnglish: req.body.profile.fluentInEnglish,
+        eligibleToWorkInUS: req.body.profile.eligibleToWorkInUS,
+        linkedInURL: req.body.profile.linkedInURL,
+        githubURL: req.body.profile.githubURL,
+        personalURL: req.body.profile.personalURL
+      }
+    });
 
-  Create -> .save()
-  Read   -> .find() -> should list all
-         -> .findOne() -> should find just one user
-  Update -> .findOneAndUpdate()
-  Delete -> .deleteOne()
-*/
-
-function addUser(payload, callback) {  
+    //save user's details
+    user.save()
+    .then(doc => {
+      console.log(doc);
+      res.status(200).json(doc);
+    })
+    .catch(error => {
+      console.log('ERROR 💥:', error)
+      res.status(500).json(error);
+    });
+  } catch(err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
   
-  // Add a new user to the database
-  const user = new User(payload);
-
-  user.save((err, data) => {
-    if (err) {
-      console.log('could not add user.');
-      callback(err);
-    } else {
-      console.log('adding user..');
-      callback(null, data);
-      console.log('success!');
-    }
-  });
-}
+};
   
-// Retrieve and list all users from database (we may actually not want to use this, but it's there)
-function listUsers(callback) {
-  User.find({}, (err, data) => {
-    if (err) {
-      console.log('could not list users.');
-      callback(err);
-    } else {
-      console.log('retrieving list of users..');
-      callback(null, data);
-      console.log('success!');
+const verifyCredentials = async(req, res)=>{
+  try {
+    let getUserData = await User.findOne({ 'credentials.username': req.body.username });
+    if(getUserData != null){
+      let passwordverify = await bcrypt.compare(req.body.password, getUserData.credentials.password);
+      if(passwordverify == true){
+        let userDataWithToken = await authorisation.generateToken(getUserData);
+        res.status(200).json({
+          token: userDataWithToken.token,
+          username: userDataWithToken.updateData.credentials.username,
+          firstName: userDataWithToken.updateData.credentials.firstName,
+          lastName: userDataWithToken.updateData.credentials.lastName,
+          email: userDataWithToken.updateData.credentials.email
+        });
+      }else{
+        res.status(400).json('Password is not matched. please try again.');
+      }
+      
+    }else{
+      res.status(400).json('username is not found. please check.');
     }
-  });
+    
+  } catch(err) {
+    res.status(500).json(err);
+  }
 }
 
-// Change a User's password
-function updateUserPassword(payload, callback) {
-  const query = {
-    username: payload.username,
-  };
-
-  User.updateOne(query, {
-    password: payload.password,
-  }, (err, data) => {
-    if (err) {
-      console.log('could not find user to update.');
-      callback(err);
-    } else {
-      console.log('updating user password..');
-      callback(null, data);
-      console.log('success!');
-    }
-  });
+const updateSignature = (credentialId)=>{
+  
 }
 
-// Remove account
-function deleteUser(payload, callback) {
-  const query = {
-    username: payload.username,
-  };
-
-  User.deleteOne(query, (err, data) => {
-    if (err) {
-      console.log('could not find user to delete.');
-      callback(err);
-    } else {
-      console.log('deleting user..');
-      callback(null, data);
-      console.log('success!');
-    }
-  });
+const listUsers = async(req, res)=>{
+  try {
+    let getUserData = await User.find();
+    res.status(200).json(getUserData);
+    
+  } catch(err) {
+    res.status(500).json(err);
+  }
 }
-
-// Find User
-function findUser(payload, callback) {
-  const query = {
-    credentials: {
-      username: payload.username,
-    },
-  };
-
-  console.log(query);
-
-  User.findOne(query,(err, data) => {
-    if (err) {
-      console.log('could not find user', err);
-      callback(err);
-    } else {
-      console.log('user found! Logging in..', data);
-      callback(null, data);
-    }
-  });
-}
-
-function authenticate(payload, callback) {
-  console.log('authenticating:',payload);
-
-  User.findOne({ 'credentials.username': payload.username }, 'credentials.password', (err, document) => {
-    if (err) {
-      console.log('could not find user to authenticate');
-      callback(err);
-    } else {
-      console.log('here is the password for the user', payload.username, document);
-
-      bcrypt.compare(payload.password, document.credentials.password, (err, res) => {
-        console.log("comparing: ", payload.password, " to ", document.credentials.password, " = ", res)
-        if (res === false) {
-          console.log('error comparing passwords');
-          callback(null, res);
-        } 
-        if (res === true) {
-          console.log('successful comparison, lets get you logged in :)', res);
-          callback(null);
-        }
-      })
-    }
-  });
-}
-
 module.exports = {
-  authenticate,
   addUser,
-  listUsers,
-  findUser,
-  updateUserPassword,
-  deleteUser,
+  verifyCredentials,
+  listUsers
 };

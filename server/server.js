@@ -9,7 +9,7 @@ const PORT = 3030;
 
 // import route handlers
 const signup = require('./api/auth/signUp.js');
-const user = require('./api/auth/user.js');
+const user = require('./api/auth/user');
 const signin = require('./api/auth/signIn.js');
 const jobs = require('./api/dashboard/jobs.js')
 
@@ -19,11 +19,12 @@ app.use(history());
 // express middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+const {tokenValidityChecking} = require('./authentication')
 
 // routes
 app.use('/api/signin', signin);
 app.use('/api/signup', signup);
-app.use('/api/user', user);
+app.use('/api/user', tokenValidityChecking, user);
 
 app.get('/', (req, res) => {
   res.status(200).send();
