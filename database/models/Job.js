@@ -1,19 +1,15 @@
-const Jobs = require('../models/Job.js');
+const mongoose = require('../mongoose.config.js');
 
-function getFirstFiveJobs(callback) {
-  Jobs.find({}, (err, data) => {
-    if (err) {
-      console.log(err);
-      callback(err);
-    } else {
-      const result = data.slice(0, 4);
+const { Schema } = mongoose;
 
-      console.log('success! here are your first 5 jobs');
-      callback(null, result);
-    }
-  });
-}
+const JobSchema = new Schema({
+  jobTitle: { type: String, required: true },
+  company: { type: String, required: true },
+  jobDescription: { type: String, required: true },
+  yearsOfExperience: { type: Number, required: true },
+  skills: { type: Array },
+});
 
-module.exports = {
-  getFirstFiveJobs,
-};
+const Jobs = mongoose.model('Job', JobSchema, 'mock-jobs');
+
+module.exports = Jobs;
