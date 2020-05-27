@@ -25,10 +25,11 @@ const {tokenValidityChecking} = require('./authentication')
 app.use('/api/signin', signin);
 app.use('/api/signup', signup);
 app.use('/api/user', tokenValidityChecking, user);
+app.use('/api/jobs', jobs);
 
-app.get('/', (req, res) => {
-  res.status(200).send();
-});
+// app.get('/', (req, res) => {
+//   res.status(200).send();
+// });
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
