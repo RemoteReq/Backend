@@ -19,4 +19,5 @@ const jobSchema = new Schema({
 // Model to export
 const Jobs = mongoose.model('Jobs', jobSchema);
 
+
 module.exports = Jobs;
