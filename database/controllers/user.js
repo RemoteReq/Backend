@@ -16,11 +16,24 @@ const addUser = async(req, res) => {
         lastName: req.body.lastname,
         email: req.body.email,
         authSignature: '',
-        fluentInEnglish: req.body.fluentInEnglish,
-        eligibleToWorkInUS: req.body.eligibleToWorkInUS,
-        linkedInURL: req.body.linkedInURL,
-        githubURL: req.body.githubURL,
-        personalURL: req.body.personalURL
+        fluentInEnglish: null,
+        eligibleToWorkInUS: null,
+        linkedInURL: '',
+        githubURL: '',
+        personalURL: '',
+        mobileNum: '',
+        gender: '',
+        dob: null,
+        industryType: '',
+        jobRole: '',
+        currentCTC: null,
+        totalExperience: null,
+        keySkills: [],
+        desireIndustryType: '',
+        desireJobRole: '',
+        desireCTC: null,
+        desireLocation: [],
+        desireKeySkills: [],
     });
 
     //save user's details
@@ -80,6 +93,18 @@ const desireJob = async(req, res)=>{
   }
 }
 
+const updateUserProfile = async(req, res)=>{
+  try{
+    
+    let updateData = await User.findByIdAndUpdate(req.userId, { $set: req.body});
+    let getUserData = await User.findById(req.userId);
+    
+    res.status(200).json(getUserData);
+  } catch(err) {
+      console.log(err);
+  }
+}
+
 const listUsers = async(req, res)=>{
   try {
     let getUserData = await User.find();
@@ -96,12 +121,10 @@ const filterJobs = async(req, res)=>{
     let getJobsByIndustryType = await Jobs.find({ 
       $and: [ 
         { industryType: getUserData.desireIndustryType }, 
-        { $or : [ { ctc : { $gt: getUserData.desireCTC } }, { ctc : getUserData.desireCTC } ] },
-        { $and : [ 
-          { $or : [ { minExperience : { $lt: getUserData.totalExperience } }, { minExperience : getUserData.totalExperience } ] }, 
-          { $or : [ { maxExperience : { $gt: getUserData.totalExperience } }, { maxExperience : getUserData.totalExperience } ] }, 
-        ] },
-        {location : { $in: getUserData.desireLocation}}
+        { ctc : { $gte: getUserData.desireCTC } },
+        { $and: [ { minExperience: { $lte: getUserData.totalExperience } }, { maxExperience : { $gte: getUserData.totalExperience } } ] },
+        {location : { $in: getUserData.desireLocation}},
+        {keySkills : { $in: getUserData.desireKeySkills}},
       ] 
     })
     res.status(200).json(getJobsByIndustryType);
@@ -115,5 +138,6 @@ module.exports = {
   verifyCredentials,
   listUsers,
   desireJob,
-  filterJobs
+  filterJobs,
+  updateUserProfile
 };

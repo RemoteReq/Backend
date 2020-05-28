@@ -23,12 +23,12 @@ const userSchema = new Schema({
   jobRole: { type: String },
   currentCTC: { type: Number },
   totalExperience: { type: Number },
-  keySkills: { type: String },
+  keySkills: { type: Array },
   desireIndustryType: { type: String },
   desireJobRole: { type: String },
   desireCTC: { type: Number },
   desireLocation: { type: Array },
-  desireKeySkills: { type: String },
+  desireKeySkills: { type: Array },
 });
 
 // Model to export

@@ -11,7 +11,7 @@ const generateToken = async(userData)=> {
     try{
         // let updateData = await User.findByIdAndUpdate(userData._id, { $set: userData})
         let updateData = await User.findByIdAndUpdate(userData._id, { $set: { authSignature: newSignature }})
-        let token = await jwt.sign({userId: userData._id}, newSignature, { expiresIn: '1h' });
+        let token = await jwt.sign({userId: userData._id}, newSignature, { expiresIn: '1d' });
         
         return {
             updateData: updateData,

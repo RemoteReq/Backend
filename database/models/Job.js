@@ -9,7 +9,7 @@ const jobSchema = new Schema({
   industryType: { type: String, required: true },
   role: { type: String, required: true },
   jobDetails: { type: String, require: true },
-  keySkills: { type: String, required: true },
+  keySkills: { type: Array, required: true },
   ctc: { type: Number, required: true },
   minExperience: {type: Number, required: true},
   maxExperience: { type: Number, required: true },
