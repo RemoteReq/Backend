@@ -3,12 +3,14 @@ const mongoose = require('mongoose');
 
 // These are development variables and don't need to be srored in a .env file until production
 const DB_ADDRESS = process.env.DATABASE_IP || 'localhost';
-const DB_NAME = 'rrdev';
+const DB_NAME = process.env.DB_NAME;
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
 
 // Connection Check
 console.log(`Connecting to IP: ${DB_ADDRESS}, Database: ${DB_NAME}`);
 
-mongoose.connect(`mongodb://${DB_ADDRESS}/${DB_NAME}`, {
+mongoose.connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_ADDRESS}/${DB_NAME}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,

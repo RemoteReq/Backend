@@ -26,6 +26,7 @@ router.post('/',[
       errors: errors.array() 
     })
   }
+  
   addUser(req,res)
 });
 

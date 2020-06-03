@@ -7,47 +7,58 @@ const addUser = async(req, res) => {
   try {
     let salt = await bcrypt.genSalt(saltRounds);
     let hashPassword = await bcrypt.hash(req.body.password, salt);
-    
-    const user = new User({
-      
-        username: req.body.username,
-        password: hashPassword,
-        firstName: req.body.firstname,
-        lastName: req.body.lastname,
-        email: req.body.email,
-        authSignature: '',
-        fluentInEnglish: null,
-        eligibleToWorkInUS: null,
-        linkedInURL: '',
-        githubURL: '',
-        personalURL: '',
-        mobileNum: '',
-        gender: '',
-        dob: null,
-        industryType: '',
-        jobRole: '',
-        currentCTC: null,
-        totalExperience: null,
-        keySkills: [],
-        desireIndustryType: '',
-        desireJobRole: '',
-        desireCTC: null,
-        desireLocation: [],
-        desireKeySkills: [],
-    });
 
-    //save user's details
-    user.save()
-    .then(doc => {
-      // console.log(doc);
-      res.status(200).json(doc);
-    })
-    .catch(error => {
-      console.log('ERROR 💥:', error)
-      res.status(500).json(error);
-    });
+    let checkUserName = await User.findOne({"username" : req.body.username});
+    if(checkUserName == null){
+      let checkEmail = await User.findOne({"email" : req.body.email});
+      if(checkEmail == null){
+        const user = new User({
+          username: req.body.username,
+          password: hashPassword,
+          firstName: req.body.firstname,
+          lastName: req.body.lastname,
+          email: req.body.email,
+          authSignature: '',
+          fluentInEnglish: null,
+          eligibleToWorkInUS: null,
+          linkedInURL: '',
+          githubURL: '',
+          personalURL: '',
+          mobileNum: '',
+          gender: '',
+          dob: null,
+          industryType: '',
+          jobRole: '',
+          currentCTC: null,
+          totalExperience: null,
+          keySkills: [],
+          desireIndustryType: '',
+          desireJobRole: '',
+          desireCTC: null,
+          desireLocation: [],
+          desireKeySkills: [],
+        });
+    
+        //save user's details
+        user.save()
+        .then(doc => {
+          // console.log(doc);
+          res.status(200).json(doc);
+        })
+        .catch(error => {
+          console.log('ERROR 💥:', error)
+          res.status(500).json(error);
+        });
+
+      }else{
+        res.status(400).json('Email Id already exists.');
+      }
+    }else{
+      res.status(400).json('User Name already exists.');
+    }
+
   } catch(err) {
-    console.log(err);
+    console.log('catcherr',err);
     res.status(500).json(err);
   }
   
@@ -83,7 +94,6 @@ const verifyCredentials = async(req, res)=>{
 
 const desireJob = async(req, res)=>{
   try{
-    
     let updateData = await User.findByIdAndUpdate(req.userId, { $set: req.body});
     let getUserData = await User.findById(req.userId);
     
@@ -139,5 +149,6 @@ module.exports = {
   listUsers,
   desireJob,
   filterJobs,
-  updateUserProfile
+  updateUserProfile,
+  
 };
