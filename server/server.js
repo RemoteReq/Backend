@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 
 // middleware
@@ -5,7 +6,7 @@ const history = require('connect-history-api-fallback');
 const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = 3030;
+const PORT = process.env.PORT;
 
 // import route handlers
 const signup = require('./api/auth/signUp.js');
