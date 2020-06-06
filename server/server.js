@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+var cors = require('cors')
 
 // middleware
 const history = require('connect-history-api-fallback');
@@ -13,6 +14,9 @@ const signup = require('./api/auth/signUp.js');
 const user = require('./api/auth/user');
 const signin = require('./api/auth/signIn.js');
 const jobs = require('./api/dashboard/jobs.js')
+
+//CORS
+app.use(cors())
 
 // Use history to intecept client requests and forward to React Router history
 app.use(history());
