@@ -24,6 +24,7 @@ const addUser = async(req, res) => {
           linkedInURL: '',
           githubURL: '',
           personalURL: '',
+          profilePicUrl: '',
           mobileNum: '',
           gender: '',
           dob: null,
@@ -143,6 +144,17 @@ const filterJobs = async(req, res)=>{
   }
 }
 
+const getSingleUserDetails = async(req, res)=>{
+  try{
+    
+    let getUserData = await User.findById(req.userId);
+    
+    res.status(200).json(getUserData);
+  } catch(err) {
+      console.log(err);
+  }
+}
+
 module.exports = {
   addUser,
   verifyCredentials,
@@ -150,5 +162,5 @@ module.exports = {
   desireJob,
   filterJobs,
   updateUserProfile,
-  
+  getSingleUserDetails
 };

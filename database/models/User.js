@@ -16,6 +16,7 @@ const userSchema = new Schema({
   linkedInURL: { type: String },
   githubURL: { type: String },
   personalURL: { type: String },
+  profilePicUrl: { type: String },
   mobileNum: { type: String },
   gender: { type: String },
   dob: { type: Date },
