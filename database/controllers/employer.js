@@ -25,7 +25,14 @@ const addEmployer = async(req, res) => {
         employer.save()
         .then(doc => {
           // console.log(doc);
-          res.status(200).json(doc);
+          let filterDoc = {
+            username: doc.username,
+            email: doc.email,
+            companyName: doc.companyName,
+            logo: doc.logo,
+            location: doc.location
+          }
+          res.status(200).json(filterDoc);
         })
         .catch(error => {
           console.log('ERROR 💥:', error)
