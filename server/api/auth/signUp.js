@@ -11,6 +11,7 @@ const router = express.Router();
 
 // import handler
 const { addUser } = require('../../../database/controllers/user.js');
+const {addEmployer } = require('../../../database/controllers/employer')
 
 router.post('/',[
   // check('name').isLength({ min: 5 }).withMessage('Must be at least 5 chars long'),
@@ -29,5 +30,20 @@ router.post('/',[
   
   addUser(req,res)
 });
+
+router.post('/employerSignUp',[
+  check('username','UserName is required').not().isEmpty(),
+  check('password','Password is required').not().isEmpty(),
+  check('email','Email is required').not().isEmpty()
+], (req,res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ 
+      errors: errors.array() 
+    })
+  }
+  // res.send('hello emp')
+  addEmployer(req,res)
+})
 
 module.exports = router;

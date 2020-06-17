@@ -14,6 +14,7 @@ const signup = require('./api/auth/signUp.js');
 const user = require('./api/auth/user');
 const signin = require('./api/auth/signIn.js');
 const jobs = require('./api/dashboard/jobs.js')
+const employers = require('./api/Employer/employer')
 
 //CORS
 app.use(cors())
@@ -24,13 +25,14 @@ app.use(history());
 // express middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-const {tokenValidityChecking} = require('./authentication')
+const {tokenValidityChecking, tokenValidityCheckingForEmp} = require('./authentication')
 
 // routes
 app.use('/api/signin', signin);
 app.use('/api/signup', signup);
 app.use('/api/user', tokenValidityChecking, user);
 app.use('/api/jobs', jobs);
+app.use('/api/employers', tokenValidityCheckingForEmp, employers);
 
 // app.get('/', (req, res) => {
 //   res.status(200).send();
