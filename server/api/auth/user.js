@@ -85,21 +85,7 @@ router.post('/updateUserProfile',[
 
 router.post('/filterJobs', filterJobs)
 
-router.post('/updateProfileDataWithImage', upload.single('userImage'), [
-  check('fluentInEnglish','fluentInEnglish is required').not().isEmpty(),
-  check('eligibleToWorkInUS','eligibleToWorkInUS is required').not().isEmpty(),
-  check('linkedInURL','linkedInURL is required').not().isEmpty(),
-  check('githubURL','githubURL is required').not().isEmpty(),
-  check('personalURL','personalURL is required').not().isEmpty(),
-  check('mobileNum','Mobile Number is required').not().isEmpty(),
-  check('gender','Gender is required').not().isEmpty(),
-  check('dob','Date of birth is required').not().isEmpty(),
-  check('industryType','Industry Type is required').not().isEmpty(),
-  check('jobRole','Job Role is required').not().isEmpty(),
-  check('currentCTC','Current CTC is required').not().isEmpty(),
-  check('totalExperience','Total Experience is required').not().isEmpty(),
-  check('keySkills','Key Skills is required').not().isEmpty(),
-],(req, res)=>{
+router.post('/updateProfileDataWithImage', upload.single('userImage'),(req, res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(422).json({ 
@@ -135,10 +121,7 @@ function uploadFile(req, res){
         //success
         if (data) {
           fs.unlinkSync(source);
-          // console.log("Uploaded in:", data.Location);
           req.body.profilePicUrl = data.Location;
-          // req.body.keySkills = req.body.keySkills.split(",")
-          req.body.keySkills = JSON.parse(req.body.keySkills)
           updateUserProfile(req,res)
         }
       });

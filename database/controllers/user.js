@@ -44,6 +44,10 @@ const addUser = async(req, res) => {
         user.save()
         .then(doc => {
           // console.log(doc);
+          doc = doc.toObject();
+          delete doc._id;
+          delete doc["password"];
+          delete doc["__v"];
           res.status(200).json(doc);
         })
         .catch(error => {
@@ -96,7 +100,7 @@ const verifyCredentials = async(req, res)=>{
 const desireJob = async(req, res)=>{
   try{
     let updateData = await User.findByIdAndUpdate(req.userId, { $set: req.body});
-    let getUserData = await User.findById(req.userId);
+    let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature");
     
     res.status(200).json(getUserData);
   } catch(err) {
@@ -108,7 +112,7 @@ const updateUserProfile = async(req, res)=>{
   try{
     
     let updateData = await User.findByIdAndUpdate(req.userId, { $set: req.body});
-    let getUserData = await User.findById(req.userId);
+    let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature");
     
     res.status(200).json(getUserData);
   } catch(err) {
@@ -118,7 +122,7 @@ const updateUserProfile = async(req, res)=>{
 
 const listUsers = async(req, res)=>{
   try {
-    let getUserData = await User.find();
+    let getUserData = await User.find().select("-_id -__v -password -authSignature");
     res.status(200).json(getUserData);
     
   } catch(err) {
@@ -147,7 +151,7 @@ const filterJobs = async(req, res)=>{
 const getSingleUserDetails = async(req, res)=>{
   try{
     
-    let getUserData = await User.findById(req.userId);
+    let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature");
     
     res.status(200).json(getUserData);
   } catch(err) {

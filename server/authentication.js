@@ -47,17 +47,19 @@ const tokenValidityChecking = async(req, res, next)=>{
     }
     try{
         let decodedData = await jwt.decode(req.headers.token);
+        // console.log('decodedData', decodedData)
         let userData = await User.findOne({ _id: decodedData.userId })
         jwt.verify(req.headers.token, userData.authSignature, function(err, decoded) {
             if(err){
               res.json(err)
             }else{
-            //   console.log(decoded)
+            //   console.log("decoded",decoded)
               req.userId = decoded.userId
               next()
             }  
         });
     } catch(err) {
+        console.log("err1",err)
         res.json(err)
     }
     
