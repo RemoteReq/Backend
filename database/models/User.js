@@ -25,6 +25,7 @@ const userSchema = new Schema({
   currentCTC: { type: Number },
   totalExperience: { type: Number },
   keySkills: { type: Array },
+  education: { type: Array },
   desireIndustryType: { type: String },
   desireJobRole: { type: String },
   desireCTC: { type: Number },

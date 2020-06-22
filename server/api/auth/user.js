@@ -135,6 +135,10 @@ function uploadFile(req, res){
 
 router.post('/getSingleUserDetails', getSingleUserDetails)
 
+router.get('/test', (req,res)=>{
+  res.send('hello')
+})
+
 
 
 

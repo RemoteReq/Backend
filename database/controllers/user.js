@@ -33,6 +33,7 @@ const addUser = async(req, res) => {
           currentCTC: null,
           totalExperience: null,
           keySkills: [],
+          education: [],
           desireIndustryType: '',
           desireJobRole: '',
           desireCTC: null,
