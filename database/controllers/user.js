@@ -44,12 +44,12 @@ const addUser = async(req, res) => {
         //save user's details
         user.save()
         .then(doc => {
-          // console.log(doc);
-          doc = doc.toObject();
-          delete doc._id;
-          delete doc["password"];
-          delete doc["__v"];
-          res.status(200).json(doc);
+          // doc = doc.toObject();
+          // delete doc._id;
+          // delete doc["password"];
+          // delete doc["__v"];
+          // res.status(200).json(doc);
+          res.status(200).json('Signed up successfully done');
         })
         .catch(error => {
           console.log('ERROR 💥:', error)
