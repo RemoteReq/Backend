@@ -10,7 +10,7 @@ const router = express.Router();
 */
 
 // import handler
-const { addUser } = require('../../../database/controllers/user.js');
+const { addUser, sendOTP } = require('../../../database/controllers/user.js');
 const {addEmployer } = require('../../../database/controllers/employer')
 
 router.post('/',[
@@ -19,7 +19,8 @@ router.post('/',[
   check('username','Username is required').not().isEmpty(),
   check('firstname','First Name is required').not().isEmpty(),
   check('lastname','Last Name is required').not().isEmpty(),
-  check('password','Password is required').not().isEmpty()
+  check('password','Password is required').not().isEmpty(),
+  check('otp','OTP is required').not().isEmpty()
 ], (req,res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -30,6 +31,19 @@ router.post('/',[
   
   addUser(req,res)
 });
+
+
+router.post('/sendOTP',[
+  check('email').isEmail().withMessage('Invalid Email Id'),
+], (req, res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ 
+      errors: errors.array() 
+    })
+  }
+  sendOTP(req,res)
+})
 
 router.post('/employerSignUp',[
   check('username','UserName is required').not().isEmpty(),

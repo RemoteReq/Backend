@@ -56,7 +56,10 @@ const addEmployer = async(req, res) => {
   
 const employerCredVerify = async(req, res)=>{
   try {
-    let getEmpData = await Employer.findOne({ 'username': req.body.username });
+    // let getEmpData = await Employer.findOne({ 'username': req.body.username });
+    let getEmpData = await Employer.findOne({ $or: [
+      {'username': req.body.emailOrUserName}, {'email': req.body.emailOrUserName}
+    ] });
     if(getEmpData != null){
       let passwordverify = await bcrypt.compare(req.body.password, getEmpData.password);
       if(passwordverify == true){
@@ -71,7 +74,7 @@ const employerCredVerify = async(req, res)=>{
       }
       
     }else{
-      res.status(400).json('username is not found. please check.');
+      res.status(400).json('Email or UserName is not found. please check.');
     }
     
   } catch(err) {

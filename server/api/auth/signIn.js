@@ -7,7 +7,7 @@ const { verifyCredentials } = require('../../../database/controllers/user.js');
 const { employerCredVerify } = require('../../../database/controllers/employer');
 
 route.post('/',[
-check('username','Username is required').not().isEmpty(),
+check('emailOrUserName','Email Or UserName is required').not().isEmpty(),
 check('password','Password is required').not().isEmpty()
 ], (req, res) => {
   const errors = validationResult(req)
@@ -21,7 +21,7 @@ check('password','Password is required').not().isEmpty()
 });
 
 route.post('/employerSignIn',[
-  check('username','Username is required').not().isEmpty(),
+  check('emailOrUserName','Email Or UserName is required').not().isEmpty(),
   check('password','Password is required').not().isEmpty()
   ], (req, res) => {
     const errors = validationResult(req)

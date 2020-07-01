@@ -1,5 +1,8 @@
 const User = require('../models/User.js');
 const Jobs = require('../models/Job');
+const OtpMaster = require('../models/OTP_master');
+
+var nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const authorisation = require('../../server/authentication')
 const saltRounds = 10;
@@ -8,59 +11,55 @@ const addUser = async(req, res) => {
     let salt = await bcrypt.genSalt(saltRounds);
     let hashPassword = await bcrypt.hash(req.body.password, salt);
 
-    let checkUserName = await User.findOne({"username" : req.body.username});
-    if(checkUserName == null){
-      let checkEmail = await User.findOne({"email" : req.body.email});
-      if(checkEmail == null){
-        const user = new User({
-          username: req.body.username,
-          password: hashPassword,
-          firstName: req.body.firstname,
-          lastName: req.body.lastname,
-          email: req.body.email,
-          authSignature: '',
-          fluentInEnglish: null,
-          eligibleToWorkInUS: null,
-          linkedInURL: '',
-          githubURL: '',
-          personalURL: '',
-          profilePicUrl: '',
-          mobileNum: '',
-          gender: '',
-          dob: null,
-          industryType: '',
-          jobRole: '',
-          currentCTC: null,
-          totalExperience: null,
-          keySkills: [],
-          education: [],
-          desireIndustryType: '',
-          desireJobRole: '',
-          desireCTC: null,
-          desireLocation: [],
-          desireKeySkills: [],
-        });
-    
-        //save user's details
-        user.save()
-        .then(doc => {
-          // doc = doc.toObject();
-          // delete doc._id;
-          // delete doc["password"];
-          // delete doc["__v"];
-          // res.status(200).json(doc);
-          res.status(200).json('Signed up successfully done');
-        })
-        .catch(error => {
-          console.log('ERROR 💥:', error)
-          res.status(500).json(error);
-        });
+    let verifyEmail = await OtpMaster.findOne({"emailId" : req.body.email, "OTP": req.body.otp});
+    // console.log(verifyEmail)
+    if(verifyEmail != null){
+      const user = new User({
+        username: req.body.username,
+        password: hashPassword,
+        firstName: req.body.firstname,
+        lastName: req.body.lastname,
+        email: req.body.email,
+        authSignature: '',
+        fluentInEnglish: null,
+        eligibleToWorkInUS: null,
+        linkedInURL: '',
+        githubURL: '',
+        personalURL: '',
+        profilePicUrl: '',
+        mobileNum: '',
+        gender: '',
+        dob: null,
+        industryType: '',
+        jobRole: '',
+        currentCTC: null,
+        totalExperience: null,
+        keySkills: [],
+        education: [],
+        desireIndustryType: '',
+        desireJobRole: '',
+        desireCTC: null,
+        desireLocation: [],
+        desireKeySkills: [],
+      });
+  
+      //save user's details
+      user.save()
+      .then(doc => {
+        // doc = doc.toObject();
+        // delete doc._id;
+        // delete doc["password"];
+        // delete doc["__v"];
+        // res.status(200).json(doc);
+        res.status(200).json('Signed up successfully done');
+      })
+      .catch(error => {
+        console.log('ERROR 💥:', error)
+        res.status(500).json(error);
+      });
 
-      }else{
-        res.status(400).json('Email Id already exists.');
-      }
     }else{
-      res.status(400).json('User Name already exists.');
+      res.status(400).json('OTP not matched. Please try again.');
     }
 
   } catch(err) {
@@ -69,10 +68,82 @@ const addUser = async(req, res) => {
   }
   
 };
+
+const sendOTP = async(req, res)=>{
+  try{
+    let checkUserName = await User.findOne({"username" : req.body.username});
+    if(checkUserName == null){
+      let checkEmail = await User.findOne({"email" : req.body.email});
+      if(checkEmail == null){
+        let randDigit = Math.floor(100000 + Math.random() * 900000);
+        let findEmailInOTPmaster = await OtpMaster.findOne({"emailId" : req.body.email});
+        // console.log(findEmailInOTPmaster)
+        if(findEmailInOTPmaster == null){
+          const otpMaster = new OtpMaster({
+            OTP: randDigit,
+            emailId: req.body.email
+          })
+    
+          otpMaster.save().then(data =>{
+            sendMail(req, res, randDigit)
+          }).catch(err =>{
+            console.log('generate OTP error:', err)
+            res.status(500).json(err);
+          })
+        }else{
+          let updateData = await OtpMaster.findByIdAndUpdate(findEmailInOTPmaster._id, { $set: { OTP: randDigit }});
+          sendMail(req, res, randDigit)
+        }
+        
+      }else{
+        res.status(400).json('Email Id already exists.');
+      }
+    }else{
+      res.status(400).json('User Name already exists.');
+    }
+  }catch(err) {
+    console.log('catcherr',err);
+    res.status(500).json(err);
+  }
+}
+
+const sendMail = async(req, res, otp)=>{
+  var transporter = nodemailer.createTransport({
+      // host: 'mail.lcn.com',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      // service: 'gmail',
+      auth: {
+          user: 'notasom1@gmail.com',
+          pass: 'notagoodpassword1'
+      }
+  });
+
+  var mailOptions = {
+    from: '"support@remotereq.com" <notasom1@gmail.com>',
+    to: req.body.email,
+    subject: 'RemoteReq: Verify Email Id!',
+    html: '<p>Your OTP is: '+otp+'</p><p>Thanks and Regards,</p><p>Team RemoteReq</p>',
+  };
+
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log("error: Unable to send email.", error);
+      res.status(500).json("Server Error. Please try again.");
+    } else {
+      // console.log('Email sent: ' + info.response);
+      res.status(200).json("OTP is sent to your email id. Please verify.");
+    }
+  });
+}
   
 const verifyCredentials = async(req, res)=>{
   try {
-    let getUserData = await User.findOne({ 'username': req.body.username });
+    // let getUserData = await User.findOne({ 'username': req.body.username });
+    let getUserData = await User.findOne({ $or: [
+      {'username': req.body.emailOrUserName}, {'email': req.body.emailOrUserName}
+    ] });
     if(getUserData != null){
       let passwordverify = await bcrypt.compare(req.body.password, getUserData.password);
       if(passwordverify == true){
@@ -89,7 +160,7 @@ const verifyCredentials = async(req, res)=>{
       }
       
     }else{
-      res.status(400).json('username is not found. please check.');
+      res.status(400).json('Email or UserName is not found. please check.');
     }
     
   } catch(err) {
@@ -167,5 +238,6 @@ module.exports = {
   desireJob,
   filterJobs,
   updateUserProfile,
-  getSingleUserDetails
+  getSingleUserDetails,
+  sendOTP
 };
