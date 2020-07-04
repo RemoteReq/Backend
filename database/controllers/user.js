@@ -168,6 +168,51 @@ const verifyCredentials = async(req, res)=>{
   }
 }
 
+const generateResetToken = async(req, res)=>{
+  try {
+    let getUserData = await User.findOne({ 'email': req.body.email });
+    if(getUserData != null){
+      
+      let resetToken = await authorisation.resetTokenGenerate(getUserData);
+      // res.status(200).send(resetToken)
+      var transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: 'notasom1@gmail.com',
+            pass: 'notagoodpassword1'
+        }
+      });
+    
+      var mailOptions = {
+        from: '"support@remotereq.com" <notasom1@gmail.com>',
+        to: req.body.email,
+        subject: 'RemoteReq: Reset your password!',
+        html: '<p>Please click this link to reset your password <a target="_blank"  href="http://18.217.254.98/resetpassword?resetToken='+resetToken+'">http://18.217.254.98/resetpassword?resetToken='+resetToken+'</a></p><p><b>**Note: </b>Link validity only for 15 minutes</p>',
+      };
+    
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log("error: Unable to send email for reset password.", error);
+          res.status(500).json("Server Error. Please try again.");
+        } else {
+          // console.log('Email sent: ' + info.response);
+          res.status(200).json("A link is shared to your email id. Please check it.");
+        }
+      });
+
+      
+    }else{
+      res.status(400).json('Email id is not found in our system. please check.');
+    }
+    
+  } catch(err) {
+    res.status(500).json(err);
+  }
+}
+
+
 
 const desireJob = async(req, res)=>{
   try{
@@ -231,6 +276,22 @@ const getSingleUserDetails = async(req, res)=>{
   }
 }
 
+
+const resetPassword = async(req, res)=>{
+  try{
+    // console.log(req.body.userId)
+    let salt = await bcrypt.genSalt(saltRounds);
+    let hashPassword = await bcrypt.hash(req.body.newPassword, salt);
+    let updateData = await User.findByIdAndUpdate(req.body.userId, { $set: {password: hashPassword}});
+    
+    
+    // res.status(200).json(updateData);
+    res.status(200).json("Password reset successfully");
+  } catch(err) {
+      console.log(err);
+  }
+}
+
 module.exports = {
   addUser,
   verifyCredentials,
@@ -239,5 +300,7 @@ module.exports = {
   filterJobs,
   updateUserProfile,
   getSingleUserDetails,
-  sendOTP
+  sendOTP,
+  generateResetToken,
+  resetPassword
 };
