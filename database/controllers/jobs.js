@@ -12,7 +12,8 @@ const addJob = async(req, res) => {
     ctc: req.body.ctc,
     minExperience: req.body.minExperience,
     maxExperience: req.body.maxExperience,
-    location: req.body.location
+    location: req.body.location,
+    addBy: req.employerId
   });
 
   //save user's details

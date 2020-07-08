@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 
 // User Schema
 const jobSchema = new Schema({
+  // title: { type: String, required: true },
   companyName: { type: String, required: true },
   industryType: { type: String, required: true },
   role: { type: String, required: true },
@@ -13,7 +14,8 @@ const jobSchema = new Schema({
   ctc: { type: Number, required: true },
   minExperience: {type: Number, required: true},
   maxExperience: { type: Number, required: true },
-  location: { type: String, required: true }
+  location: { type: String, required: true },
+  addBy: { type: String, required: true }
 });
 
 // Model to export

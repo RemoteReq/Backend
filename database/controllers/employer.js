@@ -1,4 +1,6 @@
 const Employer = require('../models/Employer');
+const Job = require('../models/Job');
+const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const authorisation = require('../../server/authentication')
 const saltRounds = 10;
@@ -118,10 +120,45 @@ const getSingleEmployerDetails = async(req, res)=>{
   }
 }
 
+const getJoblistByEmployer = async(req, res)=>{
+  try{
+    
+    // let getData = await Job.find(req.employerId).select("-_id -__v -password -authSignature");
+    let getData = await Job.find({addBy: req.employerId}).select("-__v -addBy");
+    
+    res.status(200).json(getData);
+  } catch(err) {
+      console.log(err);
+  }
+}
+
+const matchesCandidateByEachJob = async(req, res)=>{
+  try{
+    
+    let getJobData = await Job.findById(req.params.jobId).select("-__v -addBy");
+
+    let getCandidateList = await User.find({ 
+      $and: [ 
+        { industryType: getJobData.industryType }, 
+        { desireCTC : { $lte: getJobData.ctc } },
+        { $and: [ { totalExperience: { $gte: getJobData.minExperience } }, { totalExperience : { $lte: getJobData.maxExperience } } ] },
+        {desireLocation : { $in: getJobData.location}},
+        {desireKeySkills : { $in: getJobData.keySkills}},
+      ] 
+    })
+    
+    res.status(200).json(getCandidateList);
+  } catch(err) {
+      console.log(err);
+  }
+}
+
 module.exports = {
   addEmployer,
   employerCredVerify,
   listEmployers,
   // updateUserProfile,
-  getSingleEmployerDetails
+  getSingleEmployerDetails,
+  getJoblistByEmployer,
+  matchesCandidateByEachJob
 };

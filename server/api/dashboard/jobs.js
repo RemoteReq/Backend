@@ -24,6 +24,7 @@ router.post('/add',[
       errors: errors.array() 
     })
   }
+  // console.log(req.employerId)
   addJob(req,res)
 });
 
