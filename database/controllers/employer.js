@@ -1,3 +1,4 @@
+var nodemailer = require('nodemailer');
 const Employer = require('../models/Employer');
 const Job = require('../models/Job');
 const User = require('../models/User');
@@ -17,8 +18,10 @@ const addEmployer = async(req, res) => {
           username: req.body.username,
           password: hashPassword,
           email: req.body.email,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
           authSignature: '',
-          companyName: '',
+          companyName: req.body.companyName,
           logo: '',
           location: ''
         });
@@ -35,7 +38,8 @@ const addEmployer = async(req, res) => {
           //   location: doc.location
           // }
           // res.status(200).json(filterDoc);
-          res.status(200).json('Signed up successfully done');
+          // res.status(200).json('Signed up successfully done');
+          sendMail(req, res, doc)
         })
         .catch(error => {
           console.log('ERROR 💥:', error)
@@ -55,6 +59,51 @@ const addEmployer = async(req, res) => {
   }
   
 };
+
+const sendMail = async(req, res, doc)=>{
+  var transporter = nodemailer.createTransport({
+      // host: 'mail.lcn.com',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      // service: 'gmail',
+      auth: {
+          user: 'notasom1@gmail.com',
+          pass: 'notagoodpassword1'
+      }
+  });
+
+  var mailOptions = {
+    from: '"support@remotereq.com" <notasom1@gmail.com>',
+    to: req.body.email,
+    subject: 'RemoteReq: Email Verification!',
+    html: '<p>Hey '+doc.firstName+',</p><p>This email is to confirm an employer account for '+doc.companyName+' has been registered on RemoteReq.com. If this email was received in error, then unsubscribe <a target="_blank"  href="http://18.217.254.98/unsubscribeEmployer?id='+doc._id+'">here</a>.</p><p><a target="_blank" href="http://18.217.254.98/employerEmailVerify?id='+doc._id+'">Click here</a> to add new job req to your profile, or to start interviewing our remote talent—immediately.</p><p>Be well,</><p><b>RemoteReq</b> | Remote work with purpose.</><h5 style="font-weight:normal">Visit us online, or follow us on social media. </br> <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5>',
+    // html: '<p></p><p>Thanks and Regards,</p><p>Team RemoteReq</p>',
+  };
+
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log("error: Unable to send email.", error);
+      res.status(500).json("Server Error. Please try again.");
+    } else {
+      // console.log('Email sent: ' + info.response);
+      // res.status(200).json("OTP is sent to your email id. Please verify.");
+      res.status(200).json("Email verification link is sent to your mail id. Please check.");
+    }
+  });
+}
+
+const employerEmailVerify = async(req, res)=>{
+  try{
+    let updateData = await Employer.findByIdAndUpdate(req.query.id, { $set: {isEmailVerify: true}});
+    
+    // res.status(200).json(updateData);
+    res.status(200).json("Email Verified successfully");
+  } catch(err) {
+      console.log(err);
+      res.status(500).json(err);
+  }
+}
   
 const employerCredVerify = async(req, res)=>{
   try {
@@ -65,12 +114,16 @@ const employerCredVerify = async(req, res)=>{
     if(getEmpData != null){
       let passwordverify = await bcrypt.compare(req.body.password, getEmpData.password);
       if(passwordverify == true){
-        let empDataWithToken = await authorisation.generateTokenForEmp(getEmpData);
-        res.status(200).json({
-          token: empDataWithToken.token,
-          username: empDataWithToken.updateData.username,
-          email: empDataWithToken.updateData.email
-        });
+        if(getEmpData.isEmailVerify){
+          let empDataWithToken = await authorisation.generateTokenForEmp(getEmpData);
+          res.status(200).json({
+            token: empDataWithToken.token,
+            username: empDataWithToken.updateData.username,
+            email: empDataWithToken.updateData.email
+          });
+        }else{
+          res.status(400).json('First verify your email please.');
+        }
       }else{
         res.status(400).json('Password is not matched. please try again.');
       }
@@ -160,5 +213,6 @@ module.exports = {
   // updateUserProfile,
   getSingleEmployerDetails,
   getJoblistByEmployer,
-  matchesCandidateByEachJob
+  matchesCandidateByEachJob,
+  employerEmailVerify
 };

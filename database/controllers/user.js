@@ -11,55 +11,64 @@ const addUser = async(req, res) => {
     let salt = await bcrypt.genSalt(saltRounds);
     let hashPassword = await bcrypt.hash(req.body.password, salt);
 
-    let verifyEmail = await OtpMaster.findOne({"emailId" : req.body.email, "OTP": req.body.otp});
+    // let verifyEmail = await OtpMaster.findOne({"emailId" : req.body.email, "OTP": req.body.otp});
     // console.log(verifyEmail)
-    if(verifyEmail != null){
-      const user = new User({
-        username: req.body.username,
-        password: hashPassword,
-        firstName: req.body.firstname,
-        lastName: req.body.lastname,
-        email: req.body.email,
-        authSignature: '',
-        fluentInEnglish: null,
-        eligibleToWorkInUS: null,
-        linkedInURL: '',
-        githubURL: '',
-        personalURL: '',
-        profilePicUrl: '',
-        mobileNum: '',
-        gender: '',
-        dob: null,
-        industryType: '',
-        jobRole: '',
-        currentCTC: null,
-        totalExperience: null,
-        keySkills: [],
-        education: [],
-        desireIndustryType: '',
-        desireJobRole: '',
-        desireCTC: null,
-        desireLocation: [],
-        desireKeySkills: [],
-      });
+    let checkUserName = await User.findOne({"username" : req.body.username});
+    if(checkUserName == null){
+      let checkEmail = await User.findOne({"email" : req.body.email});
+      if(checkEmail == null){
+      // if(verifyEmail != null){
+          const user = new User({
+            username: req.body.username,
+            password: hashPassword,
+            firstName: req.body.firstname,
+            lastName: req.body.lastname,
+            email: req.body.email,
+            authSignature: '',
+            fluentInEnglish: null,
+            eligibleToWorkInUS: null,
+            linkedInURL: '',
+            githubURL: '',
+            personalURL: '',
+            profilePicUrl: '',
+            mobileNum: '',
+            gender: '',
+            dob: null,
+            industryType: '',
+            jobRole: '',
+            currentCTC: null,
+            totalExperience: null,
+            keySkills: [],
+            education: [],
+            desireIndustryType: '',
+            desireJobRole: '',
+            desireCTC: null,
+            desireLocation: [],
+            desireKeySkills: [],
+          });
   
-      //save user's details
-      user.save()
-      .then(doc => {
-        // doc = doc.toObject();
-        // delete doc._id;
-        // delete doc["password"];
-        // delete doc["__v"];
-        // res.status(200).json(doc);
-        res.status(200).json('Signed up successfully done');
-      })
-      .catch(error => {
-        console.log('ERROR 💥:', error)
-        res.status(500).json(error);
-      });
+          //save user's details
+          user.save()
+          .then(doc => {
+            // doc = doc.toObject();
+            // delete doc._id;
+            // delete doc["password"];
+            // delete doc["__v"];
+            // res.status(200).json(doc);
+            // res.status(200).json('Signed up successfully done');
+            sendMail(req, res, doc)
+          })
+          .catch(error => {
+            console.log('ERROR 💥:', error)
+            res.status(500).json(error);
+          });
 
+      }else{
+        // res.status(400).json('OTP not matched. Please try again.');
+        res.status(400).json('Email Id already exists.');
+      }
     }else{
-      res.status(400).json('OTP not matched. Please try again.');
+      res.status(400).json('User Name already exists.');
     }
 
   } catch(err) {
@@ -69,45 +78,46 @@ const addUser = async(req, res) => {
   
 };
 
-const sendOTP = async(req, res)=>{
-  try{
-    let checkUserName = await User.findOne({"username" : req.body.username});
-    if(checkUserName == null){
-      let checkEmail = await User.findOne({"email" : req.body.email});
-      if(checkEmail == null){
-        let randDigit = Math.floor(100000 + Math.random() * 900000);
-        let findEmailInOTPmaster = await OtpMaster.findOne({"emailId" : req.body.email});
-        // console.log(findEmailInOTPmaster)
-        if(findEmailInOTPmaster == null){
-          const otpMaster = new OtpMaster({
-            OTP: randDigit,
-            emailId: req.body.email
-          })
+// const sendOTP = async(req, res)=>{
+//   try{
+//     let checkUserName = await User.findOne({"username" : req.body.username});
+//     if(checkUserName == null){
+//       let checkEmail = await User.findOne({"email" : req.body.email});
+//       if(checkEmail == null){
+//         let randDigit = Math.floor(100000 + Math.random() * 900000);
+//         let findEmailInOTPmaster = await OtpMaster.findOne({"emailId" : req.body.email});
+//         // console.log(findEmailInOTPmaster)
+//         if(findEmailInOTPmaster == null){
+//           const otpMaster = new OtpMaster({
+//             OTP: randDigit,
+//             emailId: req.body.email
+//           })
     
-          otpMaster.save().then(data =>{
-            sendMail(req, res, randDigit)
-          }).catch(err =>{
-            console.log('generate OTP error:', err)
-            res.status(500).json(err);
-          })
-        }else{
-          let updateData = await OtpMaster.findByIdAndUpdate(findEmailInOTPmaster._id, { $set: { OTP: randDigit }});
-          sendMail(req, res, randDigit)
-        }
+//           otpMaster.save().then(data =>{
+//             sendMail(req, res, randDigit)
+//           }).catch(err =>{
+//             console.log('generate OTP error:', err)
+//             res.status(500).json(err);
+//           })
+//         }else{
+//           let updateData = await OtpMaster.findByIdAndUpdate(findEmailInOTPmaster._id, { $set: { OTP: randDigit }});
+//           sendMail(req, res, randDigit)
+//         }
         
-      }else{
-        res.status(400).json('Email Id already exists.');
-      }
-    }else{
-      res.status(400).json('User Name already exists.');
-    }
-  }catch(err) {
-    console.log('catcherr',err);
-    res.status(500).json(err);
-  }
-}
+//       }else{
+//         res.status(400).json('Email Id already exists.');
+//       }
+//     }else{
+//       res.status(400).json('User Name already exists.');
+//     }
+//   }catch(err) {
+//     console.log('catcherr',err);
+//     res.status(500).json(err);
+//   }
+// }
 
-const sendMail = async(req, res, otp)=>{
+// const sendMail = async(req, res, otp)=>{
+const sendMail = async(req, res, doc)=>{
   var transporter = nodemailer.createTransport({
       // host: 'mail.lcn.com',
       host: 'smtp.gmail.com',
@@ -123,8 +133,9 @@ const sendMail = async(req, res, otp)=>{
   var mailOptions = {
     from: '"support@remotereq.com" <notasom1@gmail.com>',
     to: req.body.email,
-    subject: 'RemoteReq: Verify Email Id!',
-    html: '<p>Your OTP is: '+otp+'</p><p>Thanks and Regards,</p><p>Team RemoteReq</p>',
+    subject: 'RemoteReq: Email Verification!',
+    html: '<p>Hey '+doc.firstName+',</p><p>This email is to confirm your job seeker account for '+doc.firstName+' '+doc.lastName+' has been registered on RemoteReq.com. If this email was received in error, then unsubscribe <a target="_blank"  href="http://18.217.254.98/unsubscribeUser?id='+doc._id+'">here</a>.</p><p><a target="_blank" href="http://18.217.254.98/userEmailVerify?id='+doc._id+'">Click here</a> to visit your account or update your profile.</p><p>Be well,</><p><b>RemoteReq</b> | Remote work with purpose.</><h5 style="font-weight:normal">Visit us online, or follow us on social media. </br> <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5>',
+    // html: '<p></p><p>Thanks and Regards,</p><p>Team RemoteReq</p>',
   };
 
   transporter.sendMail(mailOptions, function(error, info){
@@ -133,9 +144,22 @@ const sendMail = async(req, res, otp)=>{
       res.status(500).json("Server Error. Please try again.");
     } else {
       // console.log('Email sent: ' + info.response);
-      res.status(200).json("OTP is sent to your email id. Please verify.");
+      // res.status(200).json("OTP is sent to your email id. Please verify.");
+      res.status(200).json("Email verification link is sent to your mail id. Please check.");
     }
   });
+}
+
+const userEmailVerify = async(req, res)=>{
+  try{
+    let updateData = await User.findByIdAndUpdate(req.query.id, { $set: {isEmailVerify: true}});
+    
+    // res.status(200).json(updateData);
+    res.status(200).json("Email Verified successfully");
+  } catch(err) {
+      console.log(err);
+      res.status(500).json(err);
+  }
 }
   
 const verifyCredentials = async(req, res)=>{
@@ -147,14 +171,19 @@ const verifyCredentials = async(req, res)=>{
     if(getUserData != null){
       let passwordverify = await bcrypt.compare(req.body.password, getUserData.password);
       if(passwordverify == true){
-        let userDataWithToken = await authorisation.generateToken(getUserData);
-        res.status(200).json({
-          token: userDataWithToken.token,
-          username: userDataWithToken.updateData.username,
-          firstName: userDataWithToken.updateData.firstName,
-          lastName: userDataWithToken.updateData.lastName,
-          email: userDataWithToken.updateData.email
-        });
+        if(getUserData.isEmailVerify){
+          let userDataWithToken = await authorisation.generateToken(getUserData);
+          res.status(200).json({
+            token: userDataWithToken.token,
+            username: userDataWithToken.updateData.username,
+            firstName: userDataWithToken.updateData.firstName,
+            lastName: userDataWithToken.updateData.lastName,
+            email: userDataWithToken.updateData.email
+          });
+        }else{
+          res.status(400).json('First verify your email please.');
+        }
+        
       }else{
         res.status(400).json('Password is not matched. please try again.');
       }
@@ -300,7 +329,8 @@ module.exports = {
   filterJobs,
   updateUserProfile,
   getSingleUserDetails,
-  sendOTP,
+  // sendOTP,
   generateResetToken,
-  resetPassword
+  resetPassword,
+  userEmailVerify
 };

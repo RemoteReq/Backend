@@ -31,6 +31,7 @@ const userSchema = new Schema({
   desireCTC: { type: Number },
   desireLocation: { type: Array },
   desireKeySkills: { type: Array },
+  isEmailVerify: { type: Boolean, default: false },
 });
 
 // Model to export

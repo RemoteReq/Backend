@@ -10,8 +10,8 @@ const router = express.Router();
 */
 
 // import handler
-const { addUser, sendOTP } = require('../../../database/controllers/user.js');
-const {addEmployer } = require('../../../database/controllers/employer')
+const { addUser, userEmailVerify } = require('../../../database/controllers/user.js');
+const {addEmployer, employerEmailVerify } = require('../../../database/controllers/employer')
 
 router.post('/',[
   // check('name').isLength({ min: 5 }).withMessage('Must be at least 5 chars long'),
@@ -20,7 +20,7 @@ router.post('/',[
   check('firstname','First Name is required').not().isEmpty(),
   check('lastname','Last Name is required').not().isEmpty(),
   check('password','Password is required').not().isEmpty(),
-  check('otp','OTP is required').not().isEmpty()
+  // check('otp','OTP is required').not().isEmpty()
 ], (req,res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -33,8 +33,20 @@ router.post('/',[
 });
 
 
-router.post('/sendOTP',[
-  check('email').isEmail().withMessage('Invalid Email Id'),
+// router.post('/sendOTP',[
+//   check('email').isEmail().withMessage('Invalid Email Id'),
+// ], (req, res)=>{
+//   const errors = validationResult(req)
+//   if (!errors.isEmpty()) {
+//     return res.status(422).json({ 
+//       errors: errors.array() 
+//     })
+//   }
+//   sendOTP(req,res)
+// })
+
+router.post('/userEmailVerify',[
+  check('id','User id is required').not().isEmpty(),
 ], (req, res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -42,13 +54,15 @@ router.post('/sendOTP',[
       errors: errors.array() 
     })
   }
-  sendOTP(req,res)
+  // console.log(req.query.id)
+  userEmailVerify(req,res)
 })
 
 router.post('/employerSignUp',[
   check('username','UserName is required').not().isEmpty(),
   check('password','Password is required').not().isEmpty(),
-  check('email','Email is required').not().isEmpty()
+  check('email','Email is required').not().isEmpty(),
+  check('companyName','Company Name is required').not().isEmpty(),
 ], (req,res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -58,6 +72,19 @@ router.post('/employerSignUp',[
   }
   // res.send('hello emp')
   addEmployer(req,res)
+})
+
+router.post('/employerEmailVerify',[
+  check('id','Employer id is required').not().isEmpty(),
+], (req, res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ 
+      errors: errors.array() 
+    })
+  }
+  // console.log(req.query.id)
+  employerEmailVerify(req,res)
 })
 
 module.exports = router;
