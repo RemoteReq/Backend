@@ -13,16 +13,17 @@ const addUser = async(req, res) => {
 
     // let verifyEmail = await OtpMaster.findOne({"emailId" : req.body.email, "OTP": req.body.otp});
     // console.log(verifyEmail)
-    let checkUserName = await User.findOne({"username" : req.body.username});
+    let checkUserName = await User.findOne({"username" : req.body.username, isDeleteAccount: false});
     if(checkUserName == null){
-      let checkEmail = await User.findOne({"email" : req.body.email});
+      let checkEmail = await User.findOne({"email" : req.body.email, isDeleteAccount: false});
       if(checkEmail == null){
       // if(verifyEmail != null){
           const user = new User({
             username: req.body.username,
             password: hashPassword,
-            firstName: req.body.firstname,
-            lastName: req.body.lastname,
+            // firstName: req.body.firstname,
+            // lastName: req.body.lastname,
+            fullName: req.body.fullName,
             email: req.body.email,
             authSignature: '',
             fluentInEnglish: null,
@@ -119,7 +120,6 @@ const addUser = async(req, res) => {
 // const sendMail = async(req, res, otp)=>{
 const sendMail = async(req, res, doc)=>{
   var transporter = nodemailer.createTransport({
-      // host: 'mail.lcn.com',
       host: 'smtp.gmail.com',
       port: 587,
       secure: false,
@@ -134,8 +134,8 @@ const sendMail = async(req, res, doc)=>{
     from: '"support@remotereq.com" <notasom1@gmail.com>',
     to: req.body.email,
     subject: 'RemoteReq: Email Verification!',
-    html: '<p>Hey '+doc.firstName+',</p><p>This email is to confirm your job seeker account for '+doc.firstName+' '+doc.lastName+' has been registered on RemoteReq.com. If this email was received in error, then unsubscribe <a target="_blank"  href="http://18.217.254.98/unsubscribeUser?id='+doc._id+'">here</a>.</p><p><a target="_blank" href="http://18.217.254.98/userEmailVerify?id='+doc._id+'">Click here</a> to visit your account or update your profile.</p><p>Be well,</><p><b>RemoteReq</b> | Remote work with purpose.</><h5 style="font-weight:normal">Visit us online, or follow us on social media. </br> <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5>',
-    // html: '<p></p><p>Thanks and Regards,</p><p>Team RemoteReq</p>',
+    // html: '<p>Hey '+doc.fullName+',</p><p>This email is to confirm your job seeker account for '+doc.fullName+' has been registered on RemoteReq.com. If this email was received in error, then unsubscribe <a target="_blank"  href="http://18.217.254.98/unsubscribeUser?id='+doc._id+'">here</a>.</p><p><a target="_blank" href="http://18.217.254.98/userEmailVerify?id='+doc._id+'">Click here</a> to visit your account or update your profile.</p><p>Be well,</><p><b>RemoteReq</b> | Remote work with purpose.</><h5 style="font-weight:normal">Visit us online, or follow us on social media. </br> <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5>',
+    html: '<div style="font-family: \'Open Sans\', sans-serif; padding: 15px;"><p>Hey '+doc.fullName+',</p><p>This email is to confirm your job seeker account for '+doc.fullName+' has been registered on RemoteReq.com. If this email was received in error, then unsubscribe <a target="_blank" href="http://18.217.254.98/unsubscribeUser?id='+doc._id+'" style="color:#1f3961; text-decoration: none;border-bottom: 1px solid #000;">here</a></p><p><a target="_blank" href="http://18.217.254.98/userEmailVerify?id='+doc._id+'" style="color:#1f3961; text-decoration: none;border-bottom: 1px solid #000;">Click here</a> to visit your account or update your profile.</p><p>Be well,</p><p style="color:#1f3961";><b>RemoteReq</b> | Remote work with purpose.</p><h5 style="font-weight:normal">Visit us online, or follow us on social media.</br> <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5><ul style="list-style: none;padding-left: 0;"><li style="float: left;margin-right: 3px;"><a href="https://www.facebook.com/RemoteReq-1833060860134583" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/facebook-512.png" style="width: 100%;"/> </a></li><li style="float: left;margin-right: 3px;"><a href="https://www.linkedin.com/company/remotereq" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/linkedin-512.png"  style="width: 100%;"/></a></li><li style="float: left;margin-right: 3px;"><a href="" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/twitter-512.png" style="width: 100%;"/></a></li></ul></div>',
   };
 
   transporter.sendMail(mailOptions, function(error, info){
@@ -165,9 +165,12 @@ const userEmailVerify = async(req, res)=>{
 const verifyCredentials = async(req, res)=>{
   try {
     // let getUserData = await User.findOne({ 'username': req.body.username });
-    let getUserData = await User.findOne({ $or: [
-      {'username': req.body.emailOrUserName}, {'email': req.body.emailOrUserName}
-    ] });
+    let getUserData = await User.findOne({ 
+      isDeleteAccount: false,
+      $or: [
+        {'username': req.body.emailOrUserName}, {'email': req.body.emailOrUserName}
+      ] 
+    });
     if(getUserData != null){
       let passwordverify = await bcrypt.compare(req.body.password, getUserData.password);
       if(passwordverify == true){
@@ -176,8 +179,9 @@ const verifyCredentials = async(req, res)=>{
           res.status(200).json({
             token: userDataWithToken.token,
             username: userDataWithToken.updateData.username,
-            firstName: userDataWithToken.updateData.firstName,
-            lastName: userDataWithToken.updateData.lastName,
+            // firstName: userDataWithToken.updateData.firstName,
+            // lastName: userDataWithToken.updateData.lastName,
+            fullName: userDataWithToken.updateData.fullName,
             email: userDataWithToken.updateData.email
           });
         }else{
@@ -246,7 +250,7 @@ const generateResetToken = async(req, res)=>{
 const desireJob = async(req, res)=>{
   try{
     let updateData = await User.findByIdAndUpdate(req.userId, { $set: req.body});
-    let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature");
+    let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
     
     res.status(200).json(getUserData);
   } catch(err) {
@@ -258,7 +262,7 @@ const updateUserProfile = async(req, res)=>{
   try{
     
     let updateData = await User.findByIdAndUpdate(req.userId, { $set: req.body});
-    let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature");
+    let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
     
     res.status(200).json(getUserData);
   } catch(err) {
@@ -268,7 +272,7 @@ const updateUserProfile = async(req, res)=>{
 
 const listUsers = async(req, res)=>{
   try {
-    let getUserData = await User.find().select("-_id -__v -password -authSignature");
+    let getUserData = await User.find().select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
     res.status(200).json(getUserData);
     
   } catch(err) {
@@ -297,7 +301,7 @@ const filterJobs = async(req, res)=>{
 const getSingleUserDetails = async(req, res)=>{
   try{
     
-    let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature");
+    let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
     
     res.status(200).json(getUserData);
   } catch(err) {
@@ -321,6 +325,15 @@ const resetPassword = async(req, res)=>{
   }
 }
 
+const deleteAccount = async(req, res)=>{
+  try{
+    let updateData = await User.findByIdAndUpdate(req.userId, { $set: {isDeleteAccount: true}});
+    res.status(200).json("Removed your account");
+  } catch(err) {
+      console.log(err);
+  }
+}
+
 module.exports = {
   addUser,
   verifyCredentials,
@@ -332,5 +345,6 @@ module.exports = {
   // sendOTP,
   generateResetToken,
   resetPassword,
-  userEmailVerify
+  userEmailVerify,
+  deleteAccount
 };

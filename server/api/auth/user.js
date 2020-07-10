@@ -34,7 +34,8 @@ const {
   desireJob,
   filterJobs,
   updateUserProfile,
-  getSingleUserDetails
+  getSingleUserDetails,
+  deleteAccount
 } = require('../../../database/controllers/user.js');
 
 // route handlers
@@ -134,6 +135,8 @@ function uploadFile(req, res){
 
 
 router.post('/getSingleUserDetails', getSingleUserDetails)
+
+router.post('/deleteAccount', deleteAccount)
 
 router.get('/test', (req,res)=>{
   res.send('hello')

@@ -17,8 +17,9 @@ router.post('/',[
   // check('name').isLength({ min: 5 }).withMessage('Must be at least 5 chars long'),
   check('email').isEmail().withMessage('Invalid Email Id'),
   check('username','Username is required').not().isEmpty(),
-  check('firstname','First Name is required').not().isEmpty(),
-  check('lastname','Last Name is required').not().isEmpty(),
+  // check('firstname','First Name is required').not().isEmpty(),
+  // check('lastname','Last Name is required').not().isEmpty(),
+  check('fullName','Name is required').not().isEmpty(),
   check('password','Password is required').not().isEmpty(),
   // check('otp','OTP is required').not().isEmpty()
 ], (req,res)=>{
@@ -62,6 +63,7 @@ router.post('/employerSignUp',[
   check('username','UserName is required').not().isEmpty(),
   check('password','Password is required').not().isEmpty(),
   check('email','Email is required').not().isEmpty(),
+  check('fullName','Name is required').not().isEmpty(),
   check('companyName','Company Name is required').not().isEmpty(),
 ], (req,res)=>{
   const errors = validationResult(req)

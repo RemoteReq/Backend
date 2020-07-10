@@ -2,11 +2,19 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 
-const {listEmployers, getSingleEmployerDetails, getJoblistByEmployer, matchesCandidateByEachJob} = require('../../../database/controllers/employer')
+const {listEmployers, 
+    getSingleEmployerDetails, 
+    getJoblistByEmployer, 
+    matchesCandidateByEachJob, 
+    deleteAccount
+} = require('../../../database/controllers/employer')
 
 router.post('/list', listEmployers)
 
+router.post('/deleteAccount', deleteAccount)
+
 router.post('/getSingleEmployer', getSingleEmployerDetails)
+
 
 router.post('/joblistByEmployer', getJoblistByEmployer)
 router.post('/matchesCandidateByEachJob/:jobId', [
