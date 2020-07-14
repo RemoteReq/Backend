@@ -283,6 +283,7 @@ const listUsers = async(req, res)=>{
 const filterJobs = async(req, res)=>{
   try{
     let getUserData = await User.findById(req.userId);
+    // console.log(getUserData.totalExperience)
     let getJobsByIndustryType = await Jobs.find({ 
       $and: [ 
         { industryType: getUserData.desireIndustryType }, 
@@ -292,6 +293,38 @@ const filterJobs = async(req, res)=>{
         {keySkills : { $in: getUserData.desireKeySkills}},
       ] 
     })
+    // let getJobsByIndustryType = await Jobs.aggregate([
+    //   { $match: { $and: [
+    //     { industryType: getUserData.desireIndustryType }, 
+    //     { ctc : { $gte: getUserData.desireCTC } },
+    //     { $and: [ { minExperience: { $lte: getUserData.totalExperience } }, { maxExperience : { $gte: getUserData.totalExperience } } ] },
+    //     {location : { $in: getUserData.desireLocation}},
+    //     {keySkills : { $in: getUserData.desireKeySkills}},
+    //   ] } },
+    //   {
+    //     $addFields: { desireKeySkills: getUserData.desireKeySkills }
+    //   },
+    //   {
+    //     $addFields: { abc: {$size: "$desireKeySkills" }}
+    //   },
+    //   {
+    //     $project: {
+    //       // _id: 0, 
+    //       keySkills:1, 
+    //       companyName:1, 
+    //       industryType:1, 
+    //       role:1, 
+    //       jobDetails: 1, 
+    //       ctc:1, 
+    //       minExperience:1, 
+    //       maxExperience:1, 
+    //       location:1, 
+    //       abc:1,
+    //       commonToBoth: { $setIntersection: [ "$keySkills", "$desireKeySkills" ] } 
+    //     }
+    //   },
+      
+    // ])
     res.status(200).json(getJobsByIndustryType);
   } catch(err) {
       console.log(err);
