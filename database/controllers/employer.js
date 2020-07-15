@@ -195,15 +195,66 @@ const matchesCandidateByEachJob = async(req, res)=>{
     
     let getJobData = await Job.findById(req.params.jobId).select("-__v -addBy");
 
-    let getCandidateList = await User.find({ 
-      $and: [ 
-        { industryType: getJobData.industryType }, 
-        { desireCTC : { $lte: getJobData.ctc } },
-        { $and: [ { totalExperience: { $gte: getJobData.minExperience } }, { totalExperience : { $lte: getJobData.maxExperience } } ] },
-        {desireLocation : { $in: getJobData.location}},
-        {desireKeySkills : { $in: getJobData.keySkills}},
-      ] 
-    })
+    // let getCandidateList = await User.find({ 
+    //   $and: [ 
+    //     { industryType: getJobData.industryType }, 
+    //     { desireCTC : { $lte: getJobData.ctc } },
+    //     { $and: [ { totalExperience: { $gte: getJobData.minExperience } }, { totalExperience : { $lte: getJobData.maxExperience } } ] },
+    //     {desireLocation : { $in: getJobData.location}},
+    //     {desireKeySkills : { $in: getJobData.keySkills}},
+    //   ] 
+    // })
+
+    let getCandidateList = await User.aggregate([
+      {
+        $match: {$and: [
+          { industryType: getJobData.industryType }, 
+          { desireCTC : { $lte: getJobData.ctc } },
+          { $and: [ { totalExperience: { $gte: getJobData.minExperience } }, { totalExperience : { $lte: getJobData.maxExperience } } ] },
+          // {desireLocation : { $in: getJobData.location}},
+          // { $in: [ desireLocation, getJobData.location ] }
+          {desireLocation: {'$regex':"^"+getJobData.location, '$options': 'i'}},
+          {desireKeySkills : { $in: getJobData.keySkills}},
+        ]}
+      },
+      {
+        $addFields: { requireKeySkills: getJobData.keySkills }
+      },
+      {
+        $addFields: { commonToBoth: { $setIntersection: [ "$requireKeySkills", "$desireKeySkills" ] } }
+      },
+      {
+        $project: {
+          keySkills:1,
+          education: 1,
+          fullName: 1,
+          email: 1,
+          fluentInEnglish: 1,
+          eligibleToWorkInUS: 1,
+          linkedInURL: 1,
+          githubURL: 1,
+          personalURL: 1,
+          profilePicUrl: 1,
+          mobileNum: 1,
+          gender: 1,
+          dob: 1,
+          address: 1,
+          pincode: 1,
+          aboutMe: 1,
+          refferedBy: 1,
+          industryType: 1,
+          jobRole: 1,
+          currentCTC: 1,
+          totalExperience: 1,
+          desireIndustryType: 1,
+          desireJobRole: 1,
+          desireCTC: 1,
+          desireLocation:1,
+          desireKeySkills:1,
+          MatchPercentage: {$multiply:[{$divide:[{$size: "$commonToBoth" },{$size: "$requireKeySkills" } ]},100]} ,
+        }
+      }
+    ])
     
     res.status(200).json(getCandidateList);
   } catch(err) {
