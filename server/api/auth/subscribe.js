@@ -10,7 +10,7 @@ const router = express.Router();
 */
 
 // import handler
-const { addSubscriber, subscribersList } = require('../../../database/controllers/subscribers');
+const { addSubscriber, subscribersList, unsubscribe } = require('../../../database/controllers/subscribers');
 
 router.post('/',[
   // check('name').isLength({ min: 5 }).withMessage('Must be at least 5 chars long'),
@@ -27,5 +27,19 @@ router.post('/',[
 });
 
 router.post('/getList', subscribersList);
+
+router.post('/unsubscribe',[
+  // check('name').isLength({ min: 5 }).withMessage('Must be at least 5 chars long'),
+  check('emailId').isEmail().withMessage('Invalid Email Id'),
+], (req,res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ 
+      errors: errors.array() 
+    })
+  }
+  // console.log(req.query.emailId)
+  unsubscribe(req, res)
+})
 
 module.exports = router;

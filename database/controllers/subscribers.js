@@ -29,7 +29,18 @@ const subscribersList = async(req, res)=>{
   }
 }
 
+const unsubscribe = async(req, res)=>{
+  try {
+    let deleteItem = await Subscriber.deleteMany({ emailId: req.query.emailId });
+    res.status(200).json('Successfully unsubscribed');
+    
+  } catch(err) {
+    res.status(500).json(err);
+  }
+}
+
 module.exports = {
   addSubscriber,
-  subscribersList
+  subscribersList,
+  unsubscribe
 };
