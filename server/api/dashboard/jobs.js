@@ -16,7 +16,9 @@ router.post('/add',[
   check('ctc','CTC is required').not().isEmpty(),
   check('minExperience','Minimum Experience is required').not().isEmpty(),
   check('maxExperience','Maximum Experience is required').not().isEmpty(),
-  check('location','Location is required').not().isEmpty()
+  check('location','Location is required').not().isEmpty(),
+  check('numberOfCandidate','Number of Candidates is required').not().isEmpty(),
+  check('percentageMatch','Percentage match value is required').not().isEmpty(),
 ], (req,res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -27,5 +29,6 @@ router.post('/add',[
   // console.log(req.employerId)
   addJob(req,res)
 });
+
 
 module.exports = router;

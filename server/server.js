@@ -16,6 +16,7 @@ const user = require('./api/auth/user');
 const signin = require('./api/auth/signIn.js');
 const jobs = require('./api/dashboard/jobs.js')
 const employers = require('./api/Employer/employer')
+const scheduleJob = require('./api/schedulejob/scheduleJob')
 
 //CORS
 app.use(cors())
@@ -27,11 +28,12 @@ app.use(history());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const {tokenValidityChecking, tokenValidityCheckingForEmp} = require('./authentication')
-
+// require('./cron')
 // routes
 app.use('/api/signin', signin);
 app.use('/api/signup', signup);
 app.use('/api/subscribe', subscribe);
+app.use('/api/scheduleJob', scheduleJob);
 app.use('/api/user', tokenValidityChecking, user);
 app.use('/api/jobs', tokenValidityCheckingForEmp, jobs);
 app.use('/api/employers', tokenValidityCheckingForEmp, employers);
