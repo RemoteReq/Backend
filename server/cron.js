@@ -6,7 +6,7 @@ let API_URL = (process.env.HOST_TYPE == 'local')? 'http://localhost:3030/' : (pr
 console.log(API_URL)
 
 //find out all of the jobs which was expired(21 days period over) - everday at 12:01 AM
-cron.schedule('1 18 * * *', () => {
+cron.schedule('15 18 * * *', () => {
     console.log('find out all of the jobs which was expired(21 days period over) - everday at 12:01 AM');
     unirest
       .post(API_URL+'api/scheduleJob/checkExpiredJob')
@@ -57,7 +57,7 @@ cron.schedule('45 18 * * *', () => {
 });
 
 // sends mail for 48 hours reminder - at 12:20 AM
-cron.schedule('15 18 * * *', () => {
+cron.schedule('20 18 * * *', () => {
     console.log('sends mail for 48 hours reminder - at 12:20 AM');
     unirest
       .post(API_URL+'api/scheduleJob/mailForTwoDaysLeft')
