@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
+// const gateway = require('../../../gateway/connection')
+// console.log('gateway', gateway)
 
 // Removed until DB queries are establshed
-const { addJob, jobsList } = require('../../../database/controllers/jobs.js');
+const { addJob, jobsList,
+  clientTokenForPayment
+ } = require('../../../database/controllers/jobs.js');
 
 router.post('/getAll', jobsList);
 
@@ -30,5 +34,8 @@ router.post('/add',[
   addJob(req,res)
 });
 
+router.post("/client_token_for_payment", clientTokenForPayment);
+
+// router.post('/paymentForAddJob')
 
 module.exports = router;

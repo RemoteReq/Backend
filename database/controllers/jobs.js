@@ -1,6 +1,8 @@
 const Jobs = require('../models/Job');
 const Employer = require('../models/Employer');
 var nodemailer = require('nodemailer');
+const gateway = require('../../gateway/connection')
+// console.log('gateway', gateway)
 
 const addJob = async(req, res) => {
   
@@ -72,7 +74,22 @@ const jobsList = async(req, res)=>{
   }
 }
 
+const clientTokenForPayment = async(req, res)=>{
+  gateway.clientToken.generate({
+    // customerId: req.employerId
+  }, function (err, response) {
+    if(err){
+      res.send('payment token not generate for server issue')
+    }else{
+      // console.log('hghjg')
+      res.send(response.clientToken);
+    }
+    
+  });
+}
+
 module.exports = {
   addJob,
-  jobsList
+  jobsList,
+  clientTokenForPayment
 };
