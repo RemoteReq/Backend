@@ -162,21 +162,21 @@ const employerCredVerify = async(req, res)=>{
 
 
 
-// const updateUserProfile = async(req, res)=>{
-//   try{
+const updateEmployerProfile = async(req, res)=>{
+  try{
     
-//     let updateData = await User.findByIdAndUpdate(req.userId, { $set: req.body});
-//     let getUserData = await User.findById(req.userId);
+    let updateData = await Employer.findByIdAndUpdate(req.employerId, { $set: req.body});
+    let getUserData = await Employer.findById(req.employerId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount -clientIdOfPaymentGateway");
     
-//     res.status(200).json(getUserData);
-//   } catch(err) {
-//       console.log(err);
-//   }
-// }
+    res.status(200).json(getUserData);
+  } catch(err) {
+      console.log(err);
+  }
+}
 
 const listEmployers = async(req, res)=>{
   try {
-    let getData = await Employer.find().select("-password -authSignature -_id -__v -isEmailVerify -isDeleteAccount");
+    let getData = await Employer.find().select("-password -authSignature -_id -__v -isEmailVerify -isDeleteAccount -clientIdOfPaymentGateway");
     res.status(200).json(getData);
     
   } catch(err) {
@@ -188,7 +188,7 @@ const listEmployers = async(req, res)=>{
 const getSingleEmployerDetails = async(req, res)=>{
   try{
     
-    let getData = await Employer.findById(req.employerId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
+    let getData = await Employer.findById(req.employerId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount -clientIdOfPaymentGateway");
     
     res.status(200).json(getData);
   } catch(err) {
@@ -299,5 +299,6 @@ module.exports = {
   getJoblistByEmployer,
   matchesCandidateByEachJob,
   employerEmailVerify,
-  deleteAccount
+  deleteAccount,
+  updateEmployerProfile
 };

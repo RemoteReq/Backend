@@ -6,7 +6,8 @@ const {listEmployers,
     getSingleEmployerDetails, 
     getJoblistByEmployer, 
     matchesCandidateByEachJob, 
-    deleteAccount
+    deleteAccount,
+    updateEmployerProfile
 } = require('../../../database/controllers/employer')
 
 router.post('/list', listEmployers)
@@ -29,5 +30,7 @@ router.post('/matchesCandidateByEachJob/:jobId', [
     }
     matchesCandidateByEachJob(req,res)
 })
+
+router.post('/updateEmployerProfile', updateEmployerProfile)
 
 module.exports = router
