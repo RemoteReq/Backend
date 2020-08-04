@@ -17,6 +17,7 @@ const employerSchema = new Schema({
   location: { type: String },
   isEmailVerify: { type: Boolean, default: false },
   isDeleteAccount: { type: Boolean, default: false },
+  clientIdOfPaymentGateway: { type: String, required: true },
 });
 
 // Model to export

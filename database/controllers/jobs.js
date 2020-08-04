@@ -19,6 +19,8 @@ const addJob = async(req, res) => {
     numberOfCandidate: req.body.numberOfCandidate,
     percentageMatch: req.body.percentageMatch,
     addBy: req.employerId,
+    'transactionDetails.transactionIdForAddJob.transactionId': req.body.transactionIdForAddJob,
+    // 'transactionDetails.transactionIdAfterHired.transactionId': '',
   });
 
   //save user's details
@@ -74,22 +76,92 @@ const jobsList = async(req, res)=>{
   }
 }
 
+// const createClientForGateway = async(req, res)=>{
+//   gateway.customer.create({
+//     firstName: req.body.firstName,
+//     lastName: req.body.lastName,
+//     company: req.body.company,
+//     email: req.body.email,
+//     phone: req.body.phone,
+//     // fax: "614.555.5678",
+//     // website: "www.example.com"
+//   }).then(result =>{
+//       result.customer.id;
+//       res.status(200).json(result);
+//   })
+//   .catch(err =>{
+//     res.status(500).json(err);
+//   });
+// }
+
 const clientTokenForPayment = async(req, res)=>{
   gateway.clientToken.generate({
     // customerId: req.employerId
+    customerId: req.body.clientId
+
   }, function (err, response) {
     if(err){
-      res.send('payment token not generate for server issue')
+      res.status(500).json('payment token not generate for server issue')
     }else{
-      // console.log('hghjg')
-      res.send(response.clientToken);
+      res.status(200).json(response.clientToken);
     }
     
+  });
+}
+
+const checkoutForAddjob = async(req, res)=>{
+  gateway.transaction.sale({
+    amount: req.body.amount,
+    paymentMethodNonce: req.body.paymentMethodNonce,
+    options: {
+      submitForSettlement: true
+    }
+  }).then(function (result) {
+    if (result.success) {
+      console.log('Transaction ID: ' + result.transaction.id);
+      res.status(200).json({
+        transactionId : result.transaction.id
+      });
+    } else {
+      console.error(result.message);
+      res.status(400).json(result.message);
+    }
+  }).catch(function (err) {
+    console.error(err);
+    res.status(500).json(err);
+  });
+}
+const checkoutAfterHired = async(req, res)=>{
+  
+  gateway.transaction.sale({
+    amount: req.body.amount,
+    paymentMethodNonce: req.body.paymentMethodNonce,
+    options: {
+      submitForSettlement: true
+    }
+  }).then(async function (result) {
+    if (result.success) {
+      console.log('Transaction ID: ' + result.transaction.id);
+      let updateData = await Jobs.findByIdAndUpdate(req.body.jobId, { $set: {'transactionDetails.transactionIdAfterHired.transactionId': result.transaction.id, hiringPaymentStatus: true}});
+    
+      res.status(200).json({
+        transactionId : result.transaction.id
+      });
+    } else {
+      console.error(result.message);
+      res.status(400).json(result.message);
+    }
+  }).catch(function (err) {
+    console.error(err);
+    res.status(500).json(err);
   });
 }
 
 module.exports = {
   addJob,
   jobsList,
-  clientTokenForPayment
+  // createClientForGateway,
+  clientTokenForPayment,
+  checkoutForAddjob,
+  checkoutAfterHired
 };

@@ -26,7 +26,15 @@ const jobSchema = new Schema({
   seventhDayAfterExpireDate: { type: Date, default: new Date(+new Date() + 5*24*60*60*1000) },
   // mailForCandidateMatch: { type: Boolean, default: false},
   hiredStatus: { type: Boolean, default: null}, 
-  hiringPaymentStatus: {type: Boolean, default: null} // true: paid, false: not paid
+  hiringPaymentStatus: {type: Boolean, default: null}, // true: paid, false: not paid
+  transactionDetails: {
+    transactionIdForAddJob: {
+      transactionId: { type: String, required: true }
+    },
+    transactionIdAfterHired: {
+      transactionId: { type: String }
+    }
+  }
   
 });
 

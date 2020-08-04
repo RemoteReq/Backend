@@ -136,7 +136,8 @@ const User = require('../models/User');
 
 //reminder 48 hrs left API
 const mailForTwoDaysLeft = async(req, res)=>{
-  var currentDate = new Date(2020, 6, 31);
+  var currentDate = new Date();
+  // var currentDate = new Date(2020, 6, 31);
   // console.log(currentDate)
   // console.log(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()+2)
   // console.log('hfh', new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()+3))
@@ -199,7 +200,8 @@ const sendMailForTwoDaysReminder = async(empId)=>{
 
 //ask employer to hiring complete or not? (continue 7 days from expiration date)
 const checkHiredOrNot = async(req, res)=>{
-  let currentDate = new Date(2020, 7, 2);
+  let currentDate = new Date();
+  // let currentDate = new Date(2020, 7, 2);
   console.log(currentDate)
   try{
     let getJobList = await Job.aggregate([
@@ -232,7 +234,7 @@ const checkHiredOrNot = async(req, res)=>{
 
 const sendMailForHiring = async(empId, jobId)=>{
   let empDetails = await Employer.findById(empId)
-  console.log(empDetails.email)
+  // console.log(empDetails.email)
   var transporter = nodemailer.createTransport({
     // host: 'mail.lcn.com',
       host: 'smtp.gmail.com',
@@ -269,7 +271,8 @@ const isHired = async(req, res)=>{
     // res.status(200).json("Status Updated Successfully");
     res.status(200).json({
       message: "Updated Successfully",
-      hiredStatus: req.query.status
+      hiredStatus: req.query.status,
+      jobId: req.query.jobId
     });
   } catch(err) {
       console.log(err);
@@ -278,7 +281,8 @@ const isHired = async(req, res)=>{
 
 // check employer not response about hiring after 7 days later from expired date 
 const autoUpdateHiringStatus = async(req, res)=>{
-  let currentDate = new Date(2020, 7, 4);
+  let currentDate = new Date();
+  // let currentDate = new Date(2020, 7, 4);
   console.log(currentDate)
   try{
     let getJobList = await Job.updateMany(
@@ -299,7 +303,8 @@ const autoUpdateHiringStatus = async(req, res)=>{
 
 //check all jobs which is expired today 
 const checkExpiredJob = async(req, res)=>{
-  let currentDate = new Date(2020, 7, 2);
+  let currentDate = new Date();
+  // let currentDate = new Date(2020, 7, 2);
   // console.log(currentDate)
   try{
     let getJobList = await Job.updateMany(

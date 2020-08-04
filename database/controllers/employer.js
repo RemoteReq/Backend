@@ -2,6 +2,7 @@ var nodemailer = require('nodemailer');
 const Employer = require('../models/Employer');
 const Job = require('../models/Job');
 const User = require('../models/User');
+const gateway = require('../../gateway/connection')
 const bcrypt = require('bcrypt');
 const authorisation = require('../../server/authentication')
 const saltRounds = 10;
@@ -14,6 +15,21 @@ const addEmployer = async(req, res) => {
     if(checkUserName == null){
       let checkEmail = await Employer.findOne({"email" : req.body.email, isDeleteAccount:false});
       if(checkEmail == null){
+        //create new client for brainTree
+        let newCustomerOfPaymentGateway = await gateway.customer.create({ 
+          firstName: req.body.fullName,
+          // lastName: req.body.lastName,
+          company: req.body.companyName,
+          email: req.body.email,
+          // phone: req.body.phone,
+          // fax: "614.555.5678",
+          // website: "www.example.com"
+        })
+        // console.log(newCustomerOfPaymentGateway)
+        // res.send(newCustomerOfPaymentGateway.customer.id);
+        // return;
+
+
         const employer = new Employer({
           username: req.body.username,
           password: hashPassword,
@@ -24,7 +40,8 @@ const addEmployer = async(req, res) => {
           authSignature: '',
           companyName: req.body.companyName,
           logo: '',
-          location: ''
+          location: '',
+          clientIdOfPaymentGateway: newCustomerOfPaymentGateway.customer.id
         });
     
         //save Employer's details
@@ -124,7 +141,8 @@ const employerCredVerify = async(req, res)=>{
           res.status(200).json({
             token: empDataWithToken.token,
             username: empDataWithToken.updateData.username,
-            email: empDataWithToken.updateData.email
+            email: empDataWithToken.updateData.email,
+            clientIdOfPaymentGateway: empDataWithToken.updateData.clientIdOfPaymentGateway
           });
         }else{
           res.status(400).json('First verify your email please.');
