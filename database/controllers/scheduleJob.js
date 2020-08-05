@@ -305,7 +305,7 @@ const autoUpdateHiringStatus = async(req, res)=>{
 const checkExpiredJob = async(req, res)=>{
   // let currentDate = new Date();
   let currentDate = new Date(2020, 7, 7);
-  // console.log(currentDate)
+  console.log(currentDate)
   try{
     let getJobList = await Job.updateMany(
       { 
