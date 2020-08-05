@@ -6,7 +6,7 @@ let API_URL = (process.env.HOST_TYPE == 'local')? 'http://localhost:3030/' : (pr
 // console.log(API_URL)
 
 //find out all of the jobs which was expired(21 days period over) - everday at 12:01 AM
-cron.schedule('1 0 * * *', () => {
+cron.schedule('1 12 * * *', () => {
     console.log('find out all of the jobs which was expired(21 days period over) - everday at 12:01 AM');
     unirest
       .post(API_URL+'api/scheduleJob/checkExpiredJob')
@@ -23,7 +23,7 @@ cron.schedule('1 0 * * *', () => {
 });
 
 // After expired job sends mail for hiring complete or not (7 days continue until employer's answerd) - At 1:00 AM
-cron.schedule('0 1 * * *', () => {
+cron.schedule('15 12 * * *', () => {
     console.log('After expired job sends mail for hiring complete or not (7 days continue until employer\'s answerd) - At 1:00 AM');
     unirest
       .post(API_URL+'api/scheduleJob/checkHiredOrNot')
@@ -40,7 +40,7 @@ cron.schedule('0 1 * * *', () => {
 });
 
 // Auto charged for hiring if employer not responsed after 7 days - At 12:40 AM
-cron.schedule('40 0 * * *', () => {
+cron.schedule('40 12 * * *', () => {
     console.log('Auto charged for hiring if employer not responsed after 7 days - At 12:40 AM');
     unirest
       .post(API_URL+'api/scheduleJob/employerNotRespForHiring')
@@ -57,7 +57,7 @@ cron.schedule('40 0 * * *', () => {
 });
 
 // sends mail for 48 hours reminder - at 12:20 AM
-cron.schedule('20 0 * * *', () => {
+cron.schedule('45 11 * * *', () => {
     console.log('sends mail for 48 hours reminder - at 12:20 AM');
     unirest
       .post(API_URL+'api/scheduleJob/mailForTwoDaysLeft')

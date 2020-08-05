@@ -200,8 +200,8 @@ const sendMailForTwoDaysReminder = async(empId)=>{
 
 //ask employer to hiring complete or not? (continue 7 days from expiration date)
 const checkHiredOrNot = async(req, res)=>{
-  let currentDate = new Date();
-  // let currentDate = new Date(2020, 7, 2);
+  // let currentDate = new Date();
+  let currentDate = new Date(2020, 7, 7);
   console.log(currentDate)
   try{
     let getJobList = await Job.aggregate([
@@ -281,8 +281,8 @@ const isHired = async(req, res)=>{
 
 // check employer not response about hiring after 7 days later from expired date 
 const autoUpdateHiringStatus = async(req, res)=>{
-  let currentDate = new Date();
-  // let currentDate = new Date(2020, 7, 4);
+  // let currentDate = new Date();
+  let currentDate = new Date(2020, 7, 9);
   console.log(currentDate)
   try{
     let getJobList = await Job.updateMany(
@@ -303,8 +303,8 @@ const autoUpdateHiringStatus = async(req, res)=>{
 
 //check all jobs which is expired today 
 const checkExpiredJob = async(req, res)=>{
-  let currentDate = new Date();
-  // let currentDate = new Date(2020, 7, 2);
+  // let currentDate = new Date();
+  let currentDate = new Date(2020, 7, 7);
   // console.log(currentDate)
   try{
     let getJobList = await Job.updateMany(
