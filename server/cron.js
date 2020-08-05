@@ -23,7 +23,7 @@ cron.schedule('15 14 * * *', () => {
 });
 
 // After expired job sends mail for hiring complete or not (7 days continue until employer's answerd) - At 1:00 AM
-cron.schedule('15 12 * * *', () => {
+cron.schedule('25 14 * * *', () => {
     console.log('After expired job sends mail for hiring complete or not (7 days continue until employer\'s answerd) - At 1:00 AM');
     unirest
       .post(API_URL+'api/scheduleJob/checkHiredOrNot')
@@ -40,7 +40,7 @@ cron.schedule('15 12 * * *', () => {
 });
 
 // Auto charged for hiring if employer not responsed after 7 days - At 12:40 AM
-cron.schedule('40 12 * * *', () => {
+cron.schedule('30 14 * * *', () => {
     console.log('Auto charged for hiring if employer not responsed after 7 days - At 12:40 AM');
     unirest
       .post(API_URL+'api/scheduleJob/employerNotRespForHiring')
