@@ -15,6 +15,7 @@ const { addJob, jobsList,
 router.post('/getAll', jobsList);
 
 router.post('/add',[
+  check('title','Job title is required').not().isEmpty(),
   check('companyName','Company Name is required').not().isEmpty(),
   check('industryType','Industry Type is required').not().isEmpty(),
   check('role','Role is required').not().isEmpty(),
