@@ -138,9 +138,43 @@ router.post('/getSingleUserDetails', getSingleUserDetails)
 
 router.post('/deleteAccount', deleteAccount)
 
-router.get('/test', (req,res)=>{
-  res.send('hello')
+router.post('/uploadResume', upload.single('uploadResume'), (req,res)=>{
+  uploadResume(req,res)
 })
+
+function uploadResume(req, res){
+  console.log('preparing to upload resume...');
+  let source = req.file.path;
+  let targetName = req.file.filename;
+  fs.readFile(source, function (err, filedata) {
+    if (!err) {
+      const putParams = {
+          Bucket      : myBucket,
+          Key         : `user_resume/${targetName}`,
+          Body        : filedata,
+          ACL         :'public-read-write'
+      };
+      
+      s3.upload(putParams, function (err, data) {
+        //handle error
+        if (err) {
+          console.log("Error", err);
+          res.status(403).json(err);
+        }
+      
+        //success
+        if (data) {
+          fs.unlinkSync(source);
+          req.body.resumePath = data.Location;
+          updateUserProfile(req,res)
+        }
+      });
+    }
+    else{
+      console.log({'readFileErr':err});
+    }
+  });
+}
 
 
 

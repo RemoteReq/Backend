@@ -39,7 +39,9 @@ const addEmployer = async(req, res) => {
           fullName: req.body.fullName,
           authSignature: '',
           companyName: req.body.companyName,
-          logo: '',
+          companyLogo: '',
+          companyWebsite: '',
+          companyLinkedinURL: '',
           location: '',
           clientIdOfPaymentGateway: newCustomerOfPaymentGateway.customer.id
         });
@@ -215,15 +217,7 @@ const matchesCandidateByEachJob = async(req, res)=>{
     
     let getJobData = await Job.findById(req.params.jobId).select("-__v -addBy");
 
-    // let getCandidateList = await User.find({ 
-    //   $and: [ 
-    //     { industryType: getJobData.industryType }, 
-    //     { desireCTC : { $lte: getJobData.ctc } },
-    //     { $and: [ { totalExperience: { $gte: getJobData.minExperience } }, { totalExperience : { $lte: getJobData.maxExperience } } ] },
-    //     {desireLocation : { $in: getJobData.location}},
-    //     {desireKeySkills : { $in: getJobData.keySkills}},
-    //   ] 
-    // })
+    // console.log(getJobData)
 
     let getCandidateList = await User.aggregate([
       {
@@ -231,8 +225,6 @@ const matchesCandidateByEachJob = async(req, res)=>{
           { industryType: getJobData.industryType }, 
           { desireCTC : { $lte: getJobData.ctc } },
           { $and: [ { totalExperience: { $gte: getJobData.minExperience } }, { totalExperience : { $lte: getJobData.maxExperience } } ] },
-          // {desireLocation : { $in: getJobData.location}},
-          // { $in: [ desireLocation, getJobData.location ] }
           {desireLocation: {'$regex':"^"+getJobData.location, '$options': 'i'}},
           {desireKeySkills : { $in: getJobData.keySkills}},
         ]}
@@ -273,7 +265,9 @@ const matchesCandidateByEachJob = async(req, res)=>{
           desireKeySkills:1,
           MatchPercentage: {$multiply:[{$divide:[{$size: "$commonToBoth" },{$size: "$requireKeySkills" } ]},100]} ,
         }
-      }
+      },
+      { $sort : { MatchPercentage : -1 } },
+      { $limit : getJobData.numberOfCandidate }
     ])
     
     res.status(200).json(getCandidateList);

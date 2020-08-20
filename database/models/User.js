@@ -38,6 +38,7 @@ const userSchema = new Schema({
   desireKeySkills: { type: Array },
   isEmailVerify: { type: Boolean, default: false },
   isDeleteAccount: { type: Boolean, default: false },
+  resumePath: { type: String },
 });
 
 // Model to export

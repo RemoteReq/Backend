@@ -12,10 +12,14 @@ const addJob = async(req, res) => {
     const job = new Jobs({
       title: req.body.title,
       companyName: req.body.companyName,
+      companyLogoPath: req.body.companyLogoPath ? req.body.companyLogoPath : '',
+      companyWebsiteUrl: req.body.companyWebsiteUrl ? req.body.companyWebsiteUrl : '',
       industryType: req.body.industryType,
       role: req.body.role,
       jobDetails: req.body.jobDetails,
-      keySkills: req.body.keySkills,
+      jobDescriptionPath: req.body.jobDescriptionPath ? req.body.jobDescriptionPath: '',
+      // keySkills: req.body.keySkills,
+      keySkills: req.body.keySkills.split(","),
       ctc: req.body.ctc,
       minExperience: req.body.minExperience,
       maxExperience: req.body.maxExperience,
@@ -26,7 +30,7 @@ const addJob = async(req, res) => {
       'transactionDetails.transactionIdForAddJob.transactionId': req.body.transactionIdForAddJob,
       // 'transactionDetails.transactionIdAfterHired.transactionId': '',
     });
-  
+
     //save user's details
     job.save()
     .then(doc => {

@@ -7,9 +7,12 @@ const { Schema } = mongoose;
 const jobSchema = new Schema({
   title: { type: String, required: true },
   companyName: { type: String, required: true },
+  companyLogoPath: { type: String},
+  companyWebsiteUrl: { type: String},
   industryType: { type: String, required: true },
-  role: { type: String, required: true },
+  // role: { type: String, required: true },
   jobDetails: { type: String, require: true },
+  jobDescriptionPath: { type: String },
   keySkills: { type: Array, required: true },
   ctc: { type: Number, required: true },
   minExperience: {type: Number, required: true},

@@ -50,6 +50,7 @@ const addUser = async(req, res) => {
             desireCTC: null,
             desireLocation: [],
             desireKeySkills: [],
+            resumePath: ''
           });
   
           //save user's details
