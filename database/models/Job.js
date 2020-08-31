@@ -13,21 +13,13 @@ const jobSchema = new Schema({
   // role: { type: String, required: true },
   jobDetails: { type: String, require: true },
   jobDescriptionPath: { type: String },
-  keySkills: { type: Array, required: true },
-  ctc: { type: Number, required: true },
-  minExperience: {type: Number, required: true},
-  maxExperience: { type: Number, required: true },
-  location: { type: String, required: true },
   numberOfCandidate: {type: Number, required: true},
   percentageMatch: {type: Number, required: true},
   addBy: { type: String, required: true },
   postDate: { type: Date, default: Date.now },
   expireDate: { type: Date, default: new Date(+new Date() + 21*24*60*60*1000) },
-  // expireDate: { type: Date, default: new Date(+new Date() + 3*24*60*60*1000) },
   expireStatus: { type: Boolean, default: false},
   seventhDayAfterExpireDate: { type: Date, default: new Date(+new Date() + 28*24*60*60*1000) },
-  // seventhDayAfterExpireDate: { type: Date, default: new Date(+new Date() + 5*24*60*60*1000) },
-  // mailForCandidateMatch: { type: Boolean, default: false},
   hiredStatus: { type: Boolean, default: null}, 
   hiringPaymentStatus: {type: Boolean, default: null}, // true: paid, false: not paid
   transactionDetails: {
@@ -37,7 +29,25 @@ const jobSchema = new Schema({
     transactionIdAfterHired: {
       transactionId: { type: String }
     }
-  }
+  },
+
+  mustEligibleToWorkInUS: { type: Boolean },
+  causesOfImpact: { type: Array },
+  WorkingType: { type: String }, // full-time/part-time
+  joiningDate: { type: Date }, 
+  fluentInEnglish: { type: Boolean },
+
+  requiredEducation: { type: String },
+  workingHours: { type: String }, //** */
+  selectTimeZone: { type: String },
+  hourlyPay: { type: Number}, //for part-timer
+  ctc: { type: Number, required: true }, // for full-timer
+  requireCertification: { type: String },
+  otherLanguages: { type: Array },
+  minExperience: {type: Number, required: true},
+  maxExperience: { type: Number, required: true },
+  keySkills: { type: Array, required: true },
+  location: { type: String, required: true },
   
 });
 
