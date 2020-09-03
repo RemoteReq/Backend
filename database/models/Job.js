@@ -38,6 +38,7 @@ const jobSchema = new Schema({
   fluentInEnglish: { type: Boolean },
 
   requiredEducation: { type: String },
+  workingDays: { type: Array }, //** */
   workingHours: { type: String }, //** */
   selectTimeZone: { type: String },
   hourlyPay: { type: Number}, //for part-timer

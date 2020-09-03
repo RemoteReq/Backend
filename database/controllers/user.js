@@ -26,31 +26,47 @@ const addUser = async(req, res) => {
             fullName: req.body.fullName,
             email: req.body.email,
             authSignature: '',
-            fluentInEnglish: null,
+
             eligibleToWorkInUS: null,
+            causesLikeToWorkOn: [],
+            typingWork: '',
+            availableJoiningDate: null,
+            fluentInEnglish: null,
+
+            highestEducation: '',
+            jobChangeReason: '',
+            availableDaysForWork: [],
+            availableWorkTime: '',
+            selectTimeZone: '',
+            hourlyPayExpectation: null,
+            desireCTC: null,
+            projectDescription: '',
+            sampleProjectLink: '',
+            relavantCertificates: '',
+            isWorkRemotely: null,
+            descProfessionalGoal: '',
+            projectDescription: '',
+            totalExperience: null,
+            desireKeySkills: [],
+            desireLocation: [],
+
             linkedInURL: '',
-            githubURL: '',
             personalURL: '',
-            profilePicUrl: '',
             mobileNum: '',
+            howLongWorkingRemotely: null, 
+            otherLanguages: [],
+            refferedBy: '',
             gender: '',
+            race: '',
+            veteranStatus: '',
+            profilePicUrl: '',
+            resumePath: '',
+            
+
             dob: null,
             address: '',
             pincode: '',
-            aboutMe: '',
-            refferedBy: '',
-            industryType: '',
-            jobRole: '',
-            currentCTC: null,
-            totalExperience: null,
-            keySkills: [],
-            education: [],
-            desireIndustryType: '',
-            desireJobRole: '',
-            desireCTC: null,
-            desireLocation: [],
-            desireKeySkills: [],
-            resumePath: ''
+            desireIndustryType: ''
           });
   
           //save user's details
@@ -255,16 +271,16 @@ const generateResetToken = async(req, res)=>{
 
 
 
-const desireJob = async(req, res)=>{
-  try{
-    let updateData = await User.findByIdAndUpdate(req.userId, { $set: req.body});
-    let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
+// const desireJob = async(req, res)=>{
+//   try{
+//     let updateData = await User.findByIdAndUpdate(req.userId, { $set: req.body});
+//     let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
     
-    res.status(200).json(getUserData);
-  } catch(err) {
-      console.log(err);
-  }
-}
+//     res.status(200).json(getUserData);
+//   } catch(err) {
+//       console.log(err);
+//   }
+// }
 
 const updateUserProfile = async(req, res)=>{
   try{
@@ -381,7 +397,7 @@ module.exports = {
   addUser,
   verifyCredentials,
   listUsers,
-  desireJob,
+  // desireJob,
   filterJobs,
   updateUserProfile,
   getSingleUserDetails,

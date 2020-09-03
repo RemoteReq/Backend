@@ -31,7 +31,7 @@ const myBucket = 'remotereq';
 const {
   addUser,
   listUsers,
-  desireJob,
+  // desireJob,
   filterJobs,
   updateUserProfile,
   getSingleUserDetails,
@@ -43,44 +43,51 @@ const {
 
 router.post('/list', listUsers);
 
-router.post('/desireJob',[
-  check('desireIndustryType','Desire industry is required').not().isEmpty(),
-  check('desireJobRole','Desire role is required').not().isEmpty(),
-  check('desireCTC','Desire CTC is required').not().isEmpty(),
+// router.post('/desireJob',[
+//   check('desireIndustryType','Desire industry is required').not().isEmpty(),
+//   check('desireJobRole','Desire role is required').not().isEmpty(),
+//   check('desireCTC','Desire CTC is required').not().isEmpty(),
+//   check('desireLocation','Desire Location is required').not().isEmpty(),
+//   check('desireKeySkills','Desire key skills is required').not().isEmpty(),
+// ], (req,res)=>{
+//   const errors = validationResult(req)
+//   if (!errors.isEmpty()) {
+//     return res.status(422).json({ 
+//       errors: errors.array() 
+//     })
+//   }
+//   desireJob(req,res)
+// });
+
+router.post('/updateUserProfile',[
+  check('fluentInEnglish','fluentInEnglish is required').not().isEmpty(),
+  check('eligibleToWorkInUS','eligibleToWorkInUS is required').not().isEmpty(),
+  check('causesLikeToWorkOn','causesLikeToWorkOn is required').not().isEmpty(),
+  check('typingWork','Working Type is required').not().isEmpty(),
+  check('availableJoiningDate','availableJoiningDate is required').not().isEmpty(),
+  check('highestEducation','Highest Education is required').not().isEmpty(),
+  check('jobChangeReason','Job Change Reason is required').not().isEmpty(),
+  check('isWorkRemotely','isWorkRemotely value is required').not().isEmpty(),
+  check('descProfessionalGoal','Describe Profession goal is required').not().isEmpty(),
+  check('totalExperience','Total Experience is required').not().isEmpty(),
   check('desireLocation','Desire Location is required').not().isEmpty(),
   check('desireKeySkills','Desire key skills is required').not().isEmpty(),
+  check('linkedInURL','linkedInURL is required').not().isEmpty(),
+  check('personalURL','personalURL is required').not().isEmpty(),
+  check('mobileNum','Mobile Number is required').not().isEmpty(),
+  check('dob','Date of birth is required').not().isEmpty(),
+  check('gender','gender is required').not().isEmpty(),
+  check('race','race is required').not().isEmpty(),
+  check('veteranStatus','veteranStatus is required').not().isEmpty(),
+  check('desireIndustryType','Industry Type is required').not().isEmpty()
 ], (req,res)=>{
+  
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(422).json({ 
       errors: errors.array() 
     })
   }
-  desireJob(req,res)
-});
-
-router.post('/updateUserProfile',[
-  // check('fluentInEnglish','fluentInEnglish is required').not().isEmpty(),
-  // check('eligibleToWorkInUS','eligibleToWorkInUS is required').not().isEmpty(),
-  // check('linkedInURL','linkedInURL is required').not().isEmpty(),
-  // check('githubURL','githubURL is required').not().isEmpty(),
-  // check('personalURL','personalURL is required').not().isEmpty(),
-  // check('mobileNum','Mobile Number is required').not().isEmpty(),
-  // check('gender','Gender is required').not().isEmpty(),
-  // check('dob','Date of birth is required').not().isEmpty(),
-  // check('industryType','Industry Type is required').not().isEmpty(),
-  // check('jobRole','Job Role is required').not().isEmpty(),
-  // check('currentCTC','Current CTC is required').not().isEmpty(),
-  // check('totalExperience','Total Experience is required').not().isEmpty(),
-  // check('keySkills','Key Skills is required').not().isEmpty(),
-], (req,res)=>{
-  
-  // const errors = validationResult(req)
-  // if (!errors.isEmpty()) {
-  //   return res.status(422).json({ 
-  //     errors: errors.array() 
-  //   })
-  // }
   updateUserProfile(req,res)
 });
 

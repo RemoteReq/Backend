@@ -60,16 +60,21 @@ router.post('/add', upload.fields([{
   check('title','Job title is required').not().isEmpty(),
   check('companyName','Company Name is required').not().isEmpty(),
   check('industryType','Industry Type is required').not().isEmpty(),
-  // check('role','Role is required').not().isEmpty(),
   check('jobDetails','Job Details is required').not().isEmpty(),
   check('keySkills','Key Skills is required').not().isEmpty(),
-  check('ctc','CTC is required').not().isEmpty(),
+  // check('ctc','CTC is required').not().isEmpty(),
   check('minExperience','Minimum Experience is required').not().isEmpty(),
   check('maxExperience','Maximum Experience is required').not().isEmpty(),
   check('location','Location is required').not().isEmpty(),
   check('numberOfCandidate','Number of Candidates is required').not().isEmpty(),
   check('percentageMatch','Percentage match value is required').not().isEmpty(),
   check('transactionIdForAddJob','Transaction Id is required').not().isEmpty(),
+  check('mustEligibleToWorkInUS','mustEligibleToWorkInUS value is required').not().isEmpty(),
+  check('causesOfImpact','Causes of impact is required').not().isEmpty(),
+  check('WorkingType','Working Type is required').not().isEmpty(),
+  check('joiningDate','Joining Date is required').not().isEmpty(),
+  check('fluentInEnglish','fluentInEnglish value is required').not().isEmpty(),
+  check('requiredEducation','Education degree is required').not().isEmpty()
 ], async(req,res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {

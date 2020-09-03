@@ -21,7 +21,7 @@ const userSchema = new Schema({
 
   highestEducation: { type: String },
   jobChangeReason: { type: String },
-  availableDaysForWork: { type: String }, //for part-timer
+  availableDaysForWork: { type: Array }, //for part-timer
   availableWorkTime: { type: String }, //for part-timer
   selectTimeZone: { type: String },
   hourlyPayExpectation: { type: Number }, //for part-timer
