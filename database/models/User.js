@@ -15,19 +15,19 @@ const userSchema = new Schema({
   
   eligibleToWorkInUS: { type: Boolean },
   causesLikeToWorkOn: { type: Array },
-  typingWork: { type: String }, // full-time/part-time
+  typeOfWork: { type: String }, // full-time/part-time
   availableJoiningDate: { type: Date }, 
   fluentInEnglish: { type: Boolean },
 
-  highestEducation: { type: String },
+  highestEducationLevel: { type: Number },
   jobChangeReason: { type: String },
   availableDaysForWork: { type: Array }, //for part-timer
   availableWorkTime: { type: String }, //for part-timer
-  selectTimeZone: { type: String },
+  selectTimeZone: { type: String }, //for part-timer
   hourlyPayExpectation: { type: Number }, //for part-timer
   desireCTC: { type: Number }, //Annual salary Expectation for full-timer
   projectDescription: { type: String },
-  sampleProjectLink: { type: String },  //issue for upload
+  sampleProjectLink: { type: String },  
   relavantCertificates: { type: String },
   isWorkRemotely: { type: Boolean },
   descProfessionalGoal: { type: String },

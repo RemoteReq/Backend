@@ -22,7 +22,7 @@ const addJob = async(req, res) => {
       'transactionDetails.transactionIdForAddJob.transactionId': req.body.transactionIdForAddJob,
 
       mustEligibleToWorkInUS: req.body.mustEligibleToWorkInUS,
-      causesOfImpact: req.body.causesOfImpact.split(","),
+      causesOfImpact: req.body.causesOfImpact,
       WorkingType: req.body.WorkingType,
       joiningDate: req.body.joiningDate,
       fluentInEnglish: req.body.fluentInEnglish,

@@ -32,12 +32,12 @@ const jobSchema = new Schema({
   },
 
   mustEligibleToWorkInUS: { type: Boolean },
-  causesOfImpact: { type: Array },
+  causesOfImpact: { type: String },
   WorkingType: { type: String }, // full-time/part-time
   joiningDate: { type: Date }, 
   fluentInEnglish: { type: Boolean },
 
-  requiredEducation: { type: String },
+  requiredEducationLevel: { type: Number },
   workingDays: { type: Array }, //** */
   workingHours: { type: String }, //** */
   selectTimeZone: { type: String },

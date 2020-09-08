@@ -208,68 +208,248 @@ const getJoblistByEmployer = async(req, res)=>{
   }
 }
 
+// const matchesCandidateByEachJob = async(req, res)=>{
+//   try{
+    
+//     let getJobData = await Job.findById(req.params.jobId).select("-__v -addBy");
+
+//     // console.log(getJobData)
+
+//     let getCandidateList = await User.aggregate([
+//       {
+//         $match: {$and: [
+//           { industryType: getJobData.industryType }, 
+//           { desireCTC : { $lte: getJobData.ctc } },
+//           { $and: [ { totalExperience: { $gte: getJobData.minExperience } }, { totalExperience : { $lte: getJobData.maxExperience } } ] },
+//           {desireLocation: {'$regex':"^"+getJobData.location, '$options': 'i'}},
+//           {desireKeySkills : { $in: getJobData.keySkills}},
+//         ]}
+//       },
+//       {
+//         $addFields: { requireKeySkills: getJobData.keySkills }
+//       },
+//       {
+//         $addFields: { commonToBoth: { $setIntersection: [ "$requireKeySkills", "$desireKeySkills" ] } }
+//       },
+//       {
+//         $project: {
+//           keySkills:1,
+//           education: 1,
+//           fullName: 1,
+//           email: 1,
+//           fluentInEnglish: 1,
+//           eligibleToWorkInUS: 1,
+//           linkedInURL: 1,
+//           githubURL: 1,
+//           personalURL: 1,
+//           profilePicUrl: 1,
+//           mobileNum: 1,
+//           gender: 1,
+//           dob: 1,
+//           address: 1,
+//           pincode: 1,
+//           aboutMe: 1,
+//           refferedBy: 1,
+//           industryType: 1,
+//           jobRole: 1,
+//           currentCTC: 1,
+//           totalExperience: 1,
+//           desireIndustryType: 1,
+//           desireJobRole: 1,
+//           desireCTC: 1,
+//           desireLocation:1,
+//           desireKeySkills:1,
+//           MatchPercentage: {$multiply:[{$divide:[{$size: "$commonToBoth" },{$size: "$requireKeySkills" } ]},100]} ,
+//         }
+//       },
+//       { $sort : { MatchPercentage : -1 } },
+//       { $limit : getJobData.numberOfCandidate }
+//     ])
+    
+//     res.status(200).json(getCandidateList);
+//   } catch(err) {
+//       console.log(err);
+//   }
+// }
+
 const matchesCandidateByEachJob = async(req, res)=>{
-  try{
-    
-    let getJobData = await Job.findById(req.params.jobId).select("-__v -addBy");
-
-    // console.log(getJobData)
-
-    let getCandidateList = await User.aggregate([
-      {
-        $match: {$and: [
-          { industryType: getJobData.industryType }, 
-          { desireCTC : { $lte: getJobData.ctc } },
-          { $and: [ { totalExperience: { $gte: getJobData.minExperience } }, { totalExperience : { $lte: getJobData.maxExperience } } ] },
-          {desireLocation: {'$regex':"^"+getJobData.location, '$options': 'i'}},
-          {desireKeySkills : { $in: getJobData.keySkills}},
-        ]}
-      },
-      {
-        $addFields: { requireKeySkills: getJobData.keySkills }
-      },
-      {
-        $addFields: { commonToBoth: { $setIntersection: [ "$requireKeySkills", "$desireKeySkills" ] } }
-      },
-      {
-        $project: {
-          keySkills:1,
-          education: 1,
-          fullName: 1,
-          email: 1,
-          fluentInEnglish: 1,
-          eligibleToWorkInUS: 1,
-          linkedInURL: 1,
-          githubURL: 1,
-          personalURL: 1,
-          profilePicUrl: 1,
-          mobileNum: 1,
-          gender: 1,
-          dob: 1,
-          address: 1,
-          pincode: 1,
-          aboutMe: 1,
-          refferedBy: 1,
-          industryType: 1,
-          jobRole: 1,
-          currentCTC: 1,
-          totalExperience: 1,
-          desireIndustryType: 1,
-          desireJobRole: 1,
-          desireCTC: 1,
-          desireLocation:1,
-          desireKeySkills:1,
-          MatchPercentage: {$multiply:[{$divide:[{$size: "$commonToBoth" },{$size: "$requireKeySkills" } ]},100]} ,
+  let getJobData = await Job.findById(req.params.jobId).select("-__v -addBy");
+  // console.log(getJobData)
+  let getCandidateList= '';
+  if(getJobData.mustEligibleToWorkInUS){
+    if(getJobData.fluentInEnglish){
+      getCandidateList = await User.aggregate([
+        {
+          $match: { $and: [
+            { eligibleToWorkInUS: getJobData.mustEligibleToWorkInUS },
+            { fluentInEnglish: getJobData.fluentInEnglish },
+            {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
+            { typeOfWork: getJobData.WorkingType },
+            { availableJoiningDate: { $lte: getJobData.joiningDate } }
+          ]}
         }
-      },
-      { $sort : { MatchPercentage : -1 } },
-      { $limit : getJobData.numberOfCandidate }
-    ])
-    
-    res.status(200).json(getCandidateList);
-  } catch(err) {
-      console.log(err);
+      ])
+      console.log('yes-yes')
+      matchingPercentageCalculation(req, res, getCandidateList, getJobData);
+    }else{
+      getCandidateList = await User.aggregate([
+        {
+          $match: { $and: [
+            { eligibleToWorkInUS: getJobData.mustEligibleToWorkInUS },
+            {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
+            { typeOfWork: getJobData.WorkingType },
+            { availableJoiningDate: { $lte: getJobData.joiningDate } }
+          ]}
+        }
+      ])
+      console.log('yes-no')
+      matchingPercentageCalculation(req, res, getCandidateList, getJobData);
+    }
+  }else{
+    if(getJobData.fluentInEnglish){
+      getCandidateList = await User.aggregate([
+        {
+          $match: { $and: [
+            { fluentInEnglish: getJobData.fluentInEnglish },
+            {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
+            { typeOfWork: getJobData.WorkingType },
+            { availableJoiningDate: { $lte: getJobData.joiningDate } }
+          ]}
+        }
+      ])
+      console.log('no-yes')
+      matchingPercentageCalculation(req, res, getCandidateList, getJobData);
+
+    }else{
+      getCandidateList = await User.aggregate([
+        {
+          $match: { $and: [
+            {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
+            { typeOfWork: getJobData.WorkingType },
+            { availableJoiningDate: { $lte: getJobData.joiningDate } }
+          ]}
+        }
+      ])
+      console.log('no-no')
+      matchingPercentageCalculation(req, res, getCandidateList, getJobData);
+    }
   }
+}
+
+const matchingPercentageCalculation = async(req, res, getCandidateList, getJobData)=>{
+  let getPointsCandidateList = '';
+  if(getJobData.WorkingType == 'HT'){
+    getPointsCandidateList = await getPointsForHalfTimers(getCandidateList, getJobData);
+    
+    
+  }else{
+    getPointsCandidateList = await getPointsForFullTimers(getCandidateList, getJobData);
+  }
+  console.log('ok')
+  getPointsCandidateList.sort((a, b) => b.matchingPercentage - a.matchingPercentage);
+  let filteredList = getPointsCandidateList.filter(data => data.matchingPercentage >= getJobData.percentageMatch).slice(0, getJobData.numberOfCandidate)
+  res.status(200).json(filteredList);
+}
+
+const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
+  let toalPoints = 23;
+  for(var i=0; i<getCandidateList.length; i++){
+    let givePoints = 3; // get auto points for jobChangeReason, desireCTC, descProfessionalGoal
+    //check education matching
+    if(getJobData.requiredEducationLevel <= getCandidateList[i].highestEducationLevel){
+      givePoints += 1;
+    }
+    //check working day matching
+    if(getCandidateList[i].availableDaysForWork.some((val) => getJobData.workingDays.indexOf(val) !== -1)){
+      givePoints += 1;
+    }
+    //check working hours matching
+    var candidateWT = getCandidateList[i].availableWorkTime.split('-');
+    var employerWT = getJobData.workingHours.split('-');
+    if( (parseInt(candidateWT[0])>=parseInt(employerWT[0]) && parseInt(candidateWT[0])<=parseInt(employerWT[1])) || (parseInt(candidateWT[1]) >= parseInt(employerWT[0]) && parseInt(candidateWT[1]) <= parseInt(employerWT[1]))){
+      givePoints += 1;
+    }
+    //check time zone matching
+    if(getJobData.selectTimeZone == getCandidateList[i].selectTimeZone){
+      givePoints += 1;
+    }
+    //check hourly pay match
+    if(getCandidateList[i].hourlyPayExpectation <= getJobData.hourlyPay){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].projectDescription != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].sampleProjectLink != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].relavantCertificates != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].isWorkRemotely){
+      givePoints += 1;
+    }
+    //check experience
+    if(getCandidateList[i].totalExperience>=getJobData.minExperience){
+      givePoints += 4;
+    }
+    //check atleast one key skill match or not
+    if(getCandidateList[i].desireKeySkills.some((val) => getJobData.keySkills.indexOf(val) !== -1)){
+      givePoints += 4;
+    }
+    //check location
+    if(getCandidateList[i].desireLocation.indexOf(getJobData.location) != -1){
+      givePoints += 4;
+    }
+    getCandidateList[i].givePoints = givePoints
+    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
+  }
+  console.log('complete')
+  return getCandidateList;
+}
+
+const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
+  let toalPoints = 23;
+  for(var i=0; i<getCandidateList.length; i++){
+    let givePoints = 6; // get auto points for jobChangeReason, availableDaysForWork, availableWorkTime, selectTimeZone, hourlyPayExpectation, descProfessionalGoal
+    //check education matching
+    if(getJobData.requiredEducationLevel <= getCandidateList[i].highestEducationLevel){
+      givePoints += 1;
+    }
+    
+    //check annual pay match
+    if(getCandidateList[i].desireCTC <= getJobData.ctc){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].projectDescription != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].sampleProjectLink != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].relavantCertificates != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].isWorkRemotely){
+      givePoints += 1;
+    }
+    //check experience
+    if(getCandidateList[i].totalExperience>=getJobData.minExperience){
+      givePoints += 4;
+    }
+    //check atleast one key skill match or not
+    if(getCandidateList[i].desireKeySkills.some((val) => getJobData.keySkills.indexOf(val) !== -1)){
+      givePoints += 4;
+    }
+    //check location
+    if(getCandidateList[i].desireLocation.indexOf(getJobData.location) != -1){
+      givePoints += 4;
+    }
+    getCandidateList[i].givePoints = givePoints
+    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
+  }
+  // console.log('complete')
+  return getCandidateList;
 }
 
 const deleteAccount = async(req, res)=>{

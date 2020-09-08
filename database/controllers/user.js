@@ -29,7 +29,7 @@ const addUser = async(req, res) => {
 
             eligibleToWorkInUS: null,
             causesLikeToWorkOn: [],
-            typingWork: '',
+            typiOfWork: '',
             availableJoiningDate: null,
             fluentInEnglish: null,
 

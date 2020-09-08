@@ -74,7 +74,7 @@ router.post('/add', upload.fields([{
   check('WorkingType','Working Type is required').not().isEmpty(),
   check('joiningDate','Joining Date is required').not().isEmpty(),
   check('fluentInEnglish','fluentInEnglish value is required').not().isEmpty(),
-  check('requiredEducation','Education degree is required').not().isEmpty()
+  check('requiredEducationLevel','Education degree is required').not().isEmpty()
 ], async(req,res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
