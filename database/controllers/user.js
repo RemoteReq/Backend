@@ -304,57 +304,225 @@ const listUsers = async(req, res)=>{
   }
 }
 
+// const filterJobs = async(req, res)=>{
+//   try{
+//     let getUserData = await User.findById(req.userId);
+//     // console.log(getUserData.totalExperience)
+
+//     let getJobsByIndustryType = await Jobs.aggregate([
+//       { $match: { $and: [
+//         { industryType: getUserData.desireIndustryType }, 
+//         { ctc : { $gte: getUserData.desireCTC } },
+//         { $and: [ { minExperience: { $lte: getUserData.totalExperience } }, { maxExperience : { $gte: getUserData.totalExperience } } ] },
+//         {location : { $in: getUserData.desireLocation}},
+//         {keySkills : { $in: getUserData.desireKeySkills}},
+//       ] } },
+//       {
+//         $addFields: { desireKeySkills: getUserData.desireKeySkills }
+//       },
+//       {
+//         $addFields: { commonToBoth: { $setIntersection: [ "$keySkills", "$desireKeySkills" ] } }
+//       },
+//       {
+//         $project: {
+//           // _id: 0, 
+//           title: 1,
+//           keySkills:1, 
+//           companyName:1, 
+//           industryType:1, 
+//           role:1, 
+//           jobDetails: 1, 
+//           ctc:1, 
+//           minExperience:1, 
+//           maxExperience:1, 
+//           location:1, 
+//           // commonToBoth: 1 ,
+//           MatchPercentage: {$multiply:[{$divide:[{$size: "$commonToBoth" },{$size: "$keySkills" } ]},100]} ,
+//         }
+//       },
+      
+//     ])
+//     res.status(200).json(getJobsByIndustryType);
+//   } catch(err) {
+//       console.log(err);
+//   }
+// }
+
 const filterJobs = async(req, res)=>{
   try{
     let getUserData = await User.findById(req.userId);
-    // console.log(getUserData.totalExperience)
-    // let getJobsByIndustryType = await Jobs.find({ 
-    //   $and: [ 
-    //     { industryType: getUserData.desireIndustryType }, 
-    //     { ctc : { $gte: getUserData.desireCTC } },
-    //     { $and: [ { minExperience: { $lte: getUserData.totalExperience } }, { maxExperience : { $gte: getUserData.totalExperience } } ] },
-    //     {location : { $in: getUserData.desireLocation}},
-    //     {keySkills : { $in: getUserData.desireKeySkills}},
-    //   ] 
-    // })
+    let getJobsList = '';
+    if(getUserData.eligibleToWorkInUS){
+      if(getUserData.fluentInEnglish){
+        getJobsList = await Jobs.find({ 
+          $and: [ 
+            { causesOfImpact : { $in: getUserData.causesLikeToWorkOn}},
+            { WorkingType: getUserData.typeOfWork },
+            { joiningDate: { $gte: getUserData.availableJoiningDate } },
+            { expireStatus: false }
+          ] 
+        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
+        .lean()
+        
+        matchingPercentage(req, res, getJobsList, getUserData)
+      }else{
+        getJobsList = await Jobs.find({ 
+          $and: [ 
+            { causesOfImpact : { $in: getUserData.causesLikeToWorkOn}},
+            { WorkingType: getUserData.typeOfWork },
+            { joiningDate: { $gte: getUserData.availableJoiningDate } },
+            { fluentInEnglish: getUserData.fluentInEnglish },
+            { expireStatus: false }
+          ] 
+        })
+        .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
+        .lean()  //lean helps addition of new fields in find query
 
-    let getJobsByIndustryType = await Jobs.aggregate([
-      { $match: { $and: [
-        { industryType: getUserData.desireIndustryType }, 
-        { ctc : { $gte: getUserData.desireCTC } },
-        { $and: [ { minExperience: { $lte: getUserData.totalExperience } }, { maxExperience : { $gte: getUserData.totalExperience } } ] },
-        {location : { $in: getUserData.desireLocation}},
-        {keySkills : { $in: getUserData.desireKeySkills}},
-      ] } },
-      {
-        $addFields: { desireKeySkills: getUserData.desireKeySkills }
-      },
-      {
-        $addFields: { commonToBoth: { $setIntersection: [ "$keySkills", "$desireKeySkills" ] } }
-      },
-      {
-        $project: {
-          // _id: 0, 
-          title: 1,
-          keySkills:1, 
-          companyName:1, 
-          industryType:1, 
-          role:1, 
-          jobDetails: 1, 
-          ctc:1, 
-          minExperience:1, 
-          maxExperience:1, 
-          location:1, 
-          // commonToBoth: 1 ,
-          MatchPercentage: {$multiply:[{$divide:[{$size: "$commonToBoth" },{$size: "$keySkills" } ]},100]} ,
-        }
-      },
-      
-    ])
-    res.status(200).json(getJobsByIndustryType);
-  } catch(err) {
-      console.log(err);
+        matchingPercentage(req, res, getJobsList, getUserData)
+      }
+    }else{
+      if(getUserData.fluentInEnglish){
+        getJobsList = await Jobs.find({ 
+          $and: [ 
+            { causesOfImpact : { $in: getUserData.causesLikeToWorkOn}},
+            { WorkingType: getUserData.typeOfWork },
+            { joiningDate: { $gte: getUserData.availableJoiningDate } },
+            { mustEligibleToWorkInUS: getUserData.eligibleToWorkInUS },
+            { expireStatus: false }
+          ] 
+        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
+        .lean()
+        
+        matchingPercentage(req, res, getJobsList, getUserData)
+      }else{
+        getJobsList = await Jobs.find({ 
+          $and: [ 
+            { causesOfImpact : { $in: getUserData.causesLikeToWorkOn}},
+            { WorkingType: getUserData.typeOfWork },
+            { joiningDate: { $gte: getUserData.availableJoiningDate } },
+            { mustEligibleToWorkInUS: getUserData.eligibleToWorkInUS },
+            { fluentInEnglish: getUserData.fluentInEnglish },
+            { expireStatus: false }
+          ] 
+        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
+        .lean()
+        
+        matchingPercentage(req, res, getJobsList, getUserData)
+      }
+    }
+    
+  }catch(err){
+    console.log(err);
   }
+}
+
+const matchingPercentage = async(req, res, getJobsList, getUserData)=>{
+  let jobListWithPercentageVal = '';
+  if(getUserData.typeOfWork == 'HT'){
+    jobListWithPercentageVal = await pointCalculationOfHT(getJobsList, getUserData);
+  }else{
+    jobListWithPercentageVal = await pointCalculationOfFT(getJobsList, getUserData);
+  }
+  // res.send(getUserData)
+  res.send(jobListWithPercentageVal)
+}
+
+const pointCalculationOfHT = async(getJobsList, getUserData)=>{
+  let toalPoints = 23;
+  for(var i=0; i<getJobsList.length; i++){
+    var givePoints = 3;
+    //check education matching
+    if(getJobsList[i].requiredEducationLevel <= getUserData.highestEducationLevel){
+      givePoints += 1;
+    }
+    //check working day matching
+    if(getUserData.availableDaysForWork.some((val) => getJobsList[i].workingDays.indexOf(val) !== -1)){
+      givePoints += 1;
+    }
+    //check working hours matching
+    var candidateWT = getUserData.availableWorkTime.split('-');
+    var employerWT = getJobsList[i].workingHours.split('-');
+    if( (parseInt(candidateWT[0])>=parseInt(employerWT[0]) && parseInt(candidateWT[0])<=parseInt(employerWT[1])) || (parseInt(candidateWT[1]) >= parseInt(employerWT[0]) && parseInt(candidateWT[1]) <= parseInt(employerWT[1]))){
+      givePoints += 1;
+    }
+    //check time zone matching
+    if(getJobsList[i].selectTimeZone == getUserData.selectTimeZone){
+      givePoints += 1;
+    }
+    //check hourly pay match
+    if(getUserData.hourlyPayExpectation <= getJobsList[i].hourlyPay){
+      givePoints += 1;
+    }
+    if(getUserData.projectDescription != ''){
+      givePoints += 1;
+    }
+    if(getUserData.sampleProjectLink != ''){
+      givePoints += 1;
+    }
+    if(getUserData.relavantCertificates != ''){
+      givePoints += 1;
+    }
+    if(getUserData.isWorkRemotely){
+      givePoints += 1;
+    }
+    //check experience
+    if(getUserData.totalExperience>=getJobsList[i].minExperience){
+      givePoints += 4;
+    }
+    //check atleast one key skill match or not
+    if(getUserData.desireKeySkills.some((val) => getJobsList[i].keySkills.indexOf(val) !== -1)){
+      givePoints += 4;
+    }
+    //check location
+    if(getUserData.desireLocation.indexOf(getJobsList[i].location) != -1){
+      givePoints += 4;
+    }
+    // getJobsList[i].givePoints = givePoints
+    getJobsList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
+  }
+  return getJobsList;
+}
+
+const pointCalculationOfFT = async(getJobsList, getUserData)=>{
+  let toalPoints = 23;
+  for(var i=0; i<getJobsList.length; i++){
+    var givePoints = 6; // get auto points for jobChangeReason, availableDaysForWork, availableWorkTime, selectTimeZone, hourlyPayExpectation, descProfessionalGoal
+    //check education matching
+    if(getJobsList[i].requiredEducationLevel <= getUserData.highestEducationLevel){
+      givePoints += 1;
+    }
+    //check annual pay match
+    if(getUserData.desireCTC <= getJobsList[i].ctc){
+      givePoints += 1;
+    }
+    if(getUserData.projectDescription != ''){
+      givePoints += 1;
+    }
+    if(getUserData.sampleProjectLink != ''){
+      givePoints += 1;
+    }
+    if(getUserData.relavantCertificates != ''){
+      givePoints += 1;
+    }
+    if(getUserData.isWorkRemotely){
+      givePoints += 1;
+    }
+    //check experience
+    if(getUserData.totalExperience>=getJobsList[i].minExperience){
+      givePoints += 4;
+    }
+    //check atleast one key skill match or not
+    if(getUserData.desireKeySkills.some((val) => getJobsList[i].keySkills.indexOf(val) !== -1)){
+      givePoints += 4;
+    }
+    //check location
+    if(getUserData.desireLocation.indexOf(getJobsList[i].location) != -1){
+      givePoints += 4;
+    }
+    
+    getJobsList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
+  }
+  return getJobsList;
 }
 
 const getSingleUserDetails = async(req, res)=>{

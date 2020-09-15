@@ -285,11 +285,53 @@ const matchesCandidateByEachJob = async(req, res)=>{
             { fluentInEnglish: getJobData.fluentInEnglish },
             {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
             { typeOfWork: getJobData.WorkingType },
-            { availableJoiningDate: { $lte: getJobData.joiningDate } }
+            { availableJoiningDate: { $lte: getJobData.joiningDate } },
+            { isDeleteAccount: false }
           ]}
+        },
+        {
+          $project: {
+            causesLikeToWorkOn: 1,
+            availableDaysForWork: 1,
+            desireKeySkills: 1,
+            desireLocation: 1,
+            otherLanguages: 1,
+            fullName: 1,
+            email: 1,
+            eligibleToWorkInUS: 1,
+            availableJoiningDate: 1,
+            fluentInEnglish: 1,
+            highestEducationLevel: 1,
+            jobChangeReason: 1,
+            availableWorkTime: 1,
+            selectTimeZone: 1,
+            hourlyPayExpectation: 1,
+            desireCTC: 1,
+            projectDescription: 1,
+            sampleProjectLink: 1,
+            relavantCertificates: 1,
+            isWorkRemotely: 1,
+            descProfessionalGoal: 1,
+            totalExperience: 1,
+            linkedInURL: 1,
+            personalURL: 1,
+            mobileNum: 1,
+            howLongWorkingRemotely: 1,
+            refferedBy: 1,
+            gender: 1,
+            race: 1,
+            veteranStatus: 1,
+            profilePicUrl: 1,
+            resumePath: 1,
+            dob: 1,
+            address: 1,
+            pincode: 1,
+            desireIndustryType: 1,
+            typeOfWork: 1
+          }
         }
       ])
-      console.log('yes-yes')
+      // console.log('yes-yes')
       matchingPercentageCalculation(req, res, getCandidateList, getJobData);
     }else{
       getCandidateList = await User.aggregate([
@@ -298,11 +340,53 @@ const matchesCandidateByEachJob = async(req, res)=>{
             { eligibleToWorkInUS: getJobData.mustEligibleToWorkInUS },
             {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
             { typeOfWork: getJobData.WorkingType },
-            { availableJoiningDate: { $lte: getJobData.joiningDate } }
+            { availableJoiningDate: { $lte: getJobData.joiningDate } },
+            { isDeleteAccount: false }
           ]}
+        },
+        {
+          $project: {
+            causesLikeToWorkOn: 1,
+            availableDaysForWork: 1,
+            desireKeySkills: 1,
+            desireLocation: 1,
+            otherLanguages: 1,
+            fullName: 1,
+            email: 1,
+            eligibleToWorkInUS: 1,
+            availableJoiningDate: 1,
+            fluentInEnglish: 1,
+            highestEducationLevel: 1,
+            jobChangeReason: 1,
+            availableWorkTime: 1,
+            selectTimeZone: 1,
+            hourlyPayExpectation: 1,
+            desireCTC: 1,
+            projectDescription: 1,
+            sampleProjectLink: 1,
+            relavantCertificates: 1,
+            isWorkRemotely: 1,
+            descProfessionalGoal: 1,
+            totalExperience: 1,
+            linkedInURL: 1,
+            personalURL: 1,
+            mobileNum: 1,
+            howLongWorkingRemotely: 1,
+            refferedBy: 1,
+            gender: 1,
+            race: 1,
+            veteranStatus: 1,
+            profilePicUrl: 1,
+            resumePath: 1,
+            dob: 1,
+            address: 1,
+            pincode: 1,
+            desireIndustryType: 1,
+            typeOfWork: 1
+          }
         }
       ])
-      console.log('yes-no')
+      // console.log('yes-no')
       matchingPercentageCalculation(req, res, getCandidateList, getJobData);
     }
   }else{
@@ -313,11 +397,53 @@ const matchesCandidateByEachJob = async(req, res)=>{
             { fluentInEnglish: getJobData.fluentInEnglish },
             {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
             { typeOfWork: getJobData.WorkingType },
-            { availableJoiningDate: { $lte: getJobData.joiningDate } }
+            { availableJoiningDate: { $lte: getJobData.joiningDate } },
+            { isDeleteAccount: false }
           ]}
+        },
+        {
+          $project: {
+            causesLikeToWorkOn: 1,
+            availableDaysForWork: 1,
+            desireKeySkills: 1,
+            desireLocation: 1,
+            otherLanguages: 1,
+            fullName: 1,
+            email: 1,
+            eligibleToWorkInUS: 1,
+            availableJoiningDate: 1,
+            fluentInEnglish: 1,
+            highestEducationLevel: 1,
+            jobChangeReason: 1,
+            availableWorkTime: 1,
+            selectTimeZone: 1,
+            hourlyPayExpectation: 1,
+            desireCTC: 1,
+            projectDescription: 1,
+            sampleProjectLink: 1,
+            relavantCertificates: 1,
+            isWorkRemotely: 1,
+            descProfessionalGoal: 1,
+            totalExperience: 1,
+            linkedInURL: 1,
+            personalURL: 1,
+            mobileNum: 1,
+            howLongWorkingRemotely: 1,
+            refferedBy: 1,
+            gender: 1,
+            race: 1,
+            veteranStatus: 1,
+            profilePicUrl: 1,
+            resumePath: 1,
+            dob: 1,
+            address: 1,
+            pincode: 1,
+            desireIndustryType: 1,
+            typeOfWork: 1
+          }
         }
       ])
-      console.log('no-yes')
+      // console.log('no-yes')
       matchingPercentageCalculation(req, res, getCandidateList, getJobData);
 
     }else{
@@ -326,11 +452,53 @@ const matchesCandidateByEachJob = async(req, res)=>{
           $match: { $and: [
             {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
             { typeOfWork: getJobData.WorkingType },
-            { availableJoiningDate: { $lte: getJobData.joiningDate } }
+            { availableJoiningDate: { $lte: getJobData.joiningDate } },
+            { isDeleteAccount: false }
           ]}
+        },
+        {
+          $project: {
+            causesLikeToWorkOn: 1,
+            availableDaysForWork: 1,
+            desireKeySkills: 1,
+            desireLocation: 1,
+            otherLanguages: 1,
+            fullName: 1,
+            email: 1,
+            eligibleToWorkInUS: 1,
+            availableJoiningDate: 1,
+            fluentInEnglish: 1,
+            highestEducationLevel: 1,
+            jobChangeReason: 1,
+            availableWorkTime: 1,
+            selectTimeZone: 1,
+            hourlyPayExpectation: 1,
+            desireCTC: 1,
+            projectDescription: 1,
+            sampleProjectLink: 1,
+            relavantCertificates: 1,
+            isWorkRemotely: 1,
+            descProfessionalGoal: 1,
+            totalExperience: 1,
+            linkedInURL: 1,
+            personalURL: 1,
+            mobileNum: 1,
+            howLongWorkingRemotely: 1,
+            refferedBy: 1,
+            gender: 1,
+            race: 1,
+            veteranStatus: 1,
+            profilePicUrl: 1,
+            resumePath: 1,
+            dob: 1,
+            address: 1,
+            pincode: 1,
+            desireIndustryType: 1,
+            typeOfWork: 1
+          }
         }
       ])
-      console.log('no-no')
+      // console.log('no-no')
       matchingPercentageCalculation(req, res, getCandidateList, getJobData);
     }
   }
@@ -340,12 +508,10 @@ const matchingPercentageCalculation = async(req, res, getCandidateList, getJobDa
   let getPointsCandidateList = '';
   if(getJobData.WorkingType == 'HT'){
     getPointsCandidateList = await getPointsForHalfTimers(getCandidateList, getJobData);
-    
-    
   }else{
     getPointsCandidateList = await getPointsForFullTimers(getCandidateList, getJobData);
   }
-  console.log('ok')
+  // console.log('ok')
   getPointsCandidateList.sort((a, b) => b.matchingPercentage - a.matchingPercentage);
   let filteredList = getPointsCandidateList.filter(data => data.matchingPercentage >= getJobData.percentageMatch).slice(0, getJobData.numberOfCandidate)
   res.status(200).json(filteredList);
@@ -401,10 +567,10 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
     if(getCandidateList[i].desireLocation.indexOf(getJobData.location) != -1){
       givePoints += 4;
     }
-    getCandidateList[i].givePoints = givePoints
+    // getCandidateList[i].givePoints = givePoints
     getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
   }
-  console.log('complete')
+  // console.log('complete')
   return getCandidateList;
 }
 
@@ -445,7 +611,7 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
     if(getCandidateList[i].desireLocation.indexOf(getJobData.location) != -1){
       givePoints += 4;
     }
-    getCandidateList[i].givePoints = givePoints
+    // getCandidateList[i].givePoints = givePoints
     getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
   }
   // console.log('complete')
