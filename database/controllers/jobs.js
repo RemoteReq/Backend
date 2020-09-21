@@ -21,18 +21,18 @@ const addJob = async(req, res) => {
       addBy: req.employerId,
       'transactionDetails.transactionIdForAddJob.transactionId': req.body.transactionIdForAddJob,
 
-      mustEligibleToWorkInUS: req.body.mustEligibleToWorkInUS,
-      causesOfImpact: req.body.causesOfImpact,
-      WorkingType: req.body.WorkingType,
-      joiningDate: req.body.joiningDate,
+      eligibleToWorkInUS: req.body.eligibleToWorkInUS,
+      cause: req.body.cause,
+      jobType: req.body.jobType,
+      soonestJoinDate: req.body.soonestJoinDate,
       fluentInEnglish: req.body.fluentInEnglish,
 
-      requiredEducation: req.body.requiredEducation,
-      workingDays: req.body.workingDays.split(","),
-      workingHours: req.body.workingHours,
-      selectTimeZone: req.body.selectTimeZone,
-      hourlyPay: req.body.hourlyPay,
-      ctc: req.body.ctc,
+      requiredEducationLevel: req.body.requiredEducationLevel,
+      workDays: req.body.workDays.split(","),
+      workHours: req.body.workHours,
+      timeZone: req.body.timeZone,
+      hourlyWage: req.body.hourlyWage,
+      salary: req.body.salary,
       requireCertification: req.body.requireCertification,
       otherLanguages: req.body.otherLanguages.split(","),
       keySkills: req.body.keySkills.split(","),
@@ -42,7 +42,7 @@ const addJob = async(req, res) => {
 
       industryType: req.body.industryType,
     });
-
+console.log(req.body.requiredEducationLevel)
     //save user's details
     job.save()
     .then(doc => {

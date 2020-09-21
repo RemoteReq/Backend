@@ -60,26 +60,26 @@ router.post('/list', listUsers);
 // });
 
 router.post('/updateUserProfile',[
-  check('fluentInEnglish','fluentInEnglish is required').not().isEmpty(),
-  check('eligibleToWorkInUS','eligibleToWorkInUS is required').not().isEmpty(),
-  check('causesLikeToWorkOn','causesLikeToWorkOn is required').not().isEmpty(),
-  check('typeOfWork','Working Type is required').not().isEmpty(),
-  check('availableJoiningDate','availableJoiningDate is required').not().isEmpty(),
-  check('highestEducationLevel','Highest Education is required').not().isEmpty(),
-  check('jobChangeReason','Job Change Reason is required').not().isEmpty(),
-  check('isWorkRemotely','isWorkRemotely value is required').not().isEmpty(),
-  check('descProfessionalGoal','Describe Profession goal is required').not().isEmpty(),
-  check('totalExperience','Total Experience is required').not().isEmpty(),
-  check('desireLocation','Desire Location is required').not().isEmpty(),
-  check('desireKeySkills','Desire key skills is required').not().isEmpty(),
-  check('linkedInURL','linkedInURL is required').not().isEmpty(),
-  check('personalURL','personalURL is required').not().isEmpty(),
-  check('mobileNum','Mobile Number is required').not().isEmpty(),
-  check('dob','Date of birth is required').not().isEmpty(),
-  check('gender','gender is required').not().isEmpty(),
-  check('race','race is required').not().isEmpty(),
-  check('veteranStatus','veteranStatus is required').not().isEmpty(),
-  check('desireIndustryType','Industry Type is required').not().isEmpty()
+  // check('fluentInEnglish','fluentInEnglish is required').not().isEmpty(),
+  // check('eligibleToWorkInUS','eligibleToWorkInUS is required').not().isEmpty(),
+  // check('causes','causes is required').not().isEmpty(),
+  // check('jobType','Working Type is required').not().isEmpty(),
+  // check('soonestJoinDate','soonestJoinDate is required').not().isEmpty(),
+  // check('highestEducationLevel','Highest Education is required').not().isEmpty(),
+  // check('jobChangeReason','Job Change Reason is required').not().isEmpty(),
+  // check('isWorkRemotely','isWorkRemotely value is required').not().isEmpty(),
+  // check('descProfessionalGoal','Describe Profession goal is required').not().isEmpty(),
+  // check('totalExperience','Total Experience is required').not().isEmpty(),
+  // check('location','Location is required').not().isEmpty(),
+  // check('desireKeySkills','Desire key skills is required').not().isEmpty(),
+  // check('linkedInURL','linkedInURL is required').not().isEmpty(),
+  // check('personalURL','personalURL is required').not().isEmpty(),
+  // check('mobileNum','Mobile Number is required').not().isEmpty(),
+  // check('dob','Date of birth is required').not().isEmpty(),
+  // check('gender','gender is required').not().isEmpty(),
+  // check('race','race is required').not().isEmpty(),
+  // check('veteranStatus','veteranStatus is required').not().isEmpty(),
+  // check('desireIndustryType','Industry Type is required').not().isEmpty()
 ], (req,res)=>{
   
   const errors = validationResult(req)

@@ -28,18 +28,18 @@ const addUser = async(req, res) => {
             authSignature: '',
 
             eligibleToWorkInUS: null,
-            causesLikeToWorkOn: [],
+            causes: [],
             typiOfWork: '',
-            availableJoiningDate: null,
+            soonestJoinDate: null,
             fluentInEnglish: null,
 
             highestEducation: '',
             jobChangeReason: '',
-            availableDaysForWork: [],
-            availableWorkTime: '',
-            selectTimeZone: '',
-            hourlyPayExpectation: null,
-            desireCTC: null,
+            availableWorkDays: [],
+            availableWorkHours: '',
+            timeZone: '',
+            hourlyWage: null,
+            salary: null,
             projectDescription: '',
             sampleProjectLink: '',
             relavantCertificates: '',
@@ -48,7 +48,7 @@ const addUser = async(req, res) => {
             projectDescription: '',
             totalExperience: null,
             desireKeySkills: [],
-            desireLocation: [],
+            location: '',
 
             linkedInURL: '',
             personalURL: '',
@@ -58,14 +58,15 @@ const addUser = async(req, res) => {
             refferedBy: '',
             gender: '',
             race: '',
-            veteranStatus: '',
+            // veteranStatus: '',
+            veteranStatus: null,
             profilePicUrl: '',
             resumePath: '',
             
 
             dob: null,
             address: '',
-            pincode: '',
+            // pincode: '',
             desireIndustryType: ''
           });
   
@@ -356,9 +357,9 @@ const filterJobs = async(req, res)=>{
       if(getUserData.fluentInEnglish){
         getJobsList = await Jobs.find({ 
           $and: [ 
-            { causesOfImpact : { $in: getUserData.causesLikeToWorkOn}},
-            { WorkingType: getUserData.typeOfWork },
-            { joiningDate: { $gte: getUserData.availableJoiningDate } },
+            { cause : { $in: getUserData.causes}},
+            { jobType: getUserData.jobType },
+            { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
             { expireStatus: false }
           ] 
         }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
@@ -368,9 +369,9 @@ const filterJobs = async(req, res)=>{
       }else{
         getJobsList = await Jobs.find({ 
           $and: [ 
-            { causesOfImpact : { $in: getUserData.causesLikeToWorkOn}},
-            { WorkingType: getUserData.typeOfWork },
-            { joiningDate: { $gte: getUserData.availableJoiningDate } },
+            { cause : { $in: getUserData.causes}},
+            { jobType: getUserData.jobType },
+            { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
             { fluentInEnglish: getUserData.fluentInEnglish },
             { expireStatus: false }
           ] 
@@ -384,10 +385,10 @@ const filterJobs = async(req, res)=>{
       if(getUserData.fluentInEnglish){
         getJobsList = await Jobs.find({ 
           $and: [ 
-            { causesOfImpact : { $in: getUserData.causesLikeToWorkOn}},
-            { WorkingType: getUserData.typeOfWork },
-            { joiningDate: { $gte: getUserData.availableJoiningDate } },
-            { mustEligibleToWorkInUS: getUserData.eligibleToWorkInUS },
+            { cause : { $in: getUserData.causes}},
+            { jobType: getUserData.jobType },
+            { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
+            { eligibleToWorkInUS: getUserData.eligibleToWorkInUS },
             { expireStatus: false }
           ] 
         }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
@@ -397,10 +398,10 @@ const filterJobs = async(req, res)=>{
       }else{
         getJobsList = await Jobs.find({ 
           $and: [ 
-            { causesOfImpact : { $in: getUserData.causesLikeToWorkOn}},
-            { WorkingType: getUserData.typeOfWork },
-            { joiningDate: { $gte: getUserData.availableJoiningDate } },
-            { mustEligibleToWorkInUS: getUserData.eligibleToWorkInUS },
+            { cause : { $in: getUserData.causes}},
+            { jobType: getUserData.jobType },
+            { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
+            { eligibleToWorkInUS: getUserData.eligibleToWorkInUS },
             { fluentInEnglish: getUserData.fluentInEnglish },
             { expireStatus: false }
           ] 
@@ -418,7 +419,7 @@ const filterJobs = async(req, res)=>{
 
 const matchingPercentage = async(req, res, getJobsList, getUserData)=>{
   let jobListWithPercentageVal = '';
-  if(getUserData.typeOfWork == 'HT'){
+  if(getUserData.jobType == 'Part Time'){
     jobListWithPercentageVal = await pointCalculationOfHT(getJobsList, getUserData);
   }else{
     jobListWithPercentageVal = await pointCalculationOfFT(getJobsList, getUserData);
@@ -436,21 +437,21 @@ const pointCalculationOfHT = async(getJobsList, getUserData)=>{
       givePoints += 1;
     }
     //check working day matching
-    if(getUserData.availableDaysForWork.some((val) => getJobsList[i].workingDays.indexOf(val) !== -1)){
+    if(getUserData.availableWorkDays.some((val) => getJobsList[i].workDays.indexOf(val) !== -1)){
       givePoints += 1;
     }
     //check working hours matching
-    var candidateWT = getUserData.availableWorkTime.split('-');
-    var employerWT = getJobsList[i].workingHours.split('-');
+    var candidateWT = getUserData.availableWorkHours.split('-');
+    var employerWT = getJobsList[i].workHours.split('-');
     if( (parseInt(candidateWT[0])>=parseInt(employerWT[0]) && parseInt(candidateWT[0])<=parseInt(employerWT[1])) || (parseInt(candidateWT[1]) >= parseInt(employerWT[0]) && parseInt(candidateWT[1]) <= parseInt(employerWT[1]))){
       givePoints += 1;
     }
     //check time zone matching
-    if(getJobsList[i].selectTimeZone == getUserData.selectTimeZone){
+    if(getJobsList[i].timeZone == getUserData.timeZone){
       givePoints += 1;
     }
     //check hourly pay match
-    if(getUserData.hourlyPayExpectation <= getJobsList[i].hourlyPay){
+    if(getUserData.hourlyWage <= getJobsList[i].hourlyWage){
       givePoints += 1;
     }
     if(getUserData.projectDescription != ''){
@@ -474,7 +475,10 @@ const pointCalculationOfHT = async(getJobsList, getUserData)=>{
       givePoints += 4;
     }
     //check location
-    if(getUserData.desireLocation.indexOf(getJobsList[i].location) != -1){
+    // if(getUserData.location.indexOf(getJobsList[i].location) != -1){
+    //   givePoints += 4;
+    // }
+    if(getUserData.location == getJobsList[i].location){
       givePoints += 4;
     }
     // getJobsList[i].givePoints = givePoints
@@ -486,13 +490,13 @@ const pointCalculationOfHT = async(getJobsList, getUserData)=>{
 const pointCalculationOfFT = async(getJobsList, getUserData)=>{
   let toalPoints = 23;
   for(var i=0; i<getJobsList.length; i++){
-    var givePoints = 6; // get auto points for jobChangeReason, availableDaysForWork, availableWorkTime, selectTimeZone, hourlyPayExpectation, descProfessionalGoal
+    var givePoints = 6; // get auto points for jobChangeReason, availableWorkDays, availableWorkHours, timeZone, hourlyWage, descProfessionalGoal
     //check education matching
     if(getJobsList[i].requiredEducationLevel <= getUserData.highestEducationLevel){
       givePoints += 1;
     }
     //check annual pay match
-    if(getUserData.desireCTC <= getJobsList[i].ctc){
+    if(getUserData.salary <= getJobsList[i].salary){
       givePoints += 1;
     }
     if(getUserData.projectDescription != ''){
@@ -516,7 +520,10 @@ const pointCalculationOfFT = async(getJobsList, getUserData)=>{
       givePoints += 4;
     }
     //check location
-    if(getUserData.desireLocation.indexOf(getJobsList[i].location) != -1){
+    // if(getUserData.location.indexOf(getJobsList[i].location) != -1){
+    //   givePoints += 4;
+    // }
+    if(getUserData.location == getJobsList[i].location){
       givePoints += 4;
     }
     

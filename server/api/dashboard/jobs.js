@@ -69,10 +69,10 @@ router.post('/add', upload.fields([{
   check('numberOfCandidate','Number of Candidates is required').not().isEmpty(),
   check('percentageMatch','Percentage match value is required').not().isEmpty(),
   check('transactionIdForAddJob','Transaction Id is required').not().isEmpty(),
-  check('mustEligibleToWorkInUS','mustEligibleToWorkInUS value is required').not().isEmpty(),
-  check('causesOfImpact','Causes of impact is required').not().isEmpty(),
-  check('WorkingType','Working Type is required').not().isEmpty(),
-  check('joiningDate','Joining Date is required').not().isEmpty(),
+  check('eligibleToWorkInUS','eligibleToWorkInUS value is required').not().isEmpty(),
+  check('cause','Causes of impact is required').not().isEmpty(),
+  check('jobType','Working Type is required').not().isEmpty(),
+  check('soonestJoinDate','Joining Date is required').not().isEmpty(),
   check('fluentInEnglish','fluentInEnglish value is required').not().isEmpty(),
   check('requiredEducationLevel','Education degree is required').not().isEmpty()
 ], async(req,res)=>{

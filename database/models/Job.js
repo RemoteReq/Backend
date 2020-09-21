@@ -31,18 +31,27 @@ const jobSchema = new Schema({
     }
   },
 
-  mustEligibleToWorkInUS: { type: Boolean },
-  causesOfImpact: { type: String },
-  WorkingType: { type: String }, // full-time/part-time
-  joiningDate: { type: Date }, 
+  // mustEligibleToWorkInUS: { type: Boolean },
+  eligibleToWorkInUS: { type: Boolean },
+  // causesOfImpact: { type: String },
+  cause: { type: String },
+  // WorkingType: { type: String }, // full-time/part-time
+  jobType: { type: String }, // full-time/part-time
+  // joiningDate: { type: Date }, 
+  soonestJoinDate: { type: Date }, 
   fluentInEnglish: { type: Boolean },
 
   requiredEducationLevel: { type: Number },
-  workingDays: { type: Array }, //** */
-  workingHours: { type: String }, //** */
-  selectTimeZone: { type: String },
-  hourlyPay: { type: Number}, //for part-timer
-  ctc: { type: Number, required: true }, // for full-timer
+  // workingDays: { type: Array }, 
+  workDays: { type: Array }, 
+  // workingHours: { type: String }, 
+  workHours: { type: String }, 
+  // selectTimeZone: { type: String },
+  timeZone: { type: String },
+  // hourlyPay: { type: Number}, //for part-timer
+  hourlyWage: { type: Number}, //for part-timer
+  // ctc: { type: Number, required: true }, // for full-timer
+  salary: { type: Number, required: true }, // for full-timer
   requireCertification: { type: String },
   otherLanguages: { type: Array },
   minExperience: {type: Number, required: true},

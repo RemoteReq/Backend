@@ -276,37 +276,37 @@ const matchesCandidateByEachJob = async(req, res)=>{
   let getJobData = await Job.findById(req.params.jobId).select("-__v -addBy");
   // console.log(getJobData)
   let getCandidateList= '';
-  if(getJobData.mustEligibleToWorkInUS){
+  if(getJobData.eligibleToWorkInUS){
     if(getJobData.fluentInEnglish){
       getCandidateList = await User.aggregate([
         {
           $match: { $and: [
-            { eligibleToWorkInUS: getJobData.mustEligibleToWorkInUS },
+            { eligibleToWorkInUS: getJobData.eligibleToWorkInUS },
             { fluentInEnglish: getJobData.fluentInEnglish },
-            {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
-            { typeOfWork: getJobData.WorkingType },
-            { availableJoiningDate: { $lte: getJobData.joiningDate } },
+            {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+            { jobType: getJobData.jobType },
+            { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
             { isDeleteAccount: false }
           ]}
         },
         {
           $project: {
-            causesLikeToWorkOn: 1,
-            availableDaysForWork: 1,
+            causes: 1,
+            availableWorkDays: 1,
             desireKeySkills: 1,
-            desireLocation: 1,
+            location: 1,
             otherLanguages: 1,
             fullName: 1,
             email: 1,
             eligibleToWorkInUS: 1,
-            availableJoiningDate: 1,
+            soonestJoinDate: 1,
             fluentInEnglish: 1,
             highestEducationLevel: 1,
             jobChangeReason: 1,
-            availableWorkTime: 1,
-            selectTimeZone: 1,
-            hourlyPayExpectation: 1,
-            desireCTC: 1,
+            availableWorkHours: 1,
+            timeZone: 1,
+            hourlyWage: 1,
+            salary: 1,
             projectDescription: 1,
             sampleProjectLink: 1,
             relavantCertificates: 1,
@@ -325,9 +325,9 @@ const matchesCandidateByEachJob = async(req, res)=>{
             resumePath: 1,
             dob: 1,
             address: 1,
-            pincode: 1,
+            // pincode: 1,
             desireIndustryType: 1,
-            typeOfWork: 1
+            jobType: 1
           }
         }
       ])
@@ -337,31 +337,31 @@ const matchesCandidateByEachJob = async(req, res)=>{
       getCandidateList = await User.aggregate([
         {
           $match: { $and: [
-            { eligibleToWorkInUS: getJobData.mustEligibleToWorkInUS },
-            {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
-            { typeOfWork: getJobData.WorkingType },
-            { availableJoiningDate: { $lte: getJobData.joiningDate } },
+            { eligibleToWorkInUS: getJobData.eligibleToWorkInUS },
+            {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+            { jobType: getJobData.jobType },
+            { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
             { isDeleteAccount: false }
           ]}
         },
         {
           $project: {
-            causesLikeToWorkOn: 1,
-            availableDaysForWork: 1,
+            causes: 1,
+            availableWorkDays: 1,
             desireKeySkills: 1,
-            desireLocation: 1,
+            location: 1,
             otherLanguages: 1,
             fullName: 1,
             email: 1,
             eligibleToWorkInUS: 1,
-            availableJoiningDate: 1,
+            soonestJoinDate: 1,
             fluentInEnglish: 1,
             highestEducationLevel: 1,
             jobChangeReason: 1,
-            availableWorkTime: 1,
-            selectTimeZone: 1,
-            hourlyPayExpectation: 1,
-            desireCTC: 1,
+            availableWorkHours: 1,
+            timeZone: 1,
+            hourlyWage: 1,
+            salary: 1,
             projectDescription: 1,
             sampleProjectLink: 1,
             relavantCertificates: 1,
@@ -380,9 +380,9 @@ const matchesCandidateByEachJob = async(req, res)=>{
             resumePath: 1,
             dob: 1,
             address: 1,
-            pincode: 1,
+            // pincode: 1,
             desireIndustryType: 1,
-            typeOfWork: 1
+            jobType: 1
           }
         }
       ])
@@ -395,30 +395,30 @@ const matchesCandidateByEachJob = async(req, res)=>{
         {
           $match: { $and: [
             { fluentInEnglish: getJobData.fluentInEnglish },
-            {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
-            { typeOfWork: getJobData.WorkingType },
-            { availableJoiningDate: { $lte: getJobData.joiningDate } },
+            {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+            { jobType: getJobData.jobType },
+            { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
             { isDeleteAccount: false }
           ]}
         },
         {
           $project: {
-            causesLikeToWorkOn: 1,
-            availableDaysForWork: 1,
+            causes: 1,
+            availableWorkDays: 1,
             desireKeySkills: 1,
-            desireLocation: 1,
+            location: 1,
             otherLanguages: 1,
             fullName: 1,
             email: 1,
             eligibleToWorkInUS: 1,
-            availableJoiningDate: 1,
+            soonestJoinDate: 1,
             fluentInEnglish: 1,
             highestEducationLevel: 1,
             jobChangeReason: 1,
-            availableWorkTime: 1,
-            selectTimeZone: 1,
-            hourlyPayExpectation: 1,
-            desireCTC: 1,
+            availableWorkHours: 1,
+            timeZone: 1,
+            hourlyWage: 1,
+            salary: 1,
             projectDescription: 1,
             sampleProjectLink: 1,
             relavantCertificates: 1,
@@ -437,9 +437,9 @@ const matchesCandidateByEachJob = async(req, res)=>{
             resumePath: 1,
             dob: 1,
             address: 1,
-            pincode: 1,
+            // pincode: 1,
             desireIndustryType: 1,
-            typeOfWork: 1
+            jobType: 1
           }
         }
       ])
@@ -450,30 +450,30 @@ const matchesCandidateByEachJob = async(req, res)=>{
       getCandidateList = await User.aggregate([
         {
           $match: { $and: [
-            {causesLikeToWorkOn: {'$regex':"^"+getJobData.causesOfImpact, '$options': 'i'}},
-            { typeOfWork: getJobData.WorkingType },
-            { availableJoiningDate: { $lte: getJobData.joiningDate } },
+            {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+            { jobType: getJobData.jobType },
+            { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
             { isDeleteAccount: false }
           ]}
         },
         {
           $project: {
-            causesLikeToWorkOn: 1,
-            availableDaysForWork: 1,
+            causes: 1,
+            availableWorkDays: 1,
             desireKeySkills: 1,
-            desireLocation: 1,
+            location: 1,
             otherLanguages: 1,
             fullName: 1,
             email: 1,
             eligibleToWorkInUS: 1,
-            availableJoiningDate: 1,
+            soonestJoinDate: 1,
             fluentInEnglish: 1,
             highestEducationLevel: 1,
             jobChangeReason: 1,
-            availableWorkTime: 1,
-            selectTimeZone: 1,
-            hourlyPayExpectation: 1,
-            desireCTC: 1,
+            availableWorkHours: 1,
+            timeZone: 1,
+            hourlyWage: 1,
+            salary: 1,
             projectDescription: 1,
             sampleProjectLink: 1,
             relavantCertificates: 1,
@@ -492,9 +492,9 @@ const matchesCandidateByEachJob = async(req, res)=>{
             resumePath: 1,
             dob: 1,
             address: 1,
-            pincode: 1,
+            // pincode: 1,
             desireIndustryType: 1,
-            typeOfWork: 1
+            jobType: 1
           }
         }
       ])
@@ -506,7 +506,7 @@ const matchesCandidateByEachJob = async(req, res)=>{
 
 const matchingPercentageCalculation = async(req, res, getCandidateList, getJobData)=>{
   let getPointsCandidateList = '';
-  if(getJobData.WorkingType == 'HT'){
+  if(getJobData.jobType == 'Part Time'){
     getPointsCandidateList = await getPointsForHalfTimers(getCandidateList, getJobData);
   }else{
     getPointsCandidateList = await getPointsForFullTimers(getCandidateList, getJobData);
@@ -520,27 +520,27 @@ const matchingPercentageCalculation = async(req, res, getCandidateList, getJobDa
 const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
   let toalPoints = 23;
   for(var i=0; i<getCandidateList.length; i++){
-    let givePoints = 3; // get auto points for jobChangeReason, desireCTC, descProfessionalGoal
+    let givePoints = 3; // get auto points for jobChangeReason, salary, descProfessionalGoal
     //check education matching
     if(getJobData.requiredEducationLevel <= getCandidateList[i].highestEducationLevel){
       givePoints += 1;
     }
     //check working day matching
-    if(getCandidateList[i].availableDaysForWork.some((val) => getJobData.workingDays.indexOf(val) !== -1)){
+    if(getCandidateList[i].availableWorkDays.some((val) => getJobData.workDays.indexOf(val) !== -1)){
       givePoints += 1;
     }
     //check working hours matching
-    var candidateWT = getCandidateList[i].availableWorkTime.split('-');
-    var employerWT = getJobData.workingHours.split('-');
+    var candidateWT = getCandidateList[i].availableWorkHours.split('-');
+    var employerWT = getJobData.workHours.split('-');
     if( (parseInt(candidateWT[0])>=parseInt(employerWT[0]) && parseInt(candidateWT[0])<=parseInt(employerWT[1])) || (parseInt(candidateWT[1]) >= parseInt(employerWT[0]) && parseInt(candidateWT[1]) <= parseInt(employerWT[1]))){
       givePoints += 1;
     }
     //check time zone matching
-    if(getJobData.selectTimeZone == getCandidateList[i].selectTimeZone){
+    if(getJobData.timeZone == getCandidateList[i].timeZone){
       givePoints += 1;
     }
     //check hourly pay match
-    if(getCandidateList[i].hourlyPayExpectation <= getJobData.hourlyPay){
+    if(getCandidateList[i].hourlyWage <= getJobData.hourlyWage){
       givePoints += 1;
     }
     if(getCandidateList[i].projectDescription != ''){
@@ -564,7 +564,10 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
       givePoints += 4;
     }
     //check location
-    if(getCandidateList[i].desireLocation.indexOf(getJobData.location) != -1){
+    // if(getCandidateList[i].location.indexOf(getJobData.location) != -1){
+    //   givePoints += 4;
+    // }
+    if(getCandidateList[i].location == getJobData.location){
       givePoints += 4;
     }
     // getCandidateList[i].givePoints = givePoints
@@ -577,14 +580,14 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
 const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
   let toalPoints = 23;
   for(var i=0; i<getCandidateList.length; i++){
-    let givePoints = 6; // get auto points for jobChangeReason, availableDaysForWork, availableWorkTime, selectTimeZone, hourlyPayExpectation, descProfessionalGoal
+    let givePoints = 6; // get auto points for jobChangeReason, availableWorkDays, availableWorkHours, timeZone, hourlyWage, descProfessionalGoal
     //check education matching
     if(getJobData.requiredEducationLevel <= getCandidateList[i].highestEducationLevel){
       givePoints += 1;
     }
     
     //check annual pay match
-    if(getCandidateList[i].desireCTC <= getJobData.ctc){
+    if(getCandidateList[i].salary <= getJobData.salary){
       givePoints += 1;
     }
     if(getCandidateList[i].projectDescription != ''){
@@ -608,7 +611,10 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
       givePoints += 4;
     }
     //check location
-    if(getCandidateList[i].desireLocation.indexOf(getJobData.location) != -1){
+    // if(getCandidateList[i].location.indexOf(getJobData.location) != -1){
+    //   givePoints += 4;
+    // }
+    if(getCandidateList[i].location == getJobData.location){
       givePoints += 4;
     }
     // getCandidateList[i].givePoints = givePoints
