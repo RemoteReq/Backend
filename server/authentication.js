@@ -97,7 +97,7 @@ const tokenValidityCheckingForEmp = async(req, res, next)=>{
     }
     try{
         let decodedData = await jwt.decode(req.headers.token);
-        // console.log(decodedData)
+        // console.log('decodedData',decodedData)
         let getData = await Employer.findOne({ _id: decodedData.employerId })
         jwt.verify(req.headers.token, getData.authSignature, async function(err, decoded) {
             if(err){

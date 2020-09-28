@@ -1,9 +1,7 @@
 require('dotenv').config();
 var cron = require('node-cron');
 var unirest = require('unirest');
-// console.log(process.env.HOST_TYPE)
 let API_URL = (process.env.HOST_TYPE == 'local')? 'http://localhost:3030/' : (process.env.HOST_TYPE == 'dev')? 'http://3.21.186.204:3030/' : 'live api URL';
-// console.log(API_URL)
 
 //find out all of the jobs which was expired(21 days period over) - everday at 12:01 AM
 cron.schedule('1 0 * * *', () => {
@@ -72,3 +70,84 @@ cron.schedule('20 0 * * *', () => {
           console.log(err)
       })
 });
+
+// Cron run every 8 hours for check matching candidate
+cron.schedule('0 */8 * * *', () => {
+    console.log('Cron run every 8 hours for check matching candidate');
+    unirest
+      .post(API_URL+'api/scheduleJob/mailToEmployerForCandidateMatch')
+      .headers({'Content-Type': 'application/json'})
+      .send({ 
+          
+      })
+      .then(async(response) => {
+          console.log(response.body)
+      })
+      .catch(err => {
+          console.log(err)
+      })
+});
+
+
+
+// for Testing Purpose
+
+// cron.schedule('0 * * * *', () => { // job expired check every 1 hour 
+//     unirest
+//       .post(API_URL+'api/scheduleJob/checkExpiredJob')
+//       .headers({'Content-Type': 'application/json'})
+//       .send({ 
+          
+//       })
+//       .then(async(response) => {
+//           console.log(response.body)
+//       })
+//       .catch(err => {
+//           console.log(err)
+//       })
+// });
+
+// cron.schedule('*/15 * * * *', () => { // check hiring or not every 15 minutes
+//     unirest
+//       .post(API_URL+'api/scheduleJob/checkHiredOrNot')
+//       .headers({'Content-Type': 'application/json'})
+//       .send({ 
+          
+//       })
+//       .then(async(response) => {
+//           console.log(response.body)
+//       })
+//       .catch(err => {
+//           console.log(err)
+//       })
+// });
+
+// cron.schedule('*/5 * * * *', () => { // check employer not responde in hiring status for every 5 minutes
+//     unirest
+//         .post(API_URL+'api/scheduleJob/employerNotRespForHiring')
+//         .headers({'Content-Type': 'application/json'})
+//         .send({ 
+            
+//         })
+//         .then(async(response) => {
+//             console.log(response.body)
+//         })
+//         .catch(err => {
+//             console.log(err)
+//         })
+// });
+
+// cron.schedule('*/10 * * * *', () => { // reminder between 30-20 mints left (check every 10 mints) 
+//     unirest
+//       .post(API_URL+'api/scheduleJob/mailForTwoDaysLeft')
+//       .headers({'Content-Type': 'application/json'})
+//       .send({ 
+          
+//       })
+//       .then(async(response) => {
+//           console.log(response.body)
+//       })
+//       .catch(err => {
+//           console.log(err)
+//       })
+// });
