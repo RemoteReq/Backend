@@ -107,7 +107,7 @@ const matchingPercentageCalculation = async(getCandidateList, getJobData)=>{
   
   if(filteredList.length>0){
     // console.log('getCandidateList', filteredList.length)
-    await mailForAfterCandidateMatched(getJobData, getJobData.addBy);
+    await mailForAfterCandidateMatched(getJobData, getJobData.addBy, filteredList.length);
   }else{
     console.log('Candidates not matched right now of JobId: '+getJobData._id)
   }
@@ -222,9 +222,9 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
   return getCandidateList;
 }
 
-const mailForAfterCandidateMatched = async(getJobData, empId)=>{
+const mailForAfterCandidateMatched = async(getJobData, empId, matchedCount)=>{
   try{
-    let updateData = await Job.findByIdAndUpdate(getJobData._id, { $set: {matchesCandidateFlag: true}});
+    let updateData = await Job.findByIdAndUpdate(getJobData._id, { $set: { matchesCandidateFlag: true, matchesCandidateCount: matchedCount }});
     // console.log(updateData);
     let empDetails = await Employer.findById(empId)
     let companyName = empDetails.companyName;

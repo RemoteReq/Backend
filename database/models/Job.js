@@ -33,6 +33,7 @@ const jobSchema = new Schema({
     }
   },
   matchesCandidateFlag: {type: Boolean, default: false},
+  matchesCandidateCount: {type: Number, default: 0},
 
   eligibleToWorkInUS: { type: Boolean },
   cause: { type: String },

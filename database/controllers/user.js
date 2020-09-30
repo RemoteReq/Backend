@@ -29,11 +29,11 @@ const addUser = async(req, res) => {
 
             eligibleToWorkInUS: null,
             causes: [],
-            typiOfWork: '',
+            jobType: '',
             soonestJoinDate: null,
             fluentInEnglish: null,
 
-            highestEducation: '',
+            highestEducationLevel: '',
             jobChangeReason: '',
             availableWorkDays: [],
             availableWorkHours: '',
@@ -288,7 +288,11 @@ const updateUserProfile = async(req, res)=>{
     
     let updateData = await User.findByIdAndUpdate(req.userId, { $set: req.body});
     let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
-    
+    // console.log(getUserData.eligibleToWorkInUS)
+    if(getUserData.eligibleToWorkInUS !== null && getUserData.causes.length !== 0 && getUserData.soonestJoinDate !== null && getUserData.jobType !== '' && getUserData.fluentInEnglish !== null){
+      await User.findByIdAndUpdate(req.userId, { $set: { questionSubmitStatus: true }});
+      getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
+    }
     res.status(200).json(getUserData);
   } catch(err) {
       console.log(err);
@@ -304,50 +308,6 @@ const listUsers = async(req, res)=>{
     res.status(500).json(err);
   }
 }
-
-// const filterJobs = async(req, res)=>{
-//   try{
-//     let getUserData = await User.findById(req.userId);
-//     // console.log(getUserData.totalExperience)
-
-//     let getJobsByIndustryType = await Jobs.aggregate([
-//       { $match: { $and: [
-//         { industryType: getUserData.desireIndustryType }, 
-//         { ctc : { $gte: getUserData.desireCTC } },
-//         { $and: [ { minExperience: { $lte: getUserData.totalExperience } }, { maxExperience : { $gte: getUserData.totalExperience } } ] },
-//         {location : { $in: getUserData.desireLocation}},
-//         {keySkills : { $in: getUserData.desireKeySkills}},
-//       ] } },
-//       {
-//         $addFields: { desireKeySkills: getUserData.desireKeySkills }
-//       },
-//       {
-//         $addFields: { commonToBoth: { $setIntersection: [ "$keySkills", "$desireKeySkills" ] } }
-//       },
-//       {
-//         $project: {
-//           // _id: 0, 
-//           title: 1,
-//           keySkills:1, 
-//           companyName:1, 
-//           industryType:1, 
-//           role:1, 
-//           jobDetails: 1, 
-//           ctc:1, 
-//           minExperience:1, 
-//           maxExperience:1, 
-//           location:1, 
-//           // commonToBoth: 1 ,
-//           MatchPercentage: {$multiply:[{$divide:[{$size: "$commonToBoth" },{$size: "$keySkills" } ]},100]} ,
-//         }
-//       },
-      
-//     ])
-//     res.status(200).json(getJobsByIndustryType);
-//   } catch(err) {
-//       console.log(err);
-//   }
-// }
 
 const filterJobs = async(req, res)=>{
   try{
