@@ -91,7 +91,7 @@ const sendMail = async(req, res, doc)=>{
           pass: 'notagoodpassword1'
       }
   });
-
+// console.log(process.env.FRONTEND_BASE_URL)
   var mailOptions = {
     from: '"support@remotereq.com" <notasom1@gmail.com>',
     to: req.body.email,

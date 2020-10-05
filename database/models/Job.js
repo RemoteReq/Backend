@@ -16,16 +16,14 @@ const jobSchema = new Schema({
   percentageMatch: {type: Number, required: true},
   addBy: { type: String, required: true },
   postDate: { type: Date, default: Date.now },
-  expireDate: { type: Date, default: new Date(+new Date() + 21*24*60*60*1000) },
-  // expireDate: { type: Date, default: new Date(+new Date() + 1*60*60*1000) },
+  expireDate: { type: Date, default: null },
   expireStatus: { type: Boolean, default: false},
-  seventhDayAfterExpireDate: { type: Date, default: new Date(+new Date() + 28*24*60*60*1000) },
-  // seventhDayAfterExpireDate: { type: Date, default: new Date(+new Date() + 2*60*60*1000) },
+  seventhDayAfterExpireDate: { type: Date, default: null },
+  firstPaymentStatus: {type: Boolean, default: false}, // true: paid, false: not paid
   hiredStatus: { type: Boolean, default: null}, 
   hiringPaymentStatus: {type: Boolean, default: null}, // true: paid, false: not paid
   transactionDetails: {
     transactionIdForAddJob: { // using for first payment
-      // transactionId: { type: String, required: true }
       transactionId: { type: String }
     },
     transactionIdAfterHired: { // using for second payment

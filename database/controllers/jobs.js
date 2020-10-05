@@ -20,7 +20,8 @@ const addJob = async(req, res) => {
       numberOfCandidate: req.body.numberOfCandidate,
       percentageMatch: req.body.percentageMatch,
       addBy: req.employerId,
-      // 'transactionDetails.transactionIdForAddJob.transactionId': req.body.transactionIdForAddJob,
+      'transactionDetails.transactionIdForAddJob.transactionId': '',
+      'transactionDetails.transactionIdAfterHired.transactionId': '',
 
       eligibleToWorkInUS: req.body.eligibleToWorkInUS,
       cause: req.body.cause,
@@ -180,7 +181,7 @@ const matchingPercentageCalculation = async(getCandidateList, getJobData)=>{
   getPointsCandidateList.sort((a, b) => b.matchingPercentage - a.matchingPercentage);
   let filteredList = getPointsCandidateList.filter(data => data.matchingPercentage >= getJobData.percentageMatch).slice(0, getJobData.numberOfCandidate)
   // res.status(200).json(filteredList);
-  // console.log('getCandidateList', filteredList)
+  console.log('expiteDate', new Date(+new Date() + 21*24*60*60*1000))
   if(filteredList.length>0){
     await mailForAfterCandidateMatched(getJobData, getJobData.addBy, filteredList.length);
   }else{
@@ -297,7 +298,14 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
 
 const mailForAfterCandidateMatched = async(getJobData, empId, matchedCount)=>{
   try{
-    let updateData = await Jobs.findByIdAndUpdate(getJobData._id, { $set: { matchesCandidateFlag: true, matchesCandidateCount: matchedCount }});
+    let updateData = await Jobs.findByIdAndUpdate(getJobData._id, { $set: { 
+      matchesCandidateFlag: true, 
+      matchesCandidateCount: matchedCount,
+      expireDate: new Date(+new Date() + 21*24*60*60*1000),
+      seventhDayAfterExpireDate: new Date(+new Date() + 28*24*60*60*1000)
+      // expireDate: new Date(+new Date() + 1*60*60*1000),
+      // seventhDayAfterExpireDate: new Date(+new Date() + 2*60*60*1000)
+    }});
     // console.log(updateData);
     let empDetails = await Employer.findById(empId)
     let companyName = empDetails.companyName;
