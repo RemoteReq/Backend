@@ -392,11 +392,14 @@ const checkoutForAddjob = async(req, res)=>{
     options: {
       submitForSettlement: true
     }
-  }).then(function (result) {
+  }).then(async function (result) {
     if (result.success) {
       console.log('Transaction ID: ' + result.transaction.id);
+      let updateData = await Jobs.findByIdAndUpdate(req.body.jobId, { $set: {'transactionDetails.transactionIdForAddJob.transactionId': result.transaction.id, firstPaymentStatus: true}});
+    
       res.status(200).json({
-        transactionId : result.transaction.id
+        transactionId : result.transaction.id,
+        message: 'First transaction succesfully completed'
       });
     } else {
       console.error(result.message);

@@ -26,6 +26,8 @@ const addEmployer = async(req, res) => {
           // fax: "614.555.5678",
           // website: "www.example.com"
         })
+
+        // console.log(newCustomerOfPaymentGateway.customer.id)
         
         const employer = new Employer({
           username: req.body.username,

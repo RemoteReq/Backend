@@ -129,6 +129,7 @@ router.post("/client_token_for_payment", [
 router.post("/checkoutForAddjob", [
   check('amount','amount is required').not().isEmpty(),
   check('paymentMethodNonce','paymentMethodNonce is required').not().isEmpty(),
+  check('jobId','Job id is required').not().isEmpty(),
 ], (req,res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
