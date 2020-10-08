@@ -1,138 +1,455 @@
 var nodemailer = require('nodemailer');
+const moment = require('moment');
 const Employer = require('../models/Employer');
 const Job = require('../models/Job');
 const User = require('../models/User');
+const MatchedJobSeeker = require('../models/MatchedJobSeeker_master')
 
 
-// const mailToEmployerForCandidateMatch = async(req, res)=>{
-//   try {
-//     let jobList = await Job.find({ matchesCandidateFlag: false });
+const mailToEmployerForCandidateMatchTest = async(req, res)=>{
+  try {
+    let jobList = await Job.find({ matchesCandidateFlag: false });
     
-//     for(var i=0; i<jobList.length; i++){
-//       let getCandidateList = await checkMatchesCandidateList(req, res, jobList[i]._id)
-//       // console.log(getCandidateList.length)
-//       if(getCandidateList.length > 0){
-//         await sendMailForFindCandidate(req, res, jobList[i].addBy, jobList[i]._id)
-//         // await updateCandidateMatchStatus(req, res, jobList[i]._id)
-//       }else{
-//         console.log('no')
-//       }
-//     }
-//     console.log("okk")
-//     res.send('okk')
-//   } catch(err) {
-//     res.status(500).json(err);
-//   }
+    for(var i=0; i<jobList.length; i++){
+      let getCandidateList = await checkMatchesCandidateList(req, res, jobList[i]._id)
+    }
+    console.log("Cron checked matches candidate list")
+    res.send('Cron checked matches candidate list')
+  } catch(err) {
+    res.status(500).json(err);
+  }
   
-// }
+}
 
-// const checkMatchesCandidateList = async(req, res, jobId)=>{
-//   // console.log(jobId)
-//   try{
+const checkMatchesCandidateList = async(req, res, jobId)=>{
+  try{
     
-//     let getJobData = await Job.findById(jobId).select("-__v -addBy");
+    let getJobData = await Job.findById(jobId).select("-__v");
 
-//     let getCandidateList = await User.aggregate([
-//       {
-//         $match: {$and: [
-//           { industryType: getJobData.industryType }, 
-//           { desireCTC : { $lte: getJobData.ctc } },
-//           { $and: [ { totalExperience: { $gte: getJobData.minExperience } }, { totalExperience : { $lte: getJobData.maxExperience } } ] },
-//           {desireLocation: {'$regex':"^"+getJobData.location, '$options': 'i'}},
-//           {desireKeySkills : { $in: getJobData.keySkills}},
-//         ]}
-//       },
-//       {
-//         $addFields: { requireKeySkills: getJobData.keySkills }
-//       },
-//       {
-//         $addFields: { commonToBoth: { $setIntersection: [ "$requireKeySkills", "$desireKeySkills" ] } }
-//       },
-//       {
-//         $project: {
-//           keySkills:1,
-//           education: 1,
-//           fullName: 1,
-//           email: 1,
-//           fluentInEnglish: 1,
-//           eligibleToWorkInUS: 1,
-//           linkedInURL: 1,
-//           githubURL: 1,
-//           personalURL: 1,
-//           profilePicUrl: 1,
-//           mobileNum: 1,
-//           gender: 1,
-//           dob: 1,
-//           address: 1,
-//           pincode: 1,
-//           aboutMe: 1,
-//           refferedBy: 1,
-//           industryType: 1,
-//           jobRole: 1,
-//           currentCTC: 1,
-//           totalExperience: 1,
-//           desireIndustryType: 1,
-//           desireJobRole: 1,
-//           desireCTC: 1,
-//           desireLocation:1,
-//           desireKeySkills:1,
-//           MatchPercentage: {$multiply:[{$divide:[{$size: "$commonToBoth" },{$size: "$requireKeySkills" } ]},100]} ,
-//         }
-//       }
-//     ])
-    
-//     // res.status(200).json(getCandidateList);
-//     return getCandidateList
-//   } catch(err) {
-//       console.log(err);
-//   }
-// }
+    let getCandidateList= '';
+    if(getJobData.eligibleToWorkInUS){
+      if(getJobData.fluentInEnglish){
+        getCandidateList = await User.aggregate([
+          {
+            $match: { $and: [
+              { eligibleToWorkInUS: getJobData.eligibleToWorkInUS },
+              { fluentInEnglish: getJobData.fluentInEnglish },
+              {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+              { jobType: getJobData.jobType },
+              { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
+              { isDeleteAccount: false }
+            ]}
+          },
+          {
+            $project: {
+              causes: 1,
+              availableWorkDays: 1,
+              desireKeySkills: 1,
+              location: 1,
+              otherLanguages: 1,
+              fullName: 1,
+              email: 1,
+              eligibleToWorkInUS: 1,
+              soonestJoinDate: 1,
+              fluentInEnglish: 1,
+              highestEducationLevel: 1,
+              jobChangeReason: 1,
+              availableWorkHours: 1,
+              timeZone: 1,
+              hourlyWage: 1,
+              salary: 1,
+              projectDescription: 1,
+              sampleProjectLink: 1,
+              relavantCertificates: 1,
+              isWorkRemotely: 1,
+              descProfessionalGoal: 1,
+              totalExperience: 1,
+              linkedInURL: 1,
+              personalURL: 1,
+              mobileNum: 1,
+              howLongWorkingRemotely: 1,
+              refferedBy: 1,
+              gender: 1,
+              race: 1,
+              veteranStatus: 1,
+              profilePicUrl: 1,
+              resumePath: 1,
+              dob: 1,
+              address: 1,
+              // pincode: 1,
+              desireIndustryType: 1,
+              jobType: 1
+            }
+          }
+        ])
+        // console.log('yes-yes')
+        return matchingPercentageCalculation(getCandidateList, getJobData);
+      }else{
+        getCandidateList = await User.aggregate([
+          {
+            $match: { $and: [
+              { eligibleToWorkInUS: getJobData.eligibleToWorkInUS },
+              {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+              { jobType: getJobData.jobType },
+              { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
+              { isDeleteAccount: false }
+            ]}
+          },
+          {
+            $project: {
+              causes: 1,
+              availableWorkDays: 1,
+              desireKeySkills: 1,
+              location: 1,
+              otherLanguages: 1,
+              fullName: 1,
+              email: 1,
+              eligibleToWorkInUS: 1,
+              soonestJoinDate: 1,
+              fluentInEnglish: 1,
+              highestEducationLevel: 1,
+              jobChangeReason: 1,
+              availableWorkHours: 1,
+              timeZone: 1,
+              hourlyWage: 1,
+              salary: 1,
+              projectDescription: 1,
+              sampleProjectLink: 1,
+              relavantCertificates: 1,
+              isWorkRemotely: 1,
+              descProfessionalGoal: 1,
+              totalExperience: 1,
+              linkedInURL: 1,
+              personalURL: 1,
+              mobileNum: 1,
+              howLongWorkingRemotely: 1,
+              refferedBy: 1,
+              gender: 1,
+              race: 1,
+              veteranStatus: 1,
+              profilePicUrl: 1,
+              resumePath: 1,
+              dob: 1,
+              address: 1,
+              // pincode: 1,
+              desireIndustryType: 1,
+              jobType: 1
+            }
+          }        
+        ])
+        // console.log('yes-no')
+        return matchingPercentageCalculation(getCandidateList, getJobData);
+      }
+    }else{
+      if(getJobData.fluentInEnglish){
+        getCandidateList = await User.aggregate([
+          {
+            $match: { $and: [
+              { fluentInEnglish: getJobData.fluentInEnglish },
+              {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+              { jobType: getJobData.jobType },
+              { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
+              { isDeleteAccount: false }
+            ]}
+          },
+          {
+            $project: {
+              causes: 1,
+              availableWorkDays: 1,
+              desireKeySkills: 1,
+              location: 1,
+              otherLanguages: 1,
+              fullName: 1,
+              email: 1,
+              eligibleToWorkInUS: 1,
+              soonestJoinDate: 1,
+              fluentInEnglish: 1,
+              highestEducationLevel: 1,
+              jobChangeReason: 1,
+              availableWorkHours: 1,
+              timeZone: 1,
+              hourlyWage: 1,
+              salary: 1,
+              projectDescription: 1,
+              sampleProjectLink: 1,
+              relavantCertificates: 1,
+              isWorkRemotely: 1,
+              descProfessionalGoal: 1,
+              totalExperience: 1,
+              linkedInURL: 1,
+              personalURL: 1,
+              mobileNum: 1,
+              howLongWorkingRemotely: 1,
+              refferedBy: 1,
+              gender: 1,
+              race: 1,
+              veteranStatus: 1,
+              profilePicUrl: 1,
+              resumePath: 1,
+              dob: 1,
+              address: 1,
+              // pincode: 1,
+              desireIndustryType: 1,
+              jobType: 1
+            }
+          }
+        ])
+        // console.log('no-yes')
+        return matchingPercentageCalculation(getCandidateList, getJobData);
 
-// const sendMailForFindCandidate = async(req, res, empId, jobId)=>{
-//   let empDetails = await Employer.findById(empId)
-//   // console.log(empDetails.email)
+      }else{
+        getCandidateList = await User.aggregate([
+          {
+            $match: { $and: [
+              {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+              { jobType: getJobData.jobType },
+              { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
+              { isDeleteAccount: false }
+            ]}
+          },
+          {
+            $project: {
+              causes: 1,
+              availableWorkDays: 1,
+              desireKeySkills: 1,
+              location: 1,
+              otherLanguages: 1,
+              fullName: 1,
+              email: 1,
+              eligibleToWorkInUS: 1,
+              soonestJoinDate: 1,
+              fluentInEnglish: 1,
+              highestEducationLevel: 1,
+              jobChangeReason: 1,
+              availableWorkHours: 1,
+              timeZone: 1,
+              hourlyWage: 1,
+              salary: 1,
+              projectDescription: 1,
+              sampleProjectLink: 1,
+              relavantCertificates: 1,
+              isWorkRemotely: 1,
+              descProfessionalGoal: 1,
+              totalExperience: 1,
+              linkedInURL: 1,
+              personalURL: 1,
+              mobileNum: 1,
+              howLongWorkingRemotely: 1,
+              refferedBy: 1,
+              gender: 1,
+              race: 1,
+              veteranStatus: 1,
+              profilePicUrl: 1,
+              resumePath: 1,
+              dob: 1,
+              address: 1,
+              // pincode: 1,
+              desireIndustryType: 1,
+              jobType: 1
+            }
+          }
+        ])
+        // console.log('no-no')
+        return matchingPercentageCalculation(getCandidateList, getJobData);
+      }
+    }
 
-//   var transporter = nodemailer.createTransport({
-//       // host: 'mail.lcn.com',
-//       host: 'smtp.gmail.com',
-//       port: 587,
-//       secure: false,
-//       // service: 'gmail',
-//       auth: {
-//           user: 'notasom1@gmail.com',
-//           pass: 'notagoodpassword1'
-//       }
-//   });
+  } catch(err) {
+      console.log(err);
+  }
+}
 
-//   var mailOptions = {
-//     from: '"support@remotereq.com" <notasom1@gmail.com>',
-//     to: empDetails.email,
-//     subject: 'RemoteReq: Find Matched Candidates',
-//     html: '<div style="font-family: \'Open Sans\', sans-serif; padding: 15px;"><p>Hey '+empDetails.fullName+',</p><p> Plese start interviewing our remote talent—immediately.</p><p>Be well,</p><p style="color:#1f3961";><b>RemoteReq</b> | Remote work with purpose.</p><h5 style="font-weight:normal">Visit us online, or follow us on social media.</br> <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5><ul style="list-style: none;padding-left: 0;"><li style="float: left;margin-right: 3px;"><a href="https://www.facebook.com/RemoteReq-1833060860134583" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/facebook-512.png" style="width: 100%;"/> </a></li><li style="float: left;margin-right: 3px;"><a href="https://www.linkedin.com/company/remotereq" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/linkedin-512.png"  style="width: 100%;"/></a></li><li style="float: left;margin-right: 3px;"><a href="" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/twitter-512.png" style="width: 100%;"/></a></li></ul></div>',
-    
-//   };
+const matchingPercentageCalculation = async(getCandidateList, getJobData)=>{
+  let getPointsCandidateList = '';
 
-//   transporter.sendMail(mailOptions, async function(error, info){
-//     if (error) {
-//       console.log("error: Unable to send email.", error);
-//     } else {
-//       console.log('mail send for matches candidate list')
-//       await updateCandidateMatchStatus(req, res, jobId)
-//     }
-//   });
-// }
-
-// const updateCandidateMatchStatus = async(req, res, jobId)=>{
+  if(getJobData.jobType == 'Part Time'){
+    getPointsCandidateList = await getPointsForHalfTimers(getCandidateList, getJobData);
+  }else{
+    getPointsCandidateList = await getPointsForFullTimers(getCandidateList, getJobData);
+  }
   
-//   try{
-//     let updateData = await Job.findByIdAndUpdate(jobId, { $set: {matchesCandidateFlag: true}});
+  getPointsCandidateList.sort((a, b) => b.matchingPercentage - a.matchingPercentage);
+  let filteredList = getPointsCandidateList.filter(data => data.matchingPercentage >= getJobData.percentageMatch).slice(0, getJobData.numberOfCandidate)
+  
+  if(filteredList.length>0){
+    await savedMatchedCandidateList(filteredList)
+    await mailForAfterCandidateMatched(getJobData, getJobData.addBy, filteredList.length);
+  }else{
+    console.log('Candidates not matched right now of JobId: '+getJobData._id)
+  }
+  
+  return filteredList;
+}
+
+const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
+  let toalPoints = 23;
+  for(var i=0; i<getCandidateList.length; i++){
+    let givePoints = 3; // get auto points for jobChangeReason, salary, descProfessionalGoal
+    //check education matching
+    if(getJobData.requiredEducationLevel <= getCandidateList[i].highestEducationLevel){
+      givePoints += 1;
+    }
+    //check working day matching
+    if(getCandidateList[i].availableWorkDays.some((val) => getJobData.workDays.indexOf(val) !== -1)){
+      givePoints += 1;
+    }
+    //check working hours matching
+    var candidateWT = getCandidateList[i].availableWorkHours.split('-');
+    var employerWT = getJobData.workHours.split('-');
+    if( (parseInt(candidateWT[0])>=parseInt(employerWT[0]) && parseInt(candidateWT[0])<=parseInt(employerWT[1])) || (parseInt(candidateWT[1]) >= parseInt(employerWT[0]) && parseInt(candidateWT[1]) <= parseInt(employerWT[1]))){
+      givePoints += 1;
+    }
+    //check time zone matching
+    if(getJobData.timeZone == getCandidateList[i].timeZone){
+      givePoints += 1;
+    }
+    //check hourly pay match
+    if(getCandidateList[i].hourlyWage <= getJobData.hourlyWage){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].projectDescription != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].sampleProjectLink != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].relavantCertificates != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].isWorkRemotely){
+      givePoints += 1;
+    }
+    //check experience
+    if(getCandidateList[i].totalExperience>=getJobData.minExperience){
+      givePoints += 4;
+    }
+    //check atleast one key skill match or not
+    if(getCandidateList[i].desireKeySkills.some((val) => getJobData.keySkills.indexOf(val) !== -1)){
+      givePoints += 4;
+    }
+    //check location
+    // if(getCandidateList[i].location.indexOf(getJobData.location) != -1){
+    //   givePoints += 4;
+    // }
+    if(getCandidateList[i].location == getJobData.location){
+      givePoints += 4;
+    }
+    // getCandidateList[i].givePoints = givePoints
+    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100);
+    getCandidateList[i].jobId = getJobData._id;
+    getCandidateList[i].candidateId = getCandidateList[i]._id;
+    delete getCandidateList[i]._id
+  }
+  // console.log('complete')
+  return getCandidateList;
+}
+
+const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
+  let toalPoints = 23;
+  for(var i=0; i<getCandidateList.length; i++){
+    let givePoints = 6; // get auto points for jobChangeReason, availableWorkDays, availableWorkHours, timeZone, hourlyWage, descProfessionalGoal
+    //check education matching
+    if(getJobData.requiredEducationLevel <= getCandidateList[i].highestEducationLevel){
+      givePoints += 1;
+    }
     
-//     console.log('matchesCandidateFlag field update for jobId: '+jobId)
-//   } catch(err) {
-//       console.log(err);
-//       // res.status(500).json(err);
-//   }
-// }
+    //check annual pay match
+    if(getCandidateList[i].salary <= getJobData.salary){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].projectDescription != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].sampleProjectLink != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].relavantCertificates != ''){
+      givePoints += 1;
+    }
+    if(getCandidateList[i].isWorkRemotely){
+      givePoints += 1;
+    }
+    //check experience
+    if(getCandidateList[i].totalExperience>=getJobData.minExperience){
+      givePoints += 4;
+    }
+    //check atleast one key skill match or not
+    if(getCandidateList[i].desireKeySkills.some((val) => getJobData.keySkills.indexOf(val) !== -1)){
+      givePoints += 4;
+    }
+    //check location
+    // if(getCandidateList[i].location.indexOf(getJobData.location) != -1){
+    //   givePoints += 4;
+    // }
+    if(getCandidateList[i].location == getJobData.location){
+      givePoints += 4;
+    }
+    // getCandidateList[i].givePoints = givePoints
+    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100);
+    getCandidateList[i].jobId = getJobData._id;
+    getCandidateList[i].candidateId = getCandidateList[i]._id;
+    delete getCandidateList[i]._id
+  }
+  // console.log('complete')
+  return getCandidateList;
+}
+
+const mailForAfterCandidateMatched = async(getJobData, empId, matchedCount)=>{
+  try{
+    // let expiredDt = new Date(+new Date() + 21*24*60*60*1000);
+    let expiredDt = new Date(+new Date() + 0.5*60*60*1000);
+    let dateTime1 = moment(expiredDt).format('YYYY-MM-DD');
+    let updateData = await Job.findByIdAndUpdate(getJobData._id, { $set: { 
+      matchesCandidateFlag: true, 
+      matchesCandidateCount: matchedCount,
+      expireDate: expiredDt,
+      // seventhDayAfterExpireDate: new Date(+new Date() + 28*24*60*60*1000)
+      seventhDayAfterExpireDate: new Date(+new Date() + 1*60*60*1000)
+    }});
+    // console.log(updateData);
+    let empDetails = await Employer.findById(empId)
+    let companyName = empDetails.companyName;
+    let jobTitle = getJobData.title
+
+    var transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: 'notasom1@gmail.com',
+            pass: 'notagoodpassword1'
+        }
+    });
+
+    var mailOptions = {
+      from: '"support@remotereq.com" <notasom1@gmail.com>',
+      to: empDetails.email,
+      subject: 'Matched Candidate Notification - RemoteReq',
+      // html: '<div style="font-family: \'Open Sans\', sans-serif; padding: 15px;"><p>Hey <b>'+companyName+'</b>,</p><p>This email is to confirm a Candidated Matched for the position of <b>'+jobTitle+'</b> to <a target="_blank" href="www.remotereq.com">RemoteReq.com</a></p><p><b>What happens next?</b><br>Go for first payment & start recruitment.</p><p><a target="_blank" href="'+process.env.FRONTEND_BASE_URL+'employer/signin">Click here</a> to visit your account.</p><p>Be well,</p><p><img src="https://remotereq.s3.us-east-2.amazonaws.com/remotereqlogo.JPG"></p><p style="font-size:11px; margin-top: -15px;">Work from Anywhere. Change the World.</p><h5 style="font-weight:normal">e: <a href="javascript:void(0)" >remotereq@gmail.com</a><br> w: <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5><ul style="list-style: none;padding-left: 0;"><li style="float: left;margin-right: 3px;"><a href="https://www.facebook.com/RemoteReq-1833060860134583" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/facebook-512.png" style="width: 100%;"/> </a></li><li style="float: left;margin-right: 3px;"><a href="https://www.linkedin.com/company/remotereq" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/linkedin-512.png"  style="width: 100%;"/></a></li><li style="float: left;margin-right: 3px;"><a href="" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/twitter-512.png" style="width: 100%;"/></a></li></ul></div>',
+      html: '<div style="font-family: \'Open Sans\', sans-serif; padding: 15px;"><p>Hey <b>'+companyName+'</b>,</p><p>Congratulations! You have <b>'+matchedCount+'</b> of matches for your job post <b>'+jobTitle+'</b> on <a target="_blank" href="www.remotereq.com">RemoteReq.com</a></p><p><b>What happens next?</b><br>You have 21 days to review your matches, interview candidates, and make an offer for your open position. The countdown starts now. Your job req will expire on '+dateTime1+'</p><p><a target="_blank" href="'+process.env.FRONTEND_BASE_URL+'employer/signin">Click here</a> to visit your account or to post another job req.</p><p>Be well,</p><p><img src="https://remotereq.s3.us-east-2.amazonaws.com/remotereqlogo.JPG"></p><p style="font-size:11px; margin-top: -15px;">Work from Anywhere. Change the World.</p><h5 style="font-weight:normal">e: <a href="javascript:void(0)" >remotereq@gmail.com</a><br> w: <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5><ul style="list-style: none;padding-left: 0;"><li style="float: left;margin-right: 3px;"><a href="https://www.facebook.com/RemoteReq-1833060860134583" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/facebook-512.png" style="width: 100%;"/> </a></li><li style="float: left;margin-right: 3px;"><a href="https://www.linkedin.com/company/remotereq" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/linkedin-512.png"  style="width: 100%;"/></a></li><li style="float: left;margin-right: 3px;"><a href="" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/twitter-512.png" style="width: 100%;"/></a></li></ul>',
+      
+    };
+
+    transporter.sendMail(mailOptions, async function(error, info){
+    if (error) {
+      console.log("error: Unable to send email.", error);
+    } else {
+      console.log('mail send for matches candidate list of jobId: '+getJobData._id);
+    }
+  });
+  } catch(err) {
+      console.log(err);
+  }
+}
+
+const savedMatchedCandidateList = async(matchedCandidateList)=>{
+  // console.log('matchedCandidateList',matchedCandidateList)
+  MatchedJobSeeker.insertMany(matchedCandidateList).then(function(){ 
+      console.log("Matched Job Seekers Data inserted by cron")  // Success 
+  }).catch(function(error){ 
+      console.log('Error in bulk insert matched job seekers',error)      // Failure 
+  }); 
+}
 
 //reminder 48 hrs left API
 const mailForTwoDaysLeftTest = async(req, res)=>{
@@ -141,17 +458,13 @@ const mailForTwoDaysLeftTest = async(req, res)=>{
   try{
     let getJobList = await Job.aggregate([
       {
-        // expireDate: { "$gte": new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() ), "$lt": new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1) }
         $match: { expireStatus:  false}       
       },
-      // {
-      //   $addFields: { currentDate: currentDate }
-      // },
       {
         $project: {
           addBy: 1,
           title: 1,
-          "subtractVal": { "$subtract": ["$expireDate", currentDate] },
+          // "subtractVal": { "$subtract": ["$expireDate", currentDate] },
           "difference": {
             "$divide": [
               { "$subtract": ["$expireDate", currentDate] },
@@ -162,12 +475,15 @@ const mailForTwoDaysLeftTest = async(req, res)=>{
       }
     ])
     
-    getJobList = getJobList.filter(data => data.difference <= 0.5 &&  data.difference >= 0.35);
+   
+    // getJobList = getJobList.filter(data => data.difference <= 0.5 &&  data.difference >= 0.35);
+    getJobList = getJobList.filter(data => data.difference <= 0.17 &&  data.difference >= 0.085);
+    // res.send(getJobList)
+    
     for(var i=0; i<getJobList.length; i++){
       await sendMailForTwoDaysReminder(getJobList[i].addBy, getJobList[i].title)
       // console.log('in')
     }
-    console.log('okkk')
     res.send('cron of reminder')
     
   } catch(err) {
@@ -336,5 +652,6 @@ module.exports = {
   checkHiredOrNotTest,
   checkExpiredJobTest,
   isHiredTest,
-  autoUpdateHiringStatusTest
+  autoUpdateHiringStatusTest,
+  mailToEmployerForCandidateMatchTest
 };

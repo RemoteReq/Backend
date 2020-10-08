@@ -3,6 +3,7 @@ var nodemailer = require('nodemailer');
 const Employer = require('../models/Employer');
 const Job = require('../models/Job');
 const User = require('../models/User');
+const MatchedJobSeeker = require('../models/MatchedJobSeeker_master')
 const gateway = require('../../gateway/connection')
 const bcrypt = require('bcrypt');
 const authorisation = require('../../server/authentication')
@@ -49,15 +50,6 @@ const addEmployer = async(req, res) => {
         employer.save()
         .then(doc => {
           // console.log(doc);
-          // let filterDoc = {
-          //   username: doc.username,
-          //   email: doc.email,
-          //   companyName: doc.companyName,
-          //   logo: doc.logo,
-          //   location: doc.location
-          // }
-          // res.status(200).json(filterDoc);
-          // res.status(200).json('Signed up successfully done');
           sendMail(req, res, doc)
         })
         .catch(error => {
@@ -93,7 +85,7 @@ const sendMail = async(req, res, doc)=>{
           pass: 'notagoodpassword1'
       }
   });
-// console.log(process.env.FRONTEND_BASE_URL)
+
   var mailOptions = {
     from: '"support@remotereq.com" <notasom1@gmail.com>',
     to: req.body.email,
@@ -107,8 +99,6 @@ const sendMail = async(req, res, doc)=>{
       console.log("error: Unable to send email.", error);
       res.status(500).json("Server Error. Please try again.");
     } else {
-      // console.log('Email sent: ' + info.response);
-      // res.status(200).json("OTP is sent to your email id. Please verify.");
       res.status(200).json("Email verification link is sent to your mail id. Please check.");
     }
   });
@@ -210,313 +200,285 @@ const getJoblistByEmployer = async(req, res)=>{
   }
 }
 
-// const matchesCandidateByEachJob = async(req, res)=>{
-//   try{
-    
-//     let getJobData = await Job.findById(req.params.jobId).select("-__v -addBy");
-
-//     // console.log(getJobData)
-
-//     let getCandidateList = await User.aggregate([
-//       {
-//         $match: {$and: [
-//           { industryType: getJobData.industryType }, 
-//           { desireCTC : { $lte: getJobData.ctc } },
-//           { $and: [ { totalExperience: { $gte: getJobData.minExperience } }, { totalExperience : { $lte: getJobData.maxExperience } } ] },
-//           {desireLocation: {'$regex':"^"+getJobData.location, '$options': 'i'}},
-//           {desireKeySkills : { $in: getJobData.keySkills}},
-//         ]}
-//       },
-//       {
-//         $addFields: { requireKeySkills: getJobData.keySkills }
-//       },
-//       {
-//         $addFields: { commonToBoth: { $setIntersection: [ "$requireKeySkills", "$desireKeySkills" ] } }
-//       },
-//       {
-//         $project: {
-//           keySkills:1,
-//           education: 1,
-//           fullName: 1,
-//           email: 1,
-//           fluentInEnglish: 1,
-//           eligibleToWorkInUS: 1,
-//           linkedInURL: 1,
-//           githubURL: 1,
-//           personalURL: 1,
-//           profilePicUrl: 1,
-//           mobileNum: 1,
-//           gender: 1,
-//           dob: 1,
-//           address: 1,
-//           pincode: 1,
-//           aboutMe: 1,
-//           refferedBy: 1,
-//           industryType: 1,
-//           jobRole: 1,
-//           currentCTC: 1,
-//           totalExperience: 1,
-//           desireIndustryType: 1,
-//           desireJobRole: 1,
-//           desireCTC: 1,
-//           desireLocation:1,
-//           desireKeySkills:1,
-//           MatchPercentage: {$multiply:[{$divide:[{$size: "$commonToBoth" },{$size: "$requireKeySkills" } ]},100]} ,
-//         }
-//       },
-//       { $sort : { MatchPercentage : -1 } },
-//       { $limit : getJobData.numberOfCandidate }
-//     ])
-    
-//     res.status(200).json(getCandidateList);
-//   } catch(err) {
-//       console.log(err);
-//   }
-// }
-
 const matchesCandidateByEachJob = async(req, res)=>{
   let getJobData = await Job.findById(req.params.jobId).select("-__v -addBy");
   // console.log(getJobData)
-  let getCandidateList= '';
-  if(getJobData.eligibleToWorkInUS){
-    if(getJobData.fluentInEnglish){
-      getCandidateList = await User.aggregate([
-        {
-          $match: { $and: [
-            { eligibleToWorkInUS: getJobData.eligibleToWorkInUS },
-            { fluentInEnglish: getJobData.fluentInEnglish },
-            {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
-            { jobType: getJobData.jobType },
-            { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
-            { isDeleteAccount: false }
-          ]}
-        },
-        {
-          $project: {
-            causes: 1,
-            availableWorkDays: 1,
-            desireKeySkills: 1,
-            location: 1,
-            otherLanguages: 1,
-            fullName: 1,
-            email: 1,
-            eligibleToWorkInUS: 1,
-            soonestJoinDate: 1,
-            fluentInEnglish: 1,
-            highestEducationLevel: 1,
-            jobChangeReason: 1,
-            availableWorkHours: 1,
-            timeZone: 1,
-            hourlyWage: 1,
-            salary: 1,
-            projectDescription: 1,
-            sampleProjectLink: 1,
-            relavantCertificates: 1,
-            isWorkRemotely: 1,
-            descProfessionalGoal: 1,
-            totalExperience: 1,
-            linkedInURL: 1,
-            personalURL: 1,
-            mobileNum: 1,
-            howLongWorkingRemotely: 1,
-            refferedBy: 1,
-            gender: 1,
-            race: 1,
-            veteranStatus: 1,
-            profilePicUrl: 1,
-            resumePath: 1,
-            dob: 1,
-            address: 1,
-            // pincode: 1,
-            desireIndustryType: 1,
-            jobType: 1
-          }
-        }
-      ])
-      // console.log('yes-yes')
-      matchingPercentageCalculation(req, res, getCandidateList, getJobData);
-    }else{
-      getCandidateList = await User.aggregate([
-        {
-          $match: { $and: [
-            { eligibleToWorkInUS: getJobData.eligibleToWorkInUS },
-            {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
-            { jobType: getJobData.jobType },
-            { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
-            { isDeleteAccount: false }
-          ]}
-        },
-        {
-          $project: {
-            causes: 1,
-            availableWorkDays: 1,
-            desireKeySkills: 1,
-            location: 1,
-            otherLanguages: 1,
-            fullName: 1,
-            email: 1,
-            eligibleToWorkInUS: 1,
-            soonestJoinDate: 1,
-            fluentInEnglish: 1,
-            highestEducationLevel: 1,
-            jobChangeReason: 1,
-            availableWorkHours: 1,
-            timeZone: 1,
-            hourlyWage: 1,
-            salary: 1,
-            projectDescription: 1,
-            sampleProjectLink: 1,
-            relavantCertificates: 1,
-            isWorkRemotely: 1,
-            descProfessionalGoal: 1,
-            totalExperience: 1,
-            linkedInURL: 1,
-            personalURL: 1,
-            mobileNum: 1,
-            howLongWorkingRemotely: 1,
-            refferedBy: 1,
-            gender: 1,
-            race: 1,
-            veteranStatus: 1,
-            profilePicUrl: 1,
-            resumePath: 1,
-            dob: 1,
-            address: 1,
-            // pincode: 1,
-            desireIndustryType: 1,
-            jobType: 1
-          }
-        }
-      ])
-      // console.log('yes-no')
-      matchingPercentageCalculation(req, res, getCandidateList, getJobData);
-    }
+  let alreadyMatchedCandidatesList = await MatchedJobSeeker.find({ jobId : req.params.jobId }).select("-_id -__v ");
+  if(alreadyMatchedCandidatesList.length == getJobData.numberOfCandidate){
+    res.status(200).json(alreadyMatchedCandidatesList);
   }else{
-    if(getJobData.fluentInEnglish){
-      getCandidateList = await User.aggregate([
-        {
-          $match: { $and: [
-            { fluentInEnglish: getJobData.fluentInEnglish },
-            {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
-            { jobType: getJobData.jobType },
-            { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
-            { isDeleteAccount: false }
-          ]}
-        },
-        {
-          $project: {
-            causes: 1,
-            availableWorkDays: 1,
-            desireKeySkills: 1,
-            location: 1,
-            otherLanguages: 1,
-            fullName: 1,
-            email: 1,
-            eligibleToWorkInUS: 1,
-            soonestJoinDate: 1,
-            fluentInEnglish: 1,
-            highestEducationLevel: 1,
-            jobChangeReason: 1,
-            availableWorkHours: 1,
-            timeZone: 1,
-            hourlyWage: 1,
-            salary: 1,
-            projectDescription: 1,
-            sampleProjectLink: 1,
-            relavantCertificates: 1,
-            isWorkRemotely: 1,
-            descProfessionalGoal: 1,
-            totalExperience: 1,
-            linkedInURL: 1,
-            personalURL: 1,
-            mobileNum: 1,
-            howLongWorkingRemotely: 1,
-            refferedBy: 1,
-            gender: 1,
-            race: 1,
-            veteranStatus: 1,
-            profilePicUrl: 1,
-            resumePath: 1,
-            dob: 1,
-            address: 1,
-            // pincode: 1,
-            desireIndustryType: 1,
-            jobType: 1
+    let getCandidateList= '';
+    if(getJobData.eligibleToWorkInUS){
+      if(getJobData.fluentInEnglish){
+        getCandidateList = await User.aggregate([
+          {
+            $match: { $and: [
+              { eligibleToWorkInUS: getJobData.eligibleToWorkInUS },
+              { fluentInEnglish: getJobData.fluentInEnglish },
+              {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+              { jobType: getJobData.jobType },
+              { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
+              { isDeleteAccount: false }
+            ]}
+          },
+          {
+            $project: {
+              causes: 1,
+              availableWorkDays: 1,
+              desireKeySkills: 1,
+              location: 1,
+              otherLanguages: 1,
+              fullName: 1,
+              email: 1,
+              eligibleToWorkInUS: 1,
+              soonestJoinDate: 1,
+              fluentInEnglish: 1,
+              highestEducationLevel: 1,
+              jobChangeReason: 1,
+              availableWorkHours: 1,
+              timeZone: 1,
+              hourlyWage: 1,
+              salary: 1,
+              projectDescription: 1,
+              sampleProjectLink: 1,
+              relavantCertificates: 1,
+              isWorkRemotely: 1,
+              descProfessionalGoal: 1,
+              totalExperience: 1,
+              linkedInURL: 1,
+              personalURL: 1,
+              mobileNum: 1,
+              howLongWorkingRemotely: 1,
+              refferedBy: 1,
+              gender: 1,
+              race: 1,
+              veteranStatus: 1,
+              profilePicUrl: 1,
+              resumePath: 1,
+              dob: 1,
+              address: 1,
+              // pincode: 1,
+              desireIndustryType: 1,
+              jobType: 1
+            }
           }
-        }
-      ])
-      // console.log('no-yes')
-      matchingPercentageCalculation(req, res, getCandidateList, getJobData);
-
+        ])
+        // console.log('yes-yes')
+        matchingPercentageCalculation(req, res, getCandidateList, getJobData, alreadyMatchedCandidatesList);
+      }else{
+        getCandidateList = await User.aggregate([
+          {
+            $match: { $and: [
+              { eligibleToWorkInUS: getJobData.eligibleToWorkInUS },
+              {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+              { jobType: getJobData.jobType },
+              { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
+              { isDeleteAccount: false }
+            ]}
+          },
+          {
+            $project: {
+              causes: 1,
+              availableWorkDays: 1,
+              desireKeySkills: 1,
+              location: 1,
+              otherLanguages: 1,
+              fullName: 1,
+              email: 1,
+              eligibleToWorkInUS: 1,
+              soonestJoinDate: 1,
+              fluentInEnglish: 1,
+              highestEducationLevel: 1,
+              jobChangeReason: 1,
+              availableWorkHours: 1,
+              timeZone: 1,
+              hourlyWage: 1,
+              salary: 1,
+              projectDescription: 1,
+              sampleProjectLink: 1,
+              relavantCertificates: 1,
+              isWorkRemotely: 1,
+              descProfessionalGoal: 1,
+              totalExperience: 1,
+              linkedInURL: 1,
+              personalURL: 1,
+              mobileNum: 1,
+              howLongWorkingRemotely: 1,
+              refferedBy: 1,
+              gender: 1,
+              race: 1,
+              veteranStatus: 1,
+              profilePicUrl: 1,
+              resumePath: 1,
+              dob: 1,
+              address: 1,
+              // pincode: 1,
+              desireIndustryType: 1,
+              jobType: 1
+            }
+          }
+        ])
+        // console.log('yes-no')
+        matchingPercentageCalculation(req, res, getCandidateList, getJobData, alreadyMatchedCandidatesList);
+      }
     }else{
-      getCandidateList = await User.aggregate([
-        {
-          $match: { $and: [
-            {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
-            { jobType: getJobData.jobType },
-            { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
-            { isDeleteAccount: false }
-          ]}
-        },
-        {
-          $project: {
-            causes: 1,
-            availableWorkDays: 1,
-            desireKeySkills: 1,
-            location: 1,
-            otherLanguages: 1,
-            fullName: 1,
-            email: 1,
-            eligibleToWorkInUS: 1,
-            soonestJoinDate: 1,
-            fluentInEnglish: 1,
-            highestEducationLevel: 1,
-            jobChangeReason: 1,
-            availableWorkHours: 1,
-            timeZone: 1,
-            hourlyWage: 1,
-            salary: 1,
-            projectDescription: 1,
-            sampleProjectLink: 1,
-            relavantCertificates: 1,
-            isWorkRemotely: 1,
-            descProfessionalGoal: 1,
-            totalExperience: 1,
-            linkedInURL: 1,
-            personalURL: 1,
-            mobileNum: 1,
-            howLongWorkingRemotely: 1,
-            refferedBy: 1,
-            gender: 1,
-            race: 1,
-            veteranStatus: 1,
-            profilePicUrl: 1,
-            resumePath: 1,
-            dob: 1,
-            address: 1,
-            // pincode: 1,
-            desireIndustryType: 1,
-            jobType: 1
+      if(getJobData.fluentInEnglish){
+        getCandidateList = await User.aggregate([
+          {
+            $match: { $and: [
+              { fluentInEnglish: getJobData.fluentInEnglish },
+              {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+              { jobType: getJobData.jobType },
+              { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
+              { isDeleteAccount: false }
+            ]}
+          },
+          {
+            $project: {
+              causes: 1,
+              availableWorkDays: 1,
+              desireKeySkills: 1,
+              location: 1,
+              otherLanguages: 1,
+              fullName: 1,
+              email: 1,
+              eligibleToWorkInUS: 1,
+              soonestJoinDate: 1,
+              fluentInEnglish: 1,
+              highestEducationLevel: 1,
+              jobChangeReason: 1,
+              availableWorkHours: 1,
+              timeZone: 1,
+              hourlyWage: 1,
+              salary: 1,
+              projectDescription: 1,
+              sampleProjectLink: 1,
+              relavantCertificates: 1,
+              isWorkRemotely: 1,
+              descProfessionalGoal: 1,
+              totalExperience: 1,
+              linkedInURL: 1,
+              personalURL: 1,
+              mobileNum: 1,
+              howLongWorkingRemotely: 1,
+              refferedBy: 1,
+              gender: 1,
+              race: 1,
+              veteranStatus: 1,
+              profilePicUrl: 1,
+              resumePath: 1,
+              dob: 1,
+              address: 1,
+              // pincode: 1,
+              desireIndustryType: 1,
+              jobType: 1
+            }
           }
-        }
-      ])
-      // console.log('no-no')
-      matchingPercentageCalculation(req, res, getCandidateList, getJobData);
+        ])
+        // console.log('no-yes')
+        matchingPercentageCalculation(req, res, getCandidateList, getJobData, alreadyMatchedCandidatesList);
+
+      }else{
+        getCandidateList = await User.aggregate([
+          {
+            $match: { $and: [
+              {causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+              { jobType: getJobData.jobType },
+              { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
+              { isDeleteAccount: false }
+            ]}
+          },
+          {
+            $project: {
+              causes: 1,
+              availableWorkDays: 1,
+              desireKeySkills: 1,
+              location: 1,
+              otherLanguages: 1,
+              fullName: 1,
+              email: 1,
+              eligibleToWorkInUS: 1,
+              soonestJoinDate: 1,
+              fluentInEnglish: 1,
+              highestEducationLevel: 1,
+              jobChangeReason: 1,
+              availableWorkHours: 1,
+              timeZone: 1,
+              hourlyWage: 1,
+              salary: 1,
+              projectDescription: 1,
+              sampleProjectLink: 1,
+              relavantCertificates: 1,
+              isWorkRemotely: 1,
+              descProfessionalGoal: 1,
+              totalExperience: 1,
+              linkedInURL: 1,
+              personalURL: 1,
+              mobileNum: 1,
+              howLongWorkingRemotely: 1,
+              refferedBy: 1,
+              gender: 1,
+              race: 1,
+              veteranStatus: 1,
+              profilePicUrl: 1,
+              resumePath: 1,
+              dob: 1,
+              address: 1,
+              // pincode: 1,
+              desireIndustryType: 1,
+              jobType: 1
+            }
+          }
+        ])
+        // console.log('no-no')
+        matchingPercentageCalculation(req, res, getCandidateList, getJobData, alreadyMatchedCandidatesList);
+      }
     }
   }
 }
 
-const matchingPercentageCalculation = async(req, res, getCandidateList, getJobData)=>{
+const matchingPercentageCalculation = async(req, res, getCandidateList, getJobData, alreadyMatchedCandidatesList)=>{
   let getPointsCandidateList = '';
   if(getJobData.jobType == 'Part Time'){
     getPointsCandidateList = await getPointsForHalfTimers(getCandidateList, getJobData);
   }else{
     getPointsCandidateList = await getPointsForFullTimers(getCandidateList, getJobData);
   }
-  // console.log('ok')
+  
   getPointsCandidateList.sort((a, b) => b.matchingPercentage - a.matchingPercentage);
-  let filteredList = getPointsCandidateList.filter(data => data.matchingPercentage >= getJobData.percentageMatch).slice(0, getJobData.numberOfCandidate)
-  res.status(200).json(filteredList);
+  let filteredList = getPointsCandidateList.filter(data => data.matchingPercentage >= getJobData.percentageMatch);
+  
+  var updatedFilterList = filteredList.filter(function(o1){
+      // filter out (!) items in result2
+      return !alreadyMatchedCandidatesList.some(function(o2){
+          return o1.candidateId === o2.candidateId;          // assumes unique id
+      });
+  });
+
+  // var matchedIds = alreadyMatchedCandidatesList.map(d => d.candidateId);
+  // console.log('matchedIds',matchedIds)
+
+  // var updatedFilterList = [];
+  // updatedFilterList = filteredList.filter(function(element){
+  //   console.log(typeof element.candidateId)
+  //   console.log(element.candidateId)
+  //   console.log(matchedIds.indexOf(element.candidateId))
+  //   return matchedIds.indexOf(element.candidateId) == -1;
+  // });
+
+  // console.log(updatedFilterList)
+  updatedFilterList = updatedFilterList.slice(0, (getJobData.numberOfCandidate - alreadyMatchedCandidatesList.length))
+  await saveMatchedCandidates(req, res, updatedFilterList, getJobData._id)
+}
+
+const saveMatchedCandidates = async(req, res, updatedFilterList)=>{
+  MatchedJobSeeker.insertMany(updatedFilterList).then(async function(){ 
+      console.log("Latest Matched Job Seekers Data inserted ")  // Success 
+      let getMatchedList = await MatchedJobSeeker.find({ jobId : req.params.jobId }).select("-_id -__v ");
+      res.status(200).json(getMatchedList);
+  }).catch(function(error){ 
+      console.log('Error in bulk insert matched job seekers',error)      // Failure 
+  });
 }
 
 const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
@@ -573,7 +535,10 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
       givePoints += 4;
     }
     // getCandidateList[i].givePoints = givePoints
-    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
+    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100);
+    getCandidateList[i].jobId = getJobData._id;
+    getCandidateList[i].candidateId = (getCandidateList[i]._id).toString();
+    delete getCandidateList[i]._id
   }
   // console.log('complete')
   return getCandidateList;
@@ -620,7 +585,10 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
       givePoints += 4;
     }
     // getCandidateList[i].givePoints = givePoints
-    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
+    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100);
+    getCandidateList[i].jobId = getJobData._id;
+    getCandidateList[i].candidateId = (getCandidateList[i]._id).toString();
+    delete getCandidateList[i]._id
   }
   // console.log('complete')
   return getCandidateList;

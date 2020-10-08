@@ -11,7 +11,7 @@ const {
     autoUpdateHiringStatus
 } = require('../../../database/controllers/scheduleJob')
 const {
-    // mailToEmployerForCandidateMatch, 
+    mailToEmployerForCandidateMatchTest, 
     mailForTwoDaysLeftTest,
     checkHiredOrNotTest,
     checkExpiredJobTest,
@@ -19,30 +19,36 @@ const {
     autoUpdateHiringStatusTest
 } = require('../../../database/controllers/scheduleJobForTesting')
 
-router.post('/mailToEmployerForCandidateMatch', (req, res)=>{
-    mailToEmployerForCandidateMatch(req,res)
-})
+// router.post('/mailToEmployerForCandidateMatch', (req, res)=>{
+//     mailToEmployerForCandidateMatch(req,res)
+// })
 
-router.post('/mailForTwoDaysLeft', mailForTwoDaysLeft)
+// router.post('/mailForTwoDaysLeft', mailForTwoDaysLeft)
 
-router.post('/checkHiredOrNot', checkHiredOrNot)
+// router.post('/checkHiredOrNot', checkHiredOrNot)
 
-router.post('/checkExpiredJob', checkExpiredJob)
+// router.post('/checkExpiredJob', checkExpiredJob)
 
-router.post('/isHired', isHired)
+// router.post('/isHired', isHired)
 
-router.post('/employerNotRespForHiring', autoUpdateHiringStatus)
+// router.post('/employerNotRespForHiring', autoUpdateHiringStatus)
 
 
 
 //For Testing Purpose
-// router.post('/checkExpiredJob', checkExpiredJobTest)
+router.post('/checkExpiredJob', checkExpiredJobTest)
 
-// router.post('/checkHiredOrNot', checkHiredOrNotTest)
+router.post('/checkHiredOrNot', checkHiredOrNotTest)
 
-// router.post('/employerNotRespForHiring', autoUpdateHiringStatusTest)
+router.post('/isHired', isHiredTest)
 
-// router.post('/mailForTwoDaysLeft', mailForTwoDaysLeftTest)
+router.post('/employerNotRespForHiring', autoUpdateHiringStatusTest)
+
+router.post('/mailForTwoDaysLeft', mailForTwoDaysLeftTest)
+
+router.post('/mailToEmployerForCandidateMatch', (req, res)=>{
+    mailToEmployerForCandidateMatchTest(req,res)
+})
 
 module.exports = router
 

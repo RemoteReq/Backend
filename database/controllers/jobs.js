@@ -1,6 +1,9 @@
 const Jobs = require('../models/Job');
 const Employer = require('../models/Employer');
 const User = require('../models/User');
+const MatchedJobSeeker = require('../models/MatchedJobSeeker_master')
+
+const moment = require('moment');
 var nodemailer = require('nodemailer');
 const gateway = require('../../gateway/connection')
 // console.log('gateway', gateway)
@@ -117,6 +120,47 @@ const checkCandidateMatch = async(getJobData)=>{
             { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
             { isDeleteAccount: false }
           ]}
+        },
+        {
+          $project: {
+            causes: 1,
+            availableWorkDays: 1,
+            desireKeySkills: 1,
+            location: 1,
+            otherLanguages: 1,
+            fullName: 1,
+            email: 1,
+            eligibleToWorkInUS: 1,
+            soonestJoinDate: 1,
+            fluentInEnglish: 1,
+            highestEducationLevel: 1,
+            jobChangeReason: 1,
+            availableWorkHours: 1,
+            timeZone: 1,
+            hourlyWage: 1,
+            salary: 1,
+            projectDescription: 1,
+            sampleProjectLink: 1,
+            relavantCertificates: 1,
+            isWorkRemotely: 1,
+            descProfessionalGoal: 1,
+            totalExperience: 1,
+            linkedInURL: 1,
+            personalURL: 1,
+            mobileNum: 1,
+            howLongWorkingRemotely: 1,
+            refferedBy: 1,
+            gender: 1,
+            race: 1,
+            veteranStatus: 1,
+            profilePicUrl: 1,
+            resumePath: 1,
+            dob: 1,
+            address: 1,
+            // pincode: 1,
+            desireIndustryType: 1,
+            jobType: 1
+          }
         }
       ])
       // console.log('yes-yes')
@@ -131,7 +175,48 @@ const checkCandidateMatch = async(getJobData)=>{
             { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
             { isDeleteAccount: false }
           ]}
-        }        
+        },
+        {
+          $project: {
+            causes: 1,
+            availableWorkDays: 1,
+            desireKeySkills: 1,
+            location: 1,
+            otherLanguages: 1,
+            fullName: 1,
+            email: 1,
+            eligibleToWorkInUS: 1,
+            soonestJoinDate: 1,
+            fluentInEnglish: 1,
+            highestEducationLevel: 1,
+            jobChangeReason: 1,
+            availableWorkHours: 1,
+            timeZone: 1,
+            hourlyWage: 1,
+            salary: 1,
+            projectDescription: 1,
+            sampleProjectLink: 1,
+            relavantCertificates: 1,
+            isWorkRemotely: 1,
+            descProfessionalGoal: 1,
+            totalExperience: 1,
+            linkedInURL: 1,
+            personalURL: 1,
+            mobileNum: 1,
+            howLongWorkingRemotely: 1,
+            refferedBy: 1,
+            gender: 1,
+            race: 1,
+            veteranStatus: 1,
+            profilePicUrl: 1,
+            resumePath: 1,
+            dob: 1,
+            address: 1,
+            // pincode: 1,
+            desireIndustryType: 1,
+            jobType: 1
+          }
+        }      
       ])
       // console.log('yes-no')
       matchingPercentageCalculation(getCandidateList, getJobData);
@@ -147,6 +232,47 @@ const checkCandidateMatch = async(getJobData)=>{
             { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
             { isDeleteAccount: false }
           ]}
+        },
+        {
+          $project: {
+            causes: 1,
+            availableWorkDays: 1,
+            desireKeySkills: 1,
+            location: 1,
+            otherLanguages: 1,
+            fullName: 1,
+            email: 1,
+            eligibleToWorkInUS: 1,
+            soonestJoinDate: 1,
+            fluentInEnglish: 1,
+            highestEducationLevel: 1,
+            jobChangeReason: 1,
+            availableWorkHours: 1,
+            timeZone: 1,
+            hourlyWage: 1,
+            salary: 1,
+            projectDescription: 1,
+            sampleProjectLink: 1,
+            relavantCertificates: 1,
+            isWorkRemotely: 1,
+            descProfessionalGoal: 1,
+            totalExperience: 1,
+            linkedInURL: 1,
+            personalURL: 1,
+            mobileNum: 1,
+            howLongWorkingRemotely: 1,
+            refferedBy: 1,
+            gender: 1,
+            race: 1,
+            veteranStatus: 1,
+            profilePicUrl: 1,
+            resumePath: 1,
+            dob: 1,
+            address: 1,
+            // pincode: 1,
+            desireIndustryType: 1,
+            jobType: 1
+          }
         }
       ])
       // console.log('no-yes')
@@ -161,6 +287,47 @@ const checkCandidateMatch = async(getJobData)=>{
             { soonestJoinDate: { $lte: getJobData.soonestJoinDate } },
             { isDeleteAccount: false }
           ]}
+        },
+        {
+          $project: {
+            causes: 1,
+            availableWorkDays: 1,
+            desireKeySkills: 1,
+            location: 1,
+            otherLanguages: 1,
+            fullName: 1,
+            email: 1,
+            eligibleToWorkInUS: 1,
+            soonestJoinDate: 1,
+            fluentInEnglish: 1,
+            highestEducationLevel: 1,
+            jobChangeReason: 1,
+            availableWorkHours: 1,
+            timeZone: 1,
+            hourlyWage: 1,
+            salary: 1,
+            projectDescription: 1,
+            sampleProjectLink: 1,
+            relavantCertificates: 1,
+            isWorkRemotely: 1,
+            descProfessionalGoal: 1,
+            totalExperience: 1,
+            linkedInURL: 1,
+            personalURL: 1,
+            mobileNum: 1,
+            howLongWorkingRemotely: 1,
+            refferedBy: 1,
+            gender: 1,
+            race: 1,
+            veteranStatus: 1,
+            profilePicUrl: 1,
+            resumePath: 1,
+            dob: 1,
+            address: 1,
+            // pincode: 1,
+            desireIndustryType: 1,
+            jobType: 1
+          }
         }
       ])
       // console.log('no-no')
@@ -181,8 +348,9 @@ const matchingPercentageCalculation = async(getCandidateList, getJobData)=>{
   getPointsCandidateList.sort((a, b) => b.matchingPercentage - a.matchingPercentage);
   let filteredList = getPointsCandidateList.filter(data => data.matchingPercentage >= getJobData.percentageMatch).slice(0, getJobData.numberOfCandidate)
   // res.status(200).json(filteredList);
-  console.log('expiteDate', new Date(+new Date() + 21*24*60*60*1000))
+
   if(filteredList.length>0){
+    await savedMatchedCandidateList(filteredList)
     await mailForAfterCandidateMatched(getJobData, getJobData.addBy, filteredList.length);
   }else{
     console.log('Candidates not matched right now')
@@ -243,7 +411,10 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
       givePoints += 4;
     }
     // getCandidateList[i].givePoints = givePoints
-    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
+    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100);
+    getCandidateList[i].jobId = getJobData._id;
+    getCandidateList[i].candidateId = getCandidateList[i]._id;
+    delete getCandidateList[i]._id
   }
   // console.log('complete')
   return getCandidateList;
@@ -290,7 +461,10 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
       givePoints += 4;
     }
     // getCandidateList[i].givePoints = givePoints
-    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
+    getCandidateList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100);
+    getCandidateList[i].jobId = getJobData._id;
+    getCandidateList[i].candidateId = getCandidateList[i]._id;
+    delete getCandidateList[i]._id
   }
   // console.log('complete')
   return getCandidateList;
@@ -298,13 +472,15 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
 
 const mailForAfterCandidateMatched = async(getJobData, empId, matchedCount)=>{
   try{
+    // let expiredDt = new Date(+new Date() + 21*24*60*60*1000);
+    let expiredDt = new Date(+new Date() + 0.5*60*60*1000);
+    let dateTime1 = moment(expiredDt).format('YYYY-MM-DD');
     let updateData = await Jobs.findByIdAndUpdate(getJobData._id, { $set: { 
       matchesCandidateFlag: true, 
       matchesCandidateCount: matchedCount,
-      expireDate: new Date(+new Date() + 21*24*60*60*1000),
-      seventhDayAfterExpireDate: new Date(+new Date() + 28*24*60*60*1000)
-      // expireDate: new Date(+new Date() + 1*60*60*1000),
-      // seventhDayAfterExpireDate: new Date(+new Date() + 2*60*60*1000)
+      expireDate: expiredDt,
+      // seventhDayAfterExpireDate: new Date(+new Date() + 28*24*60*60*1000)
+      seventhDayAfterExpireDate: new Date(+new Date() + 1*60*60*1000)
     }});
     // console.log(updateData);
     let empDetails = await Employer.findById(empId)
@@ -325,21 +501,29 @@ const mailForAfterCandidateMatched = async(getJobData, empId, matchedCount)=>{
       from: '"support@remotereq.com" <notasom1@gmail.com>',
       to: empDetails.email,
       subject: 'Matched Candidate Notification - RemoteReq',
-      // html: '<div style="font-family: \'Open Sans\', sans-serif; padding: 15px;"><p>Hey <b>'+companyName+'</b>,</p><p>This email is to confirm a Candidated Matched for the position of <b>'+jobTitle+'</b> to <a target="_blank" href="www.remotereq.com">RemoteReq.com</a></p><p><b>What happens next?</b><br>Go for first payment & start recruitment.</p><p><a target="_blank" href="'+process.env.FRONTEND_BASE_URL+'employer/signin">Click here</a> to visit your account.</p><p>Be well,</p><p><img src="https://remotereq.s3.us-east-2.amazonaws.com/remotereqlogo.JPG"></p><p style="font-size:11px; margin-top: -15px;">Work from Anywhere. Change the World.</p><h5 style="font-weight:normal">e: <a href="javascript:void(0)" >remotereq@gmail.com</a><br> w: <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5><ul style="list-style: none;padding-left: 0;"><li style="float: left;margin-right: 3px;"><a href="https://www.facebook.com/RemoteReq-1833060860134583" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/facebook-512.png" style="width: 100%;"/> </a></li><li style="float: left;margin-right: 3px;"><a href="https://www.linkedin.com/company/remotereq" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/linkedin-512.png"  style="width: 100%;"/></a></li><li style="float: left;margin-right: 3px;"><a href="" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/twitter-512.png" style="width: 100%;"/></a></li></ul></div>',
-      html: '<div style="font-family: \'Open Sans\', sans-serif; padding: 15px;"><p>Hey <b>'+companyName+'</b>,</p><p>Congratulations! You have <b>'+matchedCount+'</b> of matches for your job post <b>'+jobTitle+'</b> on <a target="_blank" href="www.remotereq.com">RemoteReq.com</a></p><p><b>What happens next?</b><br>You have 21 days to review your matches, interview candidates, and make an offer for your open position. The countdown starts now.</p><p><a target="_blank" href="'+process.env.FRONTEND_BASE_URL+'employer/signin">Click here</a> to visit your account or to post another job req.</p><p>Be well,</p><p><img src="https://remotereq.s3.us-east-2.amazonaws.com/remotereqlogo.JPG"></p><p style="font-size:11px; margin-top: -15px;">Work from Anywhere. Change the World.</p><h5 style="font-weight:normal">e: <a href="javascript:void(0)" >remotereq@gmail.com</a><br> w: <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5><ul style="list-style: none;padding-left: 0;"><li style="float: left;margin-right: 3px;"><a href="https://www.facebook.com/RemoteReq-1833060860134583" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/facebook-512.png" style="width: 100%;"/> </a></li><li style="float: left;margin-right: 3px;"><a href="https://www.linkedin.com/company/remotereq" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/linkedin-512.png"  style="width: 100%;"/></a></li><li style="float: left;margin-right: 3px;"><a href="" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/twitter-512.png" style="width: 100%;"/></a></li></ul>',
+      html: '<div style="font-family: \'Open Sans\', sans-serif; padding: 15px;"><p>Hey <b>'+companyName+'</b>,</p><p>Congratulations! You have <b>'+matchedCount+'</b> of matches for your job post <b>'+jobTitle+'</b> on <a target="_blank" href="www.remotereq.com">RemoteReq.com</a></p><p><b>What happens next?</b><br>You have 21 days to review your matches, interview candidates, and make an offer for your open position. The countdown starts now. Your job req will expire on '+dateTime1+'</p><p><a target="_blank" href="'+process.env.FRONTEND_BASE_URL+'employer/signin">Click here</a> to visit your account or to post another job req.</p><p>Be well,</p><p><img src="https://remotereq.s3.us-east-2.amazonaws.com/remotereqlogo.JPG"></p><p style="font-size:11px; margin-top: -15px;">Work from Anywhere. Change the World.</p><h5 style="font-weight:normal">e: <a href="javascript:void(0)" >remotereq@gmail.com</a><br> w: <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5><ul style="list-style: none;padding-left: 0;"><li style="float: left;margin-right: 3px;"><a href="https://www.facebook.com/RemoteReq-1833060860134583" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/facebook-512.png" style="width: 100%;"/> </a></li><li style="float: left;margin-right: 3px;"><a href="https://www.linkedin.com/company/remotereq" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/linkedin-512.png"  style="width: 100%;"/></a></li><li style="float: left;margin-right: 3px;"><a href="" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/twitter-512.png" style="width: 100%;"/></a></li></ul>',
       
     };
 
     transporter.sendMail(mailOptions, async function(error, info){
-    if (error) {
-      console.log("error: Unable to send email.", error);
-    } else {
-      console.log('mail send for matches candidate list');
-    }
-  });
+      if (error) {
+        console.log("error: Unable to send email.", error);
+      } else {
+        console.log('mail send for matches candidate list');
+      }
+    });
   } catch(err) {
       console.log(err);
   }
+}
+
+const savedMatchedCandidateList = async(matchedCandidateList)=>{
+  // console.log('matchedCandidateList',matchedCandidateList)
+  MatchedJobSeeker.insertMany(matchedCandidateList).then(function(){ 
+      console.log("Matched Job Seekers Data inserted")  // Success 
+  }).catch(function(error){ 
+      console.log('Error in bulk insert matched job seekers',error)      // Failure 
+  }); 
 }
 
 const jobsList = async(req, res)=>{
