@@ -42,7 +42,6 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
           {
             $project: {
               causes: 1,
-              availableWorkDays: 1,
               desireKeySkills: 1,
               location: 1,
               otherLanguages: 1,
@@ -61,22 +60,16 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
               sampleProjectLink: 1,
               relavantCertificates: 1,
               isWorkRemotely: 1,
-              descProfessionalGoal: 1,
+              aboutMe: 1,
               totalExperience: 1,
               linkedInURL: 1,
               personalURL: 1,
               mobileNum: 1,
               howLongWorkingRemotely: 1,
-              refferedBy: 1,
-              gender: 1,
-              race: 1,
-              veteranStatus: 1,
               profilePicUrl: 1,
               resumePath: 1,
-              dob: 1,
               address: 1,
               // pincode: 1,
-              desireIndustryType: 1,
               jobType: 1
             }
           }
@@ -97,7 +90,6 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
           {
             $project: {
               causes: 1,
-              availableWorkDays: 1,
               desireKeySkills: 1,
               location: 1,
               otherLanguages: 1,
@@ -116,22 +108,16 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
               sampleProjectLink: 1,
               relavantCertificates: 1,
               isWorkRemotely: 1,
-              descProfessionalGoal: 1,
+              aboutMe: 1,
               totalExperience: 1,
               linkedInURL: 1,
               personalURL: 1,
               mobileNum: 1,
               howLongWorkingRemotely: 1,
-              refferedBy: 1,
-              gender: 1,
-              race: 1,
-              veteranStatus: 1,
               profilePicUrl: 1,
               resumePath: 1,
-              dob: 1,
               address: 1,
               // pincode: 1,
-              desireIndustryType: 1,
               jobType: 1
             }
           }        
@@ -154,7 +140,6 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
           {
             $project: {
               causes: 1,
-              availableWorkDays: 1,
               desireKeySkills: 1,
               location: 1,
               otherLanguages: 1,
@@ -173,22 +158,16 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
               sampleProjectLink: 1,
               relavantCertificates: 1,
               isWorkRemotely: 1,
-              descProfessionalGoal: 1,
+              aboutMe: 1,
               totalExperience: 1,
               linkedInURL: 1,
               personalURL: 1,
               mobileNum: 1,
               howLongWorkingRemotely: 1,
-              refferedBy: 1,
-              gender: 1,
-              race: 1,
-              veteranStatus: 1,
               profilePicUrl: 1,
               resumePath: 1,
-              dob: 1,
               address: 1,
               // pincode: 1,
-              desireIndustryType: 1,
               jobType: 1
             }
           }
@@ -209,7 +188,6 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
           {
             $project: {
               causes: 1,
-              availableWorkDays: 1,
               desireKeySkills: 1,
               location: 1,
               otherLanguages: 1,
@@ -228,22 +206,16 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
               sampleProjectLink: 1,
               relavantCertificates: 1,
               isWorkRemotely: 1,
-              descProfessionalGoal: 1,
+              aboutMe: 1,
               totalExperience: 1,
               linkedInURL: 1,
               personalURL: 1,
               mobileNum: 1,
               howLongWorkingRemotely: 1,
-              refferedBy: 1,
-              gender: 1,
-              race: 1,
-              veteranStatus: 1,
               profilePicUrl: 1,
               resumePath: 1,
-              dob: 1,
               address: 1,
               // pincode: 1,
-              desireIndustryType: 1,
               jobType: 1
             }
           }
@@ -283,15 +255,12 @@ const matchingPercentageCalculation = async(getCandidateList, getJobData)=>{
 const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
   let toalPoints = 23;
   for(var i=0; i<getCandidateList.length; i++){
-    let givePoints = 3; // get auto points for jobChangeReason, salary, descProfessionalGoal
+    let givePoints = 3; // get auto points for jobChangeReason, salary, aboutMe
     //check education matching
     if(getJobData.requiredEducationLevel <= getCandidateList[i].highestEducationLevel){
       givePoints += 1;
     }
-    //check working day matching
-    if(getCandidateList[i].availableWorkDays.some((val) => getJobData.workDays.indexOf(val) !== -1)){
-      givePoints += 1;
-    }
+    
     //check working hours matching
     var candidateWT = getCandidateList[i].availableWorkHours.split('-');
     var employerWT = getJobData.workHours.split('-');
@@ -346,7 +315,7 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
 const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
   let toalPoints = 23;
   for(var i=0; i<getCandidateList.length; i++){
-    let givePoints = 6; // get auto points for jobChangeReason, availableWorkDays, availableWorkHours, timeZone, hourlyWage, descProfessionalGoal
+    let givePoints = 6; // get auto points for jobChangeReason, availableWorkDays, availableWorkHours, timeZone, hourlyWage, aboutMe
     //check education matching
     if(getJobData.requiredEducationLevel <= getCandidateList[i].highestEducationLevel){
       givePoints += 1;

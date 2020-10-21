@@ -35,7 +35,6 @@ const addUser = async(req, res) => {
 
             highestEducationLevel: '',
             jobChangeReason: '',
-            availableWorkDays: [],
             availableWorkHours: '',
             timeZone: '',
             hourlyWage: null,
@@ -44,7 +43,7 @@ const addUser = async(req, res) => {
             sampleProjectLink: '',
             relavantCertificates: '',
             isWorkRemotely: null,
-            descProfessionalGoal: '',
+            aboutMe: '',
             projectDescription: '',
             totalExperience: null,
             desireKeySkills: [],
@@ -55,19 +54,11 @@ const addUser = async(req, res) => {
             mobileNum: '',
             howLongWorkingRemotely: null, 
             otherLanguages: [],
-            refferedBy: '',
-            gender: '',
-            race: '',
-            // veteranStatus: '',
-            veteranStatus: null,
             profilePicUrl: '',
             resumePath: '',
             
-
-            dob: null,
             address: '',
             // pincode: '',
-            desireIndustryType: ''
           });
   
           //save user's details
@@ -395,10 +386,7 @@ const pointCalculationOfHT = async(getJobsList, getUserData)=>{
     if(getJobsList[i].requiredEducationLevel <= getUserData.highestEducationLevel){
       givePoints += 1;
     }
-    //check working day matching
-    if(getUserData.availableWorkDays.some((val) => getJobsList[i].workDays.indexOf(val) !== -1)){
-      givePoints += 1;
-    }
+    
     //check working hours matching
     var candidateWT = getUserData.availableWorkHours.split('-');
     var employerWT = getJobsList[i].workHours.split('-');
@@ -449,7 +437,7 @@ const pointCalculationOfHT = async(getJobsList, getUserData)=>{
 const pointCalculationOfFT = async(getJobsList, getUserData)=>{
   let toalPoints = 23;
   for(var i=0; i<getJobsList.length; i++){
-    var givePoints = 6; // get auto points for jobChangeReason, availableWorkDays, availableWorkHours, timeZone, hourlyWage, descProfessionalGoal
+    var givePoints = 6; // get auto points for jobChangeReason, availableWorkDays, availableWorkHours, timeZone, hourlyWage, aboutMe
     //check education matching
     if(getJobsList[i].requiredEducationLevel <= getUserData.highestEducationLevel){
       givePoints += 1;

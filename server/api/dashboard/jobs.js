@@ -59,7 +59,7 @@ router.post('/add', upload.fields([{
 }]), [
   check('title','Job title is required').not().isEmpty(),
   check('companyName','Company Name is required').not().isEmpty(),
-  check('industryType','Industry Type is required').not().isEmpty(),
+  // check('industryType','Industry Type is required').not().isEmpty(),
   check('jobDetails','Job Details is required').not().isEmpty(),
   check('keySkills','Key Skills is required').not().isEmpty(),
   check('minExperience','Minimum Experience is required').not().isEmpty(),
@@ -67,7 +67,6 @@ router.post('/add', upload.fields([{
   check('location','Location is required').not().isEmpty(),
   check('numberOfCandidate','Number of Candidates is required').not().isEmpty(),
   check('percentageMatch','Percentage match value is required').not().isEmpty(),
-  // check('transactionIdForAddJob','Transaction Id is required').not().isEmpty(),
   check('eligibleToWorkInUS','eligibleToWorkInUS value is required').not().isEmpty(),
   check('cause','Causes of impact is required').not().isEmpty(),
   check('jobType','Working Type is required').not().isEmpty(),

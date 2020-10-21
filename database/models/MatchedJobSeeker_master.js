@@ -14,7 +14,7 @@ const matchedJobSeekerSchema = new Schema({
   fluentInEnglish: { type: Boolean },
   highestEducationLevel: { type: Number },
   jobChangeReason: { type: String },
-  availableWorkDays: { type: Array }, //for part-timer
+  // availableWorkDays: { type: Array }, //for part-timer
   availableWorkHours: { type: String }, //for part-timer
   timeZone: { type: String }, //for part-timer
   hourlyWage: { type: Number }, //for part-timer
@@ -23,7 +23,7 @@ const matchedJobSeekerSchema = new Schema({
   sampleProjectLink: { type: String },  
   relavantCertificates: { type: String },
   isWorkRemotely: { type: Boolean },
-  descProfessionalGoal: { type: String },
+  aboutMe: { type: String },
   totalExperience: { type: Number }, 
   desireKeySkills: { type: Array }, 
   location: { type: String },
@@ -32,15 +32,15 @@ const matchedJobSeekerSchema = new Schema({
   mobileNum: { type: String },
   howLongWorkingRemotely: { type: Number },
   otherLanguages: { type: Array },
-  refferedBy: { type: String },
-  gender: { type: String },
-  race: { type: String },
-  veteranStatus: { type: Boolean },
+  // refferedBy: { type: String },
+  // gender: { type: String },
+  // race: { type: String },
+  // veteranStatus: { type: Boolean },
   profilePicUrl: { type: String },
   resumePath: { type: String },
-  dob: { type: Date },
+  // dob: { type: Date },
   address: { type: String },
-  desireIndustryType: { type: String },
+  // desireIndustryType: { type: String },
   matchingPercentage: { type: Number },
   jobId: { type: String },
   candidateId: { type: String },
