@@ -32,7 +32,7 @@ const matchedJobSeekerSchema = new Schema({
   mobileNum: { type: String },
   howLongWorkingRemotely: { type: Number },
   otherLanguages: { type: Array },
-  // refferedBy: { type: String },
+  refferedBy: { type: String },
   // gender: { type: String },
   // race: { type: String },
   // veteranStatus: { type: Boolean },

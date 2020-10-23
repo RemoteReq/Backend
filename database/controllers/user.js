@@ -54,6 +54,7 @@ const addUser = async(req, res) => {
             mobileNum: '',
             howLongWorkingRemotely: null, 
             otherLanguages: [],
+            refferedBy: '',
             profilePicUrl: '',
             resumePath: '',
             
