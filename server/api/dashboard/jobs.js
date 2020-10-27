@@ -40,7 +40,7 @@ AWS.config.update({
 //Creating a new instance of S3:
 const s3= new AWS.S3();
 // Unique name of aws s3 bucket created
-const myBucket = 'remotereq';
+const myBucket = process.env.AWS_BUCKET;
 
 // Removed until DB queries are establshed
 const { addJob, jobsList,

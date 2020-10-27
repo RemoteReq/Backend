@@ -93,43 +93,6 @@ const addUser = async(req, res) => {
   
 };
 
-// const sendOTP = async(req, res)=>{
-//   try{
-//     let checkUserName = await User.findOne({"username" : req.body.username});
-//     if(checkUserName == null){
-//       let checkEmail = await User.findOne({"email" : req.body.email});
-//       if(checkEmail == null){
-//         let randDigit = Math.floor(100000 + Math.random() * 900000);
-//         let findEmailInOTPmaster = await OtpMaster.findOne({"emailId" : req.body.email});
-//         // console.log(findEmailInOTPmaster)
-//         if(findEmailInOTPmaster == null){
-//           const otpMaster = new OtpMaster({
-//             OTP: randDigit,
-//             emailId: req.body.email
-//           })
-    
-//           otpMaster.save().then(data =>{
-//             sendMail(req, res, randDigit)
-//           }).catch(err =>{
-//             console.log('generate OTP error:', err)
-//             res.status(500).json(err);
-//           })
-//         }else{
-//           let updateData = await OtpMaster.findByIdAndUpdate(findEmailInOTPmaster._id, { $set: { OTP: randDigit }});
-//           sendMail(req, res, randDigit)
-//         }
-        
-//       }else{
-//         res.status(400).json('Email Id already exists.');
-//       }
-//     }else{
-//       res.status(400).json('User Name already exists.');
-//     }
-//   }catch(err) {
-//     console.log('catcherr',err);
-//     res.status(500).json(err);
-//   }
-// }
 
 // const sendMail = async(req, res, otp)=>{
 const sendMail = async(req, res, doc)=>{
@@ -142,13 +105,13 @@ const sendMail = async(req, res, doc)=>{
       secure: false,
       // service: 'gmail',
       auth: {
-          user: 'notasom1@gmail.com',
-          pass: 'notagoodpassword1'
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD
       }
   });
 
   var mailOptions = {
-    from: '"support@remotereq.com" <notasom1@gmail.com>',
+    from: '"support@remotereq.com" <'+process.env.EMAIL_USERNAME+'>',
     to: req.body.email,
     subject: 'Job Seeker Account Confirmation - RemoteReq',
     html: '<div style="font-family: \'Open Sans\', sans-serif; padding: 15px;"><p>Hey <b>'+firstName+'</b>,</p><p>This email is to confirm a job seeker account for <b>'+fullName+'</b> has been registered on <a target="_blank" href="www.remotereq.com">RemoteReq.com</a>. If this email was received in error, then unsubscribe <a target="_blank" href="'+process.env.FRONTEND_BASE_URL+'unsubscribe?emailId='+doc.email+'" style="color:#1f3961; text-decoration: none;border-bottom: 1px solid #000;">here</a></p><p><a target="_blank" href="'+process.env.FRONTEND_BASE_URL+'userEmailVerify?id='+doc._id+'" style="color:#1f3961; text-decoration: none;border-bottom: 1px solid #000;">Click here</a> to visit your account or update your profile.</p><p>Be well,</p><p><img src="https://remotereq.s3.us-east-2.amazonaws.com/remotereqlogo.JPG"></p><p style="font-size:11px; margin-top: -15px;">Work from Anywhere. Change the World.</p><h5 style="font-weight:normal">e: <a href="javascript:void(0)" >remotereq@gmail.com</a><br> w: <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5><ul style="list-style: none;padding-left: 0;"><li style="float: left;margin-right: 3px;"><a href="https://www.facebook.com/RemoteReq-1833060860134583" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/facebook-512.png" style="width: 100%;"/> </a></li><li style="float: left;margin-right: 3px;"><a href="https://www.linkedin.com/company/remotereq" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/linkedin-512.png"  style="width: 100%;"/></a></li><li style="float: left;margin-right: 3px;"><a href="" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/twitter-512.png" style="width: 100%;"/></a></li></ul></div>'
@@ -229,13 +192,13 @@ const generateResetToken = async(req, res)=>{
         port: 587,
         secure: false,
         auth: {
-            user: 'notasom1@gmail.com',
-            pass: 'notagoodpassword1'
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD
         }
       });
     
       var mailOptions = {
-        from: '"support@remotereq.com" <notasom1@gmail.com>',
+        from: '"support@remotereq.com" <'+process.env.EMAIL_USERNAME+'>',
         to: req.body.email,
         subject: 'RemoteReq: Reset your password!',
         html: '<p>Please click this link to reset your password <a target="_blank"  href="'+process.env.FRONTEND_BASE_URL+'resetpassword?resetToken='+resetToken+'">'+process.env.FRONTEND_BASE_URL+'resetpassword?resetToken='+resetToken+'</a></p><p><b>**Note: </b>Link validity only for 15 minutes</p>',

@@ -25,3 +25,11 @@ What's also neat is that this markdown also comes with a badge to show whether o
 # Gotchas:
 
   - If you run into any issues trying to dockerize this application, check to see if the `dockerize` script is trying to map to already occupied port.
+
+
+# PM2 commands: 
+   
+  - `pm2 start abc.js --name "process-name"` to create a new process
+  - `pm2 list` to showing all process
+  - `pm2 restart process-name` to restart the process
+  - `pm2 stop process-name` to stop the process
