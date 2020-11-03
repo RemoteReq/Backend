@@ -244,7 +244,7 @@ const updateUserProfile = async(req, res)=>{
     let getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
     // console.log(getUserData.eligibleToWorkInUS)
     if(getUserData.eligibleToWorkInUS !== null && getUserData.causes.length !== 0 && getUserData.soonestJoinDate !== null && getUserData.jobType !== '' && getUserData.fluentInEnglish !== null){
-      await User.findByIdAndUpdate(req.userId, { $set: { questionSubmitStatus: true }});
+      await User.findByIdAndUpdate(req.userId, { $set: { profileCompleteStatus: true }});
       getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
     }
     res.status(200).json(getUserData);

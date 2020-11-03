@@ -48,7 +48,7 @@ const userSchema = new Schema({
   isEmailVerify: { type: Boolean, default: false },
   isDeleteAccount: { type: Boolean, default: false },
   resumePath: { type: String },
-  questionSubmitStatus: { type: Boolean, default: false },
+  profileCompleteStatus: { type: Boolean, default: false },
 
   // dob: { type: Date },
   address: { type: String },
