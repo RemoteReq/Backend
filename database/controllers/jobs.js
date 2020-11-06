@@ -19,6 +19,7 @@ const addJob = async(req, res) => {
       companyName: req.body.companyName,
       companyLogoPath: req.body.companyLogoPath ? req.body.companyLogoPath : '',
       companyWebsiteUrl: req.body.companyWebsiteUrl ? req.body.companyWebsiteUrl : '',
+      aboutUs: req.body.aboutUs ? req.body.aboutUs : '',
       jobDetails: req.body.jobDetails,
       jobDescriptionPath: req.body.jobDescriptionPath ? req.body.jobDescriptionPath: '',
       numberOfCandidate: req.body.numberOfCandidate,

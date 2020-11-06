@@ -9,7 +9,7 @@ const jobSchema = new Schema({
   companyName: { type: String, required: true },
   companyLogoPath: { type: String},
   companyWebsiteUrl: { type: String},
-  // industryType: { type: String, required: true },
+  aboutUs: { type: String },
   jobDetails: { type: String, require: true },
   jobDescriptionPath: { type: String },
   numberOfCandidate: {type: Number, required: true},
