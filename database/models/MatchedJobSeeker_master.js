@@ -13,7 +13,7 @@ const matchedJobSeekerSchema = new Schema({
   soonestJoinDate: { type: Date }, 
   fluentInEnglish: { type: Boolean },
   highestEducationLevel: { type: Number },
-  jobChangeReason: { type: String },
+  reasonForCause: { type: String },
   // availableWorkDays: { type: Array }, //for part-timer
   availableWorkHours: { type: String }, //for part-timer
   timeZone: { type: String }, //for part-timer

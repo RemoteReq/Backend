@@ -66,7 +66,7 @@ router.post('/updateUserProfile',[
   // check('jobType','Working Type is required').not().isEmpty(),
   // check('soonestJoinDate','soonestJoinDate is required').not().isEmpty(),
   // check('highestEducationLevel','Highest Education is required').not().isEmpty(),
-  // check('jobChangeReason','Job Change Reason is required').not().isEmpty(),
+  // check('reasonForCause','Job Change Reason is required').not().isEmpty(),
   // check('isWorkRemotely','isWorkRemotely value is required').not().isEmpty(),
   // check('aboutMe','Describe Profession goal is required').not().isEmpty(),
   // check('totalExperience','Total Experience is required').not().isEmpty(),

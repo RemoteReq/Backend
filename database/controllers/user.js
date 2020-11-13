@@ -34,7 +34,7 @@ const addUser = async(req, res) => {
             fluentInEnglish: null,
 
             highestEducationLevel: '',
-            jobChangeReason: '',
+            reasonForCause: '',
             availableWorkHours: '',
             timeZone: '',
             hourlyWage: null,
@@ -401,7 +401,7 @@ const pointCalculationOfHT = async(getJobsList, getUserData)=>{
 const pointCalculationOfFT = async(getJobsList, getUserData)=>{
   let toalPoints = 23;
   for(var i=0; i<getJobsList.length; i++){
-    var givePoints = 6; // get auto points for jobChangeReason, availableWorkDays, availableWorkHours, timeZone, hourlyWage, aboutMe
+    var givePoints = 6; // get auto points for reasonForCause, availableWorkDays, availableWorkHours, timeZone, hourlyWage, aboutMe
     //check education matching
     if(getJobsList[i].requiredEducationLevel <= getUserData.highestEducationLevel){
       givePoints += 1;

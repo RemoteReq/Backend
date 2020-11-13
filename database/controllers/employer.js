@@ -233,7 +233,7 @@ const matchesCandidateByEachJob = async(req, res)=>{
               soonestJoinDate: 1,
               fluentInEnglish: 1,
               highestEducationLevel: 1,
-              jobChangeReason: 1,
+              reasonForCause: 1,
               availableWorkHours: 1,
               timeZone: 1,
               hourlyWage: 1,
@@ -282,7 +282,7 @@ const matchesCandidateByEachJob = async(req, res)=>{
               soonestJoinDate: 1,
               fluentInEnglish: 1,
               highestEducationLevel: 1,
-              jobChangeReason: 1,
+              reasonForCause: 1,
               availableWorkHours: 1,
               timeZone: 1,
               hourlyWage: 1,
@@ -333,7 +333,7 @@ const matchesCandidateByEachJob = async(req, res)=>{
               soonestJoinDate: 1,
               fluentInEnglish: 1,
               highestEducationLevel: 1,
-              jobChangeReason: 1,
+              reasonForCause: 1,
               availableWorkHours: 1,
               timeZone: 1,
               hourlyWage: 1,
@@ -382,7 +382,7 @@ const matchesCandidateByEachJob = async(req, res)=>{
               soonestJoinDate: 1,
               fluentInEnglish: 1,
               highestEducationLevel: 1,
-              jobChangeReason: 1,
+              reasonForCause: 1,
               availableWorkHours: 1,
               timeZone: 1,
               hourlyWage: 1,
@@ -460,7 +460,7 @@ const saveMatchedCandidates = async(req, res, updatedFilterList)=>{
 const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
   let toalPoints = 23;
   for(var i=0; i<getCandidateList.length; i++){
-    let givePoints = 3; // get auto points for jobChangeReason, salary, aboutMe
+    let givePoints = 3; // get auto points for reasonForCause, salary, aboutMe
     //check education matching
     if(getJobData.requiredEducationLevel <= getCandidateList[i].highestEducationLevel){
       givePoints += 1;
@@ -520,7 +520,7 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
 const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
   let toalPoints = 23;
   for(var i=0; i<getCandidateList.length; i++){
-    let givePoints = 6; // get auto points for jobChangeReason, availableWorkDays, availableWorkHours, timeZone, hourlyWage, aboutMe
+    let givePoints = 6; // get auto points for reasonForCause, availableWorkDays, availableWorkHours, timeZone, hourlyWage, aboutMe
     //check education matching
     if(getJobData.requiredEducationLevel <= getCandidateList[i].highestEducationLevel){
       givePoints += 1;
