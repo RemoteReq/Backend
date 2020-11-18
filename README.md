@@ -29,7 +29,7 @@ What's also neat is that this markdown also comes with a badge to show whether o
 
 # PM2 commands: 
    
-  - `pm2 start abc.js --name "process-name"` to create a new process
+  - `pm2 start server/server.js --name 'apiserver'` to create a new process
   - `pm2 list` to showing all process
-  - `pm2 restart process-name` to restart the process
-  - `pm2 stop process-name` to stop the process
+  - `pm2 restart apiserver` to restart the process
+  - `pm2 stop apiserver` to stop the process

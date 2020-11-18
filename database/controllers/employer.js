@@ -28,7 +28,7 @@ const addEmployer = async(req, res) => {
           // website: "www.example.com"
         })
 
-        // console.log(newCustomerOfPaymentGateway.customer.id)
+        // console.log("newCustomerOfPaymentGateway",newCustomerOfPaymentGateway)
         
         const employer = new Employer({
           username: req.body.username,
