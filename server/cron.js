@@ -1,7 +1,7 @@
 require('dotenv').config();
 var cron = require('node-cron');
 var unirest = require('unirest');
-let API_URL = (process.env.HOST_TYPE == 'local')? 'http://localhost:3030/' : (process.env.HOST_TYPE == 'dev')? 'http://3.21.186.204:3030/' : 'http://18.191.219.131:3030/';
+let API_URL = (process.env.HOST_TYPE == 'local')? 'http://localhost:3030/' : (process.env.HOST_TYPE == 'dev')? 'http://3.21.186.204:3030/' : 'https://api.remotereq.com/';
 
 //find out all of the jobs which was expired(21 days period over) - everday at 12:01 AM
 cron.schedule('1 0 * * *', () => {
