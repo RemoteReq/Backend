@@ -369,15 +369,13 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
 
 const mailForAfterCandidateMatched = async(getJobData, empId, matchedCount)=>{
   try{
-    // let expiredDt = new Date(+new Date() + 21*24*60*60*1000);
-    let expiredDt = new Date(+new Date() + 0.5*60*60*1000);
+    let expiredDt = (process.env.HOST_TYPE=='live')? new Date(+new Date() + 21*24*60*60*1000) : new Date(+new Date() + 0.5*60*60*1000);
     let dateTime1 = moment(expiredDt).format('YYYY-MM-DD');
     let updateData = await Job.findByIdAndUpdate(getJobData._id, { $set: { 
       matchesCandidateFlag: true, 
       matchesCandidateCount: matchedCount,
       expireDate: expiredDt,
-      // seventhDayAfterExpireDate: new Date(+new Date() + 28*24*60*60*1000)
-      seventhDayAfterExpireDate: new Date(+new Date() + 1*60*60*1000)
+      seventhDayAfterExpireDate: (process.env.HOST_TYPE=='live')? new Date(+new Date() + 28*24*60*60*1000) : new Date(+new Date() + 1*60*60*1000)
     }});
     // console.log(updateData);
     let empDetails = await Employer.findById(empId)
