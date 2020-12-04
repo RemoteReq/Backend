@@ -577,6 +577,26 @@ const deleteAccount = async(req, res)=>{
   }
 }
 
+const updatePassword = async(req, res)=>{
+  try{
+    let getEmpData = await Employer.findById(req.employerId).select("-_id -__v -authSignature -isEmailVerify -isDeleteAccount -clientIdOfPaymentGateway");
+    // console.log(getEmpData.password)
+    let passwordverify = await bcrypt.compare(req.body.oldPassword, getEmpData.password);
+    if(passwordverify == true){
+      let salt = await bcrypt.genSalt(saltRounds);
+      let hashPassword = await bcrypt.hash(req.body.newPassword, salt);
+      let updateData = await Employer.findByIdAndUpdate(req.employerId, { $set: {password: hashPassword}});
+      res.status(200).json("Password Updated successfully");
+    }else{
+      res.status(400).json('Old Password is not matched. please try again.');
+    }
+    
+    
+  } catch(err) {
+      console.log(err);
+  }
+}
+
 module.exports = {
   addEmployer,
   employerCredVerify,
@@ -587,5 +607,6 @@ module.exports = {
   matchesCandidateByEachJob,
   employerEmailVerify,
   deleteAccount,
-  updateEmployerProfile
+  updateEmployerProfile,
+  updatePassword
 };

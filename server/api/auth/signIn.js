@@ -36,6 +36,7 @@ route.post('/employerSignIn',[
     employerCredVerify(req, res)
   });
 
+//1st step of the forgot password
 route.post('/forgotPassword',[
   check('email','Email id is required').not().isEmpty(),
 ], (req, res)=>{
@@ -50,6 +51,7 @@ route.post('/forgotPassword',[
   generateResetToken(req, res)
 })
 
+//2nd step of the forgot password
 route.post('/resetPassword',[
   check('resetToken','resetToken is required').not().isEmpty(),
   check('newPassword','New Password is required').not().isEmpty(),

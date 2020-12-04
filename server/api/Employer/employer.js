@@ -33,7 +33,8 @@ const {listEmployers,
     getJoblistByEmployer, 
     matchesCandidateByEachJob, 
     deleteAccount,
-    updateEmployerProfile
+    updateEmployerProfile,
+    updatePassword
 } = require('../../../database/controllers/employer')
 
 router.post('/list', listEmployers)
@@ -100,5 +101,19 @@ function uploadFile(req, res){
       }
     });
 }
+
+router.post('/updatePassword',[
+  check('oldPassword','Old Password is required').not().isEmpty(),
+  check('newPassword','New Password is required').not().isEmpty(),
+], async(req, res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ 
+      errors: errors.array() 
+    })
+  }
+  // console.log(req.employerId)
+  updatePassword(req, res)
+})
 
 module.exports = router
