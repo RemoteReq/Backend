@@ -5,6 +5,7 @@ const Employer = require('../database/models/Employer')
 var randtoken = require('rand-token');
 var jwt = require('jsonwebtoken');
 const secretKeyForResetToken = 'remoteReq reset key for users'
+const secretKeyForResetTokenForEmp = 'remoteReq reset key for employers'
 
 //token generate for user
 const generateToken = async(userData)=> {
@@ -24,7 +25,7 @@ const generateToken = async(userData)=> {
     
 }
 
-//token generate for reset password
+//token generate for reset password (job seeker end)
 const resetTokenGenerate = async(userData)=> {
     try{
         let token = await jwt.sign({userId: userData._id}, secretKeyForResetToken, { expiresIn: '15m' });
@@ -34,6 +35,17 @@ const resetTokenGenerate = async(userData)=> {
         console.log(err);
     }
 }
+//token generate for reset password (employer end)
+const resetTokenGenerateForEmp = async(empData)=> {
+    try{
+        let token = await jwt.sign({employerId: empData._id}, secretKeyForResetTokenForEmp, { expiresIn: '15m' });
+        return token;
+
+    } catch(err) {
+        console.log(err);
+    }
+}
+
 //token generate for employer
 const generateTokenForEmp = async(empData)=> {
     const newSignature = randtoken.uid(256);
@@ -157,5 +169,6 @@ module.exports = {
     tokenValidityChecking,
     generateTokenForEmp,
     tokenValidityCheckingForEmp,
-    resetTokenGenerate
+    resetTokenGenerate,
+    resetTokenGenerateForEmp
   };

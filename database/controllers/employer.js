@@ -597,6 +597,61 @@ const updatePassword = async(req, res)=>{
   }
 }
 
+const generateResetTokenForEmp = async(req, res)=>{
+  try {
+    let getData = await Employer.findOne({ 'email': req.body.email });
+    if(getData != null){
+      
+      let resetToken = await authorisation.resetTokenGenerateForEmp(getData);
+      // res.status(200).send(resetToken)
+      var transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD
+        }
+      });
+    
+      var mailOptions = {
+        from: process.env.EMAIL_USERNAME,
+        to: req.body.email,
+        subject: 'RemoteReq: Reset your password!',
+        html: '<p>Please click this link to reset your password <a target="_blank"  href="'+process.env.FRONTEND_BASE_URL+'employerResetPassword?resetToken='+resetToken+'">'+process.env.FRONTEND_BASE_URL+'employerResetPassword?resetToken='+resetToken+'</a></p><p><b>**Note: </b>Link validity only for 15 minutes</p>',
+      };
+    
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log("error: Unable to send email for reset password.", error);
+          res.status(500).json("Server Error. Please try again.");
+        } else {
+          // console.log('Email sent: ' + info.response);
+          res.status(200).json("A link is shared to your email id. Please check it.");
+        }
+      });
+
+      
+    }else{
+      res.status(400).json('Email id is not valid. please check again.');
+    }
+    
+  } catch(err) {
+    res.status(500).json(err);
+  }
+}
+
+const resetPasswordForEmp = async(req, res)=>{
+  try{
+    let salt = await bcrypt.genSalt(saltRounds);
+    let hashPassword = await bcrypt.hash(req.body.newPassword, salt);
+    let updateData = await Employer.findByIdAndUpdate(req.body.employerId, { $set: {password: hashPassword}});
+    res.status(200).json("Password reset successfully");
+  } catch(err) {
+      console.log(err);
+  }
+}
+
 module.exports = {
   addEmployer,
   employerCredVerify,
@@ -608,5 +663,7 @@ module.exports = {
   employerEmailVerify,
   deleteAccount,
   updateEmployerProfile,
-  updatePassword
+  updatePassword,
+  generateResetTokenForEmp,
+  resetPasswordForEmp
 };
