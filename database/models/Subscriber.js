@@ -6,6 +6,9 @@ const { Schema } = mongoose;
 // Subscriber Schema
 const subscriberSchema = new Schema({
   emailId: { type: String, required: true },
+  name: { type: String, required: true },
+  companyName: { type: String },
+  phoneNumber: { type: String },
   updated: { type: Date, default: Date.now }
 });
 

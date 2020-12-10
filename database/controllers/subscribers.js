@@ -4,7 +4,10 @@ const addSubscriber = async(req, res) => {
   
   const subscriber = new Subscriber({
     
-    emailId: req.body.emailId
+    emailId: req.body.emailId,
+    name: req.body.name?req.body.name:'',
+    companyName: req.body.companyName?req.body.companyName:'',
+    phoneNumber: req.body.phoneNumber?req.body.phoneNumber:'',
   });
 
   
