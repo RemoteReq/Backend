@@ -15,7 +15,7 @@ const { addSubscriber, subscribersList, unsubscribe } = require('../../../databa
 router.post('/',[
   // check('name').isLength({ min: 5 }).withMessage('Must be at least 5 chars long'),
   check('emailId').isEmail().withMessage('Invalid Email Id'),
-  check('name','Name is required').not().isEmpty(),
+  // check('name','Name is required').not().isEmpty(),
 ], (req,res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {

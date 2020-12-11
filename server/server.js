@@ -17,6 +17,7 @@ const signin = require('./api/auth/signIn.js');
 const jobs = require('./api/dashboard/jobs.js')
 const employers = require('./api/Employer/employer')
 const scheduleJob = require('./api/schedulejob/scheduleJob')
+const demoRequestJob = require('./api/auth/demoRequest')
 
 //CORS
 app.use(cors())
@@ -33,6 +34,7 @@ const {tokenValidityChecking, tokenValidityCheckingForEmp} = require('./authenti
 app.use('/api/signin', signin);
 app.use('/api/signup', signup);
 app.use('/api/subscribe', subscribe);
+app.use('/api/requestDemo', demoRequestJob);
 app.use('/api/scheduleJob', scheduleJob);
 app.use('/api/user', tokenValidityChecking, user);
 app.use('/api/jobs', tokenValidityCheckingForEmp, jobs);
