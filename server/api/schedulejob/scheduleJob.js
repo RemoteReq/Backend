@@ -21,18 +21,28 @@ const {
 } = require('../../../database/controllers/scheduleJobForTesting')
 
 router.post('/mailToEmployerForCandidateMatch', (req, res)=>{
-    mailToEmployerForCandidateMatch(req,res)
+    process.env.HOST_TYPE == 'live'? mailToEmployerForCandidateMatch(req,res) : mailToEmployerForCandidateMatchTest(req,res)
 })
 
-router.post('/mailForTwoDaysLeft', mailForTwoDaysLeft)
+router.post('/mailForTwoDaysLeft', (req, res)=>{
+    process.env.HOST_TYPE == 'live'? mailForTwoDaysLeft(req,res) : mailForTwoDaysLeftTest(req,res)
+})
 
-router.post('/checkHiredOrNot', checkHiredOrNot)
+router.post('/checkHiredOrNot', (req, res)=>{
+    process.env.HOST_TYPE == 'live'? checkHiredOrNot(req,res) : checkHiredOrNotTest(req,res)
+})
 
-router.post('/checkExpiredJob', checkExpiredJob)
+router.post('/checkExpiredJob', (req, res)=>{
+    process.env.HOST_TYPE == 'live'? checkExpiredJob(req,res) : checkExpiredJobTest(req,res)
+})
 
-router.post('/isHired', isHired)
+router.post('/isHired', (req, res)=>{
+    process.env.HOST_TYPE == 'live'? isHired(req,res) : isHiredTest(req,res)
+})
 
-router.post('/employerNotRespForHiring', autoUpdateHiringStatus)
+router.post('/employerNotRespForHiring', (req, res)=>{
+    process.env.HOST_TYPE == 'live'? autoUpdateHiringStatus(req,res) : autoUpdateHiringStatusTest(req,res)
+})
 
 
 
