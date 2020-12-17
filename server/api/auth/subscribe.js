@@ -27,7 +27,7 @@ router.post('/',[
   addSubscriber(req,res)
 });
 
-router.post('/getList', subscribersList);
+router.post('/getSubscribers', subscribersList);
 
 router.post('/unsubscribe',[
   // check('name').isLength({ min: 5 }).withMessage('Must be at least 5 chars long'),

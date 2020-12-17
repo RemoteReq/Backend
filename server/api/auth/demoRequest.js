@@ -10,7 +10,7 @@ const router = express.Router();
 */
 
 // import handler
-const { addDemoRequest } = require('../../../database/controllers/demoRequest');
+const { addDemoRequest, getDemoReqeusts } = require('../../../database/controllers/demoRequest');
 
 router.post('/',[
   check('emailId').isEmail().withMessage('Invalid Email Id'),
@@ -25,5 +25,7 @@ router.post('/',[
   
   addDemoRequest(req,res)
 });
+
+router.post('/getDemoReqeusts', getDemoReqeusts)
 
 module.exports = router;

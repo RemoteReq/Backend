@@ -8,7 +8,7 @@ const demoRequestSchema = new Schema({
   emailId: { type: String, required: true },
   name: { type: String, required: true },
   companyName: { type: String },
-  phoneNumber: { type: String },
+  position: { type: String },
   updated: { type: Date, default: Date.now }
 });
 

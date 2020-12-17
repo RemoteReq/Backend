@@ -7,7 +7,7 @@ const addDemoRequest = async(req, res) => {
     emailId: req.body.emailId,
     name: req.body.name?req.body.name:'',
     companyName: req.body.companyName?req.body.companyName:'',
-    phoneNumber: req.body.phoneNumber?req.body.phoneNumber:'',
+    position: req.body.position?req.body.position:'',
   });
 
   
@@ -22,7 +22,17 @@ const addDemoRequest = async(req, res) => {
   });
 };
 
+const getDemoReqeusts = async(req, res)=>{
+  try {
+    let getData = await DemoRequest.find().select(" -__v");
+    res.status(200).json(getData);
+    
+  } catch(err) {
+    res.status(500).json(err);
+  }
+}
 
 module.exports = {
   addDemoRequest,
+  getDemoReqeusts
 };
