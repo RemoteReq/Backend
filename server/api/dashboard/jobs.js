@@ -47,7 +47,8 @@ const { addJob, jobsList,
   // createClientForGateway,
   clientTokenForPayment,
   checkoutForAddjob,
-  checkoutAfterHired
+  checkoutAfterHired,
+  getSingleJob
  } = require('../../../database/controllers/jobs.js');
 
 router.post('/getAll', jobsList);
@@ -237,5 +238,18 @@ async function uploadJobDescFile(req, res){
   // console.log('getResult1', getResult1);
   return getResult1
 }
+
+router.post('/getJobById/:jobId', [
+  check('jobId','Job Id is required').not().isEmpty()
+], (req,res)=>{
+
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+      return res.status(422).json({ 
+      errors: errors.array() 
+      })
+  }
+  getSingleJob(req,res)
+})
 
 module.exports = router;

@@ -591,6 +591,16 @@ const checkoutAfterHired = async(req, res)=>{
   });
 }
 
+const getSingleJob = async(req, res)=>{
+  try {
+    let jobsListData = await Jobs.findById(req.params.jobId);
+    res.status(200).json(jobsListData);
+    
+  } catch(err) {
+    res.status(500).json(err);
+  }
+}
+
 module.exports = {
   addJob,
   jobsList,
@@ -598,5 +608,6 @@ module.exports = {
   clientTokenForPayment,
   checkoutForAddjob,
   checkoutAfterHired,
-  // findPendingPayment
+  // findPendingPayment,
+  getSingleJob
 };
