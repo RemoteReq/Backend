@@ -5,9 +5,9 @@ const passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 passport.use(new GoogleStrategy({
-    clientID: '1080196925218-eijmcgfi1f2r38q3v0m3posr21s08cv6.apps.googleusercontent.com',
-    clientSecret: 'vKqHOsTQe71uHZFaMuErNKDs',
-    callbackURL: "http://localhost:3030/google/callback"
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL
   },
   function(accessToken, refreshToken, profile, cb) {
     // console.log('accessToken',accessToken)

@@ -34,7 +34,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const {tokenValidityChecking, tokenValidityCheckingForEmp} = require('./authentication')
 app.use(require('express-session')({
-  secret: 'remotereq google authenticate secret token',
+  secret: process.env.GOOGLE_SESSION_SECRET,
   resave: true,
   saveUninitialized: true
 }));
