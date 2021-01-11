@@ -21,8 +21,6 @@ const addUser = async(req, res) => {
           const user = new User({
             username: req.body.username,
             password: hashPassword,
-            // firstName: req.body.firstname,
-            // lastName: req.body.lastname,
             fullName: req.body.fullName,
             email: req.body.email,
             authSignature: '',
@@ -59,18 +57,11 @@ const addUser = async(req, res) => {
             resumePath: '',
             
             address: '',
-            // pincode: '',
           });
   
           //save user's details
           user.save()
           .then(doc => {
-            // doc = doc.toObject();
-            // delete doc._id;
-            // delete doc["password"];
-            // delete doc["__v"];
-            // res.status(200).json(doc);
-            // res.status(200).json('Signed up successfully done');
             sendMail(req, res, doc)
           })
           .catch(error => {
@@ -158,8 +149,6 @@ const verifyCredentials = async(req, res)=>{
           res.status(200).json({
             token: userDataWithToken.token,
             username: userDataWithToken.updateData.username,
-            // firstName: userDataWithToken.updateData.firstName,
-            // lastName: userDataWithToken.updateData.lastName,
             fullName: userDataWithToken.updateData.fullName,
             email: userDataWithToken.updateData.email
           });
@@ -479,6 +468,21 @@ const deleteAccount = async(req, res)=>{
   }
 }
 
+// const updateEmailIdToLowerCase = async(req, res)=>{
+//   try {
+//     let getUserData = await User.find().select("-__v -password -authSignature -isEmailVerify -isDeleteAccount");
+    
+//     for(var i=0; i<getUserData.length; i++){
+//       let updateData = await User.findByIdAndUpdate(getUserData[i]._id, { $set: { email: getUserData[i].email.toLowerCase() }});
+//     }
+//     console.log('all updated')
+//     let updatedUserData = await User.find().select("-__v -password -authSignature -isEmailVerify -isDeleteAccount");
+//     res.status(200).json(updatedUserData);
+//   } catch(err) {
+//     res.status(500).json(err);
+//   }
+// }
+
 module.exports = {
   addUser,
   verifyCredentials,
@@ -491,5 +495,6 @@ module.exports = {
   generateResetToken,
   resetPassword,
   userEmailVerify,
-  deleteAccount
+  deleteAccount,
+  // updateEmailIdToLowerCase
 };

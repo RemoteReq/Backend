@@ -5,11 +5,11 @@ const { Schema } = mongoose;
 
 // User Schema
 const userSchema = new Schema({
-  username: { type: String, required: true },
-  // firstName: { type: String, required: true },
-  // lastName: { type: String, require: true },
+  // username: { type: String, required: true },
+  username: { type: String },
   fullName: { type: String, require: true },
-  password: { type: String, required: true },
+  // password: { type: String, required: true },
+  password: { type: String },
   email: { type: String, required: true },
   authSignature: {type: String},
   
@@ -21,7 +21,6 @@ const userSchema = new Schema({
 
   highestEducationLevel: { type: Number },
   reasonForCause: { type: String },
-  // availableWorkDays: { type: Array }, //for part-timer
   availableWorkHours: { type: String }, //for part-timer
   timeZone: { type: String }, //for part-timer
   hourlyWage: { type: Number }, //for part-timer
@@ -41,19 +40,13 @@ const userSchema = new Schema({
   howLongWorkingRemotely: { type: Number },
   otherLanguages: { type: Array },
   refferedBy: { type: String },
-  // gender: { type: String },
-  // race: { type: String },
-  // veteranStatus: { type: Boolean },
   profilePicUrl: { type: String },
   isEmailVerify: { type: Boolean, default: false },
   isDeleteAccount: { type: Boolean, default: false },
   resumePath: { type: String },
   profileCompleteStatus: { type: Boolean, default: false },
 
-  // dob: { type: Date },
   address: { type: String },
-  // pincode: { type: String },
-  // desireIndustryType: { type: String },
 });
 
 // Model to export

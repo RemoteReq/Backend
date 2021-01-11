@@ -10,7 +10,6 @@ const secretKeyForResetTokenForEmp = 'remoteReq reset key for employers'
 //token generate for user
 const generateToken = async(userData)=> {
     const newSignature = randtoken.uid(256);
-    // userData.authSignature = newSignature;
     try{
         let updateData = await User.findByIdAndUpdate(userData._id, { $set: { authSignature: newSignature }})
         let token = await jwt.sign({userId: userData._id}, newSignature, { expiresIn: '1d' });
