@@ -48,7 +48,7 @@ const jobSchema = new Schema({
   requireCertification: { type: String },
   otherLanguages: { type: Array },
   minExperience: {type: Number, required: true},
-  maxExperience: { type: Number, required: true },
+  // maxExperience: { type: Number, required: true },
   keySkills: { type: Array, required: true },
   location: { type: String, required: true },
   

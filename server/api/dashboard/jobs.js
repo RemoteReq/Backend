@@ -64,7 +64,7 @@ router.post('/add', upload.fields([{
   check('jobDetails','Job Details is required').not().isEmpty(),
   check('keySkills','Key Skills is required').not().isEmpty(),
   check('minExperience','Minimum Experience is required').not().isEmpty(),
-  check('maxExperience','Maximum Experience is required').not().isEmpty(),
+  // check('maxExperience','Maximum Experience is required').not().isEmpty(),
   check('location','Location is required').not().isEmpty(),
   check('numberOfCandidate','Number of Candidates is required').not().isEmpty(),
   check('percentageMatch','Percentage match value is required').not().isEmpty(),

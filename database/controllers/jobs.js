@@ -44,7 +44,7 @@ const addJob = async(req, res) => {
       otherLanguages: req.body.otherLanguages?req.body.otherLanguages.split(","):[],
       keySkills: req.body.keySkills.split(","),
       minExperience: req.body.minExperience,
-      maxExperience: req.body.maxExperience,
+      // maxExperience: req.body.maxExperience,
       location: req.body.location,
     });
 
