@@ -6,9 +6,9 @@
   "scripts": {
     "server": "nodemon ./server/server.js",
     "setup:dev": "pm2 deploy ecosystem.config.js development setup",
-    "setup:pro": "pm2 deploy ecosystem.config.js development production",
-    "update:dev": "pm2 deploy ecosystem.config.js development setup",
-    "update:pro": "pm2 deploy ecosystem.config.js development production"
+    "setup:pro": "pm2 deploy ecosystem.config.js production setup",
+    "update:dev": "pm2 deploy ecosystem.config.js development update",
+    "update:pro": "pm2 deploy ecosystem.config.js production update"
   },
   "repository": {
     "type": "git",
