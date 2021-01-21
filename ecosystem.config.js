@@ -22,7 +22,7 @@ module.exports = {
       repo: 'git@github.com:RemoteReq/Backend.git',
       path: '/home/ubuntu/',
       'pre-deploy-local': "echo 'beginning dev server deployment'",
-      'post-deploy': 'npm install && npm run build:dev && pm2 startOrRestart ecosystem.config.js --env staging',
+      'post-deploy': 'npm install && npm run build:dev && pm2 startOrRestart ecosystem.config.js --env development',
     },
   },
 };
