@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "server": "nodemon ./server/server.js",
-    "dockerize": "sudo docker build -t name . && sudo docker run --name name -p 8080:3030 -d name",
-    "update": "sudo docker kill name && sudo docker container rm -f name && sudo docker image rm -f kill name && npm run dockerize"
+    "setup:dev": "pm2 deploy ecosystem.config.js development setup",
+    "setup:pro": "pm2 deploy ecosystem.config.js development production",
+    "update:dev": "pm2 deploy ecosystem.config.js development setup",
+    "update:pro": "pm2 deploy ecosystem.config.js development production"
   },
   "repository": {
     "type": "git",
