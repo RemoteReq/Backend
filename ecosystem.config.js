@@ -2,6 +2,10 @@ module.exports = {
   apps: [{
     name: 'RemoteReq',
     script: './server/server.js',
+  }, 
+  {
+    name: 'Cron',
+    scripts: './server/cron.js',
   }],
   deploy: {
     production: {
