@@ -21,7 +21,7 @@ module.exports = {
     development: {
       key: '/home/ryden/.ssh/Heavy-Storm.pem',
       user: 'ubuntu',
-      host: '3.17.59.237',
+      host: '3.139.183.13',
       ref: 'origin/Automate',
       repo: 'git@github.com:RemoteReq/Backend.git',
       path: '/home/ubuntu/',
