@@ -54,6 +54,10 @@ app.use('/api/user', tokenValidityChecking, user);
 app.use('/api/jobs', tokenValidityCheckingForEmp, jobs);
 app.use('/api/employers', tokenValidityCheckingForEmp, employers);
 
+app.get('/api/test', (req, res) => {
+  return res.status(200).send('gotcha!')
+})
+
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
 });
