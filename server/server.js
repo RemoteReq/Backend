@@ -11,6 +11,9 @@ require('../gateway/passportSetup');
 const app = express();
 const PORT = process.env.PORT;
 
+//CORS
+app.use(cors());
+
 // import route handlers
 const signup = require('./api/auth/signUp.js');
 const subscribe = require('./api/auth/subscribe');
@@ -37,9 +40,6 @@ app.use(require('express-session')({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-
-//CORS
-app.use(cors());
 
 // require('./cron')
 // routes
