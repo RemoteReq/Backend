@@ -265,7 +265,8 @@ const filterJobs = async(req, res)=>{
             { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
             { expireStatus: false }
           ] 
-        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
+        })
+        .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch")
         .lean()
         
         matchingPercentage(req, res, getJobsList, getUserData)
@@ -279,7 +280,7 @@ const filterJobs = async(req, res)=>{
             { expireStatus: false }
           ] 
         })
-        .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
+        .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch")
         .lean()  //lean helps addition of new fields in find query
 
         matchingPercentage(req, res, getJobsList, getUserData)
@@ -294,7 +295,7 @@ const filterJobs = async(req, res)=>{
             { eligibleToWorkInUS: getUserData.eligibleToWorkInUS },
             { expireStatus: false }
           ] 
-        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
+        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch")
         .lean()
         
         matchingPercentage(req, res, getJobsList, getUserData)
@@ -308,7 +309,7 @@ const filterJobs = async(req, res)=>{
             { fluentInEnglish: getUserData.fluentInEnglish },
             { expireStatus: false }
           ] 
-        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
+        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch")
         .lean()
         
         matchingPercentage(req, res, getJobsList, getUserData)
