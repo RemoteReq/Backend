@@ -234,12 +234,43 @@ const updateUserProfile = async(req, res)=>{
     // console.log(getUserData.eligibleToWorkInUS)
     if(getUserData.eligibleToWorkInUS !== null && getUserData.causes.length !== 0 && getUserData.soonestJoinDate !== null && getUserData.jobType !== '' && getUserData.fluentInEnglish !== null){
       await User.findByIdAndUpdate(req.userId, { $set: { profileCompleteStatus: true }});
+      await sendMailAfterUpdateProfile(getUserData.fullName, getUserData.email);
       getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
     }
     res.status(200).json(getUserData);
   } catch(err) {
       console.log(err);
   }
+}
+
+const sendMailAfterUpdateProfile = (fullname, emailId)=>{
+  let firstName = fullname.split(" ")[0];
+  var transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    // service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD
+    }
+  });
+
+  var mailOptions = {
+    from: process.env.EMAIL_USERNAME,
+    to: emailId,
+    subject: 'Thank you for completing your job seeker questionnaire - RemoteReq',
+    html: '<div style="font-family: \'Open Sans\', sans-serif; padding: 15px;"><p>Hey <b>'+firstName+'</b>,</p><p>Thank you for completing your job seeker questionnaire.</p><p>Our small but mighty team is working daily to put your profile in front of potential employers. For some job seekers, this process will move quickly, even immediately. For others, it may take a while.</p><p>Our supply of jobs will ebb and flow with the hiring needs of our employer partners. We work in service of them, and you. Both responsibilities we take seriously.</p><p>Also, we are exploring new relationships and strategies to bring you even more opportunities in the coming weeks. Stay tuned for more updates.</p><p>Lastly, we appreciate your passion, and ask for your patience. We encourage you to visit the <b>Job Seeker section</b> of our <u style="color:blue">Frequently Asked Questions</u> for more information about what we do, and what you can expect.</p><p>Thank you, again, for joining our network of remote talent. More to come soon.</p><p>In solidarity,</p><p><img src="https://remotereq.s3.us-east-2.amazonaws.com/remotereqlogo.JPG"></p><p style="font-size:11px; margin-top: -15px;">Work from Anywhere. Change the World.</p><h5 style="font-weight:normal">e: <a href="javascript:void(0)" >remotereq@gmail.com</a><br> w: <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5><ul style="list-style: none;padding-left: 0;"><li style="float: left;margin-right: 3px;"><a href="https://www.facebook.com/RemoteReq-1833060860134583" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/facebook-512.png" style="width: 100%;"/> </a></li><li style="float: left;margin-right: 3px;"><a href="https://www.linkedin.com/company/remotereq" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/linkedin-512.png"  style="width: 100%;"/></a></li><li style="float: left;margin-right: 3px;"><a href="" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/twitter-512.png" style="width: 100%;"/></a></li></ul></div>'
+  };
+
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log("error: Unable to send email.", error);
+    } else {
+      console.log('Email sent after update profile');
+    }
+  });
+
 }
 
 const listUsers = async(req, res)=>{
@@ -256,6 +287,7 @@ const filterJobs = async(req, res)=>{
   try{
     let getUserData = await User.findById(req.userId);
     let getJobsList = '';
+    let specialPrivilegeIDs = process.env.SPECIAL_PRIVILEGE_IDS.split(",")
     if(getUserData.eligibleToWorkInUS){
       if(getUserData.fluentInEnglish){
         getJobsList = await Jobs.find({ 
@@ -263,10 +295,11 @@ const filterJobs = async(req, res)=>{
             { cause : { $in: getUserData.causes}},
             { jobType: getUserData.jobType },
             { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
-            { expireStatus: false }
+            { expireStatus: false },
+            { addBy: { $nin: specialPrivilegeIDs } }
           ] 
         })
-        .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch")
+        .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch -addBy")
         .lean()
         
         matchingPercentage(req, res, getJobsList, getUserData)
@@ -277,10 +310,11 @@ const filterJobs = async(req, res)=>{
             { jobType: getUserData.jobType },
             { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
             { fluentInEnglish: getUserData.fluentInEnglish },
-            { expireStatus: false }
+            { expireStatus: false },
+            { addBy: { $nin: specialPrivilegeIDs } }
           ] 
         })
-        .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch")
+        .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch -addBy")
         .lean()  //lean helps addition of new fields in find query
 
         matchingPercentage(req, res, getJobsList, getUserData)
@@ -293,9 +327,10 @@ const filterJobs = async(req, res)=>{
             { jobType: getUserData.jobType },
             { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
             { eligibleToWorkInUS: getUserData.eligibleToWorkInUS },
-            { expireStatus: false }
+            { expireStatus: false },
+            { addBy: { $nin: specialPrivilegeIDs } }
           ] 
-        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch")
+        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch -addBy")
         .lean()
         
         matchingPercentage(req, res, getJobsList, getUserData)
@@ -307,9 +342,10 @@ const filterJobs = async(req, res)=>{
             { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
             { eligibleToWorkInUS: getUserData.eligibleToWorkInUS },
             { fluentInEnglish: getUserData.fluentInEnglish },
-            { expireStatus: false }
+            { expireStatus: false },
+            { addBy: { $nin: specialPrivilegeIDs } }
           ] 
-        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch")
+        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch -addBy")
         .lean()
         
         matchingPercentage(req, res, getJobsList, getUserData)

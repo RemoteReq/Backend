@@ -20,6 +20,7 @@ const employerSchema = new Schema({
   isEmailVerify: { type: Boolean, default: false },
   isDeleteAccount: { type: Boolean, default: false },
   clientIdOfPaymentGateway: { type: String, required: true },
+  specialPrivilege: { type: Boolean, default: false },
 });
 
 // Model to export
