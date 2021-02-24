@@ -48,7 +48,8 @@ const { addJob, jobsList,
   clientTokenForPayment,
   checkoutForAddjob,
   checkoutAfterHired,
-  getSingleJob
+  getSingleJob,
+  jobAssignToAnotherEmployer
  } = require('../../../database/controllers/jobs.js');
 
 router.post('/getAll', jobsList);
@@ -250,6 +251,19 @@ router.post('/getJobById/:jobId', [
       })
   }
   getSingleJob(req,res)
+})
+
+router.post('/jobAssignToAnotherEmployer',[
+  check('jobId','Job Id is required').not().isEmpty(),
+  check('employerId','Employer Id is required').not().isEmpty(),
+], (req, res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+      return res.status(422).json({ 
+      errors: errors.array() 
+      })
+  }
+  jobAssignToAnotherEmployer(req,res)
 })
 
 module.exports = router;

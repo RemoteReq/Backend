@@ -601,6 +601,54 @@ const getSingleJob = async(req, res)=>{
   }
 }
 
+const jobAssignToAnotherEmployer = async(req, res)=>{
+  try {
+    let updateData = await Jobs.findByIdAndUpdate(req.body.jobId, { $set: { 
+      addBy: req.body.employerId,
+      expireDate: (process.env.HOST_TYPE=='live')? new Date(+new Date() + 21*24*60*60*1000) : new Date(+new Date() + 0.5*60*60*1000),
+      seventhDayAfterExpireDate: (process.env.HOST_TYPE=='live')? new Date(+new Date() + 28*24*60*60*1000) : new Date(+new Date() + 1*60*60*1000)
+    }});
+
+    let jobDetails = await Jobs.findById(req.body.jobId);
+    await sendMailAfterJobAssign(req, res, req.body.employerId, jobDetails.title)
+    
+  } catch(err) {
+    res.status(500).json(err);
+  }
+}
+
+const sendMailAfterJobAssign = async(req, res, empId, jobTitle)=>{
+  let empDetails = await Employer.findById(empId)
+  let companyName = empDetails.companyName;
+
+  var transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD
+      }
+  });
+
+  var mailOptions = {
+    from: process.env.EMAIL_USERNAME,
+    to: empDetails.email,
+    subject: 'Remote Job Posting Confirmation - RemoteReq',
+    html: '<div style="font-family: \'Open Sans\', sans-serif; padding: 15px;"><p>Hey <b>'+companyName+'</b>,</p><p>This email is to confirm a remote job has been posted for the position of <b>'+jobTitle+'</b> to <a target="_blank" href="www.remotereq.com">RemoteReq.com</a></p><p><b>What happens next?</b><br>You will receive an email when your matches are ready for review. To review your matches, you will need to pay $100. Upon being notified, you will have 21 days to review your matches, interview candidates, and make an offer for your opening. Be on the lookout for more details, coming soon.</p><p><a target="_blank" href="'+process.env.FRONTEND_BASE_URL+'employer/signin">Click here</a> to visit your account or to post another job req.</p><p>Be well,</p><p><img src="https://remotereq.s3.us-east-2.amazonaws.com/remotereqlogo.JPG"></p><p style="font-size:11px; margin-top: -15px;">Work from Anywhere. Change the World.</p><h5 style="font-weight:normal">e: <a href="javascript:void(0)" >remotereq@gmail.com</a><br> w: <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5><ul style="list-style: none;padding-left: 0;"><li style="float: left;margin-right: 3px;"><a href="https://www.facebook.com/RemoteReq-1833060860134583" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/facebook-512.png" style="width: 100%;"/> </a></li><li style="float: left;margin-right: 3px;"><a href="https://www.linkedin.com/company/remotereq" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/linkedin-512.png"  style="width: 100%;"/></a></li><li style="float: left;margin-right: 3px;"><a href="" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/twitter-512.png" style="width: 100%;"/></a></li></ul></div>',
+    
+  };
+
+  transporter.sendMail(mailOptions, async function(error, info){
+    if (error) {
+      console.log("error: Unable to send email.", error);
+    } else {
+      res.status(200).json("Job Assigned Successfully");
+    }
+  });
+
+}
+
 module.exports = {
   addJob,
   jobsList,
@@ -609,5 +657,6 @@ module.exports = {
   checkoutForAddjob,
   checkoutAfterHired,
   // findPendingPayment,
-  getSingleJob
+  getSingleJob,
+  jobAssignToAnotherEmployer
 };
