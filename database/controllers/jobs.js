@@ -620,15 +620,15 @@ const jobAssignToAnotherEmployer = async(req, res)=>{
     }});
 
     let jobDetails = await Jobs.findById(req.body.jobId);
-    await sendMailAfterJobAssign(req, res, req.body.employerId, jobDetails.title)
+    await sendMailAfterJobAssign(req, res, req.body.email, jobDetails.title)
     
   } catch(err) {
     res.status(500).json(err);
   }
 }
 
-const sendMailAfterJobAssign = async(req, res, empId, jobTitle)=>{
-  let empDetails = await Employer.findById(empId)
+const sendMailAfterJobAssign = async(req, res, email, jobTitle)=>{
+  let empDetails = await Employer.findById(email)
   let companyName = empDetails.companyName;
 
   var transporter = nodemailer.createTransport({
