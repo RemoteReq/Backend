@@ -9,11 +9,14 @@ const gateway = require('../../gateway/connection')
 // console.log('gateway', gateway)
 
 const addJob = async(req, res) => {
+  let empData = await Employer.findById(req.employerId)
+  // console.log(empData.specialPrivilege)
   let pendingPaymentJobList = await findPendingPayment(req, res);
-  if(pendingPaymentJobList.length > 0){
+  // console.log(pendingPaymentJobList)
+  
+  if(pendingPaymentJobList.length > 0 && empData.specialPrivilege == false){
     res.status(400).send('Before post new job please pay your due payment of '+pendingPaymentJobList[0].title);
   }else{
-    console.log('otherLanguages', req.body.otherLanguages)
     const job = new Jobs({
       title: req.body.title,
       companyName: req.body.companyName,
@@ -64,7 +67,13 @@ const addJob = async(req, res) => {
 
 const findPendingPayment = async(req, res)=>{
   try {
-    let pendingPaymentList = await Jobs.find({addBy: req.employerId, hiredStatus: true, hiringPaymentStatus: null});
+    let pendingPaymentList = await Jobs.find({
+      addBy: req.employerId, 
+      $or: [
+        {$and: [ {matchesCandidateFlag: true}, {firstPaymentStatus: false}]},
+        {$and: [ {hiredStatus: true}, {hiringPaymentStatus: null}]}
+      ],
+    });
     // res.status(200).json(pendingPaymentList);
     return pendingPaymentList;
     
