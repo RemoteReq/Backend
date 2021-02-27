@@ -255,7 +255,7 @@ router.post('/getJobById/:jobId', [
 
 router.post('/jobAssignToAnotherEmployer',[
   check('jobId','Job Id is required').not().isEmpty(),
-  check('employerId','Employer Id is required').not().isEmpty(),
+  check('email','Email is required').not().isEmpty(),
 ], (req, res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
