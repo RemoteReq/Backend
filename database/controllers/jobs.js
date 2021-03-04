@@ -612,14 +612,16 @@ const getSingleJob = async(req, res)=>{
 
 const jobAssignToAnotherEmployer = async(req, res)=>{
   try {
+    let employer = await Employer.findOne({email: req.body.email});
+
     let updateData = await Jobs.findByIdAndUpdate(req.body.jobId, { $set: { 
-      addBy: req.body.employerId,
+      addBy: employer._id,
       expireDate: (process.env.HOST_TYPE=='live')? new Date(+new Date() + 21*24*60*60*1000) : new Date(+new Date() + 0.5*60*60*1000),
       seventhDayAfterExpireDate: (process.env.HOST_TYPE=='live')? new Date(+new Date() + 28*24*60*60*1000) : new Date(+new Date() + 1*60*60*1000)
     }});
 
     let jobDetails = await Jobs.findById(req.body.jobId);
-    await sendMailAfterJobAssign(req, res, req.body.employerId, jobDetails.title)
+    await sendMailAfterJobAssign(req, res, employer._id, jobDetails.title)
     
   } catch(err) {
     res.status(500).json(err);

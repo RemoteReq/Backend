@@ -180,7 +180,7 @@ const listEmployers = async(req, res)=>{
 const getSingleEmployerDetails = async(req, res)=>{
   try{
     
-    let getData = await Employer.findById(req.employerId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount -clientIdOfPaymentGateway");
+    let getData = await Employer.findById(req.employerId).select("-__v -password -authSignature -isEmailVerify -isDeleteAccount -clientIdOfPaymentGateway");
     
     res.status(200).json(getData);
   } catch(err) {
