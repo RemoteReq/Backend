@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+
 const { check, validationResult } = require('express-validator');
 // const gateway = require('../../../gateway/connection')
 // console.log('gateway', gateway)
@@ -49,7 +50,8 @@ const { addJob, jobsList,
   checkoutForAddjob,
   checkoutAfterHired,
   getSingleJob,
-  jobAssignToAnotherEmployer
+  jobAssignToAnotherEmployer,
+  editJob
  } = require('../../../database/controllers/jobs.js');
 
 router.post('/getAll', jobsList);
@@ -93,8 +95,26 @@ router.post('/add', upload.fields([{
     let descPath = await uploadJobDescFile(req, res)
     req.body.jobDescriptionPath = descPath
   }
-  
+  // console.log(req.body); return
   addJob(req,res)
+});
+
+router.post('/editJob/:jobId', upload.fields([{
+  name: 'companyLogo', maxCount: 1
+}, {
+  name: 'jobDescription', maxCount: 1
+}]), async(req,res)=>{
+
+  if(req.files.companyLogo){
+    let logoPath = await uploadCompanyLogo(req,res)
+    req.body.companyLogoPath = logoPath;
+  }
+  if(req.files.jobDescription){
+    let descPath = await uploadJobDescFile(req, res)
+    req.body.jobDescriptionPath = descPath
+  }
+  
+  editJob(req, res)
 });
 
 // router.post("/createClientForGateway", [
@@ -265,5 +285,6 @@ router.post('/jobAssignToAnotherEmployer',[
   }
   jobAssignToAnotherEmployer(req,res)
 })
+
 
 module.exports = router;

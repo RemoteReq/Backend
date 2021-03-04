@@ -658,6 +658,18 @@ const sendMailAfterJobAssign = async(req, res, empId, jobTitle)=>{
 
 }
 
+const editJob = async(req, res)=>{
+  try {    
+    await MatchedJobSeeker.deleteMany({ jobId : req.params.jobId });
+    await Jobs.findByIdAndUpdate(req.params.jobId, { $set: req.body});
+    let jobData = await Jobs.findById(req.params.jobId);
+    checkCandidateMatch(jobData)
+    res.status(200).json('Update Successfully');
+  } catch(err) {
+    res.status(500).json(err);
+  }
+}
+
 module.exports = {
   addJob,
   jobsList,
@@ -667,5 +679,6 @@ module.exports = {
   checkoutAfterHired,
   // findPendingPayment,
   getSingleJob,
-  jobAssignToAnotherEmployer
+  jobAssignToAnotherEmployer,
+  editJob
 };

@@ -30,8 +30,9 @@ const demoRequestJob = require('./api/auth/demoRequest');
 // app.use(history());
 
 // express middleware
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 const {tokenValidityChecking, tokenValidityCheckingForEmp} = require('./authentication');
 app.use(require('express-session')({
   secret: process.env.GOOGLE_SESSION_SECRET,
