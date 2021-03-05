@@ -51,7 +51,8 @@ const { addJob, jobsList,
   checkoutAfterHired,
   getSingleJob,
   jobAssignToAnotherEmployer,
-  editJob
+  editJob,
+  deleteMatchedJobSeekers
  } = require('../../../database/controllers/jobs.js');
 
 router.post('/getAll', jobsList);
@@ -286,5 +287,22 @@ router.post('/jobAssignToAnotherEmployer',[
   jobAssignToAnotherEmployer(req,res)
 })
 
+router.post('/deleteMatchedJobSeekers',[
+  check('jobId','Job Id is required').not().isEmpty(),
+  check('candidatesId','Candidates Id is required').not().isEmpty()
+], (req, res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+      return res.status(422).json({ 
+      errors: errors.array() 
+      })
+  }
+  
+  if(req.body.candidatesId.length>5){
+    res.status(400).json('Can\'t remove more than 5 candidates');
+    return false;
+  }
+  deleteMatchedJobSeekers(req,res)
+})
 
 module.exports = router;

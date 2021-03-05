@@ -672,6 +672,16 @@ const editJob = async(req, res)=>{
   }
 }
 
+const deleteMatchedJobSeekers = async(req, res)=>{
+  try {    
+    let deleteMatchedCandidatesData = await MatchedJobSeeker.deleteMany({ jobId: req.body.jobId, candidateId : req.body.candidatesId });
+    // console.log(deleteMatchedCandidatesData)
+    res.status(200).json('Deleted Successfully');
+  } catch(err) {
+    res.status(500).json(err);
+  }
+}
+
 module.exports = {
   addJob,
   jobsList,
@@ -682,5 +692,6 @@ module.exports = {
   // findPendingPayment,
   getSingleJob,
   jobAssignToAnotherEmployer,
-  editJob
+  editJob,
+  deleteMatchedJobSeekers
 };
