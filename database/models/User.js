@@ -12,12 +12,17 @@ const userSchema = new Schema({
   password: { type: String },
   email: { type: String, required: true },
   authSignature: {type: String},
-  
-  eligibleToWorkInUS: { type: Boolean },
+
+  title: { type: String }, //new field. should be Array
+  location: { type: String },
+  zipcode: { type: String },
+  availability: { type: String, enum : ['Remote','On-site', 'Flexible', ''] }, //new field
   causes: { type: Array },
-  jobType: { type: String }, // full-time/part-time
+  jobType: { type: String, enum : ['Full Time','Part Time', ''] }, // full-time/part-time
+  
   soonestJoinDate: { type: Date }, 
   fluentInEnglish: { type: Boolean },
+  eligibleToWorkInUS: { type: Boolean },
 
   highestEducationLevel: { type: Number },
   reasonForCause: { type: String },
@@ -31,8 +36,7 @@ const userSchema = new Schema({
   isWorkRemotely: { type: Boolean },
   aboutMe: { type: String },
   totalExperience: { type: Number }, 
-  desireKeySkills: { type: Array }, 
-  location: { type: String }, 
+  desireKeySkills: { type: Array },  
   
   linkedInURL: { type: String },
   personalURL: { type: String },
@@ -46,7 +50,7 @@ const userSchema = new Schema({
   resumePath: { type: String },
   profileCompleteStatus: { type: Boolean, default: false },
 
-  address: { type: String },
+  // address: { type: String },
 });
 
 // Model to export

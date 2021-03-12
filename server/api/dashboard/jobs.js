@@ -73,6 +73,7 @@ router.post('/add', upload.fields([{
   check('numberOfCandidate','Number of Candidates is required').not().isEmpty(),
   check('percentageMatch','Percentage match value is required').not().isEmpty(),
   check('eligibleToWorkInUS','eligibleToWorkInUS value is required').not().isEmpty(),
+  check('availability','Availability is required').not().isEmpty(),
   check('cause','Causes of impact is required').not().isEmpty(),
   check('jobType','Working Type is required').not().isEmpty(),
   check('soonestJoinDate','Joining Date is required').not().isEmpty(),

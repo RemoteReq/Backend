@@ -62,7 +62,7 @@ router.get('/google/success', isLoggedIn, async(req, res)=>{
             profilePicUrl: req.user._json.picture,
             resumePath: '',
             
-            address: '',
+            // address: '',
         });
 
         //save user's details

@@ -81,12 +81,12 @@ router.post('/updateUserProfile',[
   // check('veteranStatus','veteranStatus is required').not().isEmpty()
 ], (req,res)=>{
   
-  const errors = validationResult(req)
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ 
-      errors: errors.array() 
-    })
-  }
+  // const errors = validationResult(req)
+  // if (!errors.isEmpty()) {
+  //   return res.status(422).json({ 
+  //     errors: errors.array() 
+  //   })
+  // }
   updateUserProfile(req,res)
 });
 

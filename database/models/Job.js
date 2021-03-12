@@ -5,7 +5,6 @@ const { Schema } = mongoose;
 
 // Job Schema
 const jobSchema = new Schema({
-  title: { type: String, required: true },
   companyName: { type: String, required: true },
   companyLogoPath: { type: String},
   companyWebsiteUrl: { type: String},
@@ -33,11 +32,16 @@ const jobSchema = new Schema({
   matchesCandidateFlag: {type: Boolean, default: false},
   matchesCandidateCount: {type: Number, default: 0},
 
-  eligibleToWorkInUS: { type: Boolean },
+  title: { type: String, required: true },
+  location: { type: String, required: true },
+  zipcode: { type: String },
+  availability: { type: String, enum : ['Remote','On-site', 'Flexible', ''] }, //new field
   cause: { type: String },
   jobType: { type: String }, // full-time/part-time
+
   soonestJoinDate: { type: Date }, 
   fluentInEnglish: { type: Boolean },
+  eligibleToWorkInUS: { type: Boolean },
 
   requiredEducationLevel: { type: Number },
   workDays: { type: Array }, 
@@ -50,7 +54,6 @@ const jobSchema = new Schema({
   minExperience: {type: Number, required: true},
   // maxExperience: { type: Number, required: true },
   keySkills: { type: Array, required: true },
-  location: { type: String, required: true },
   
 });
 

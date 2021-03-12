@@ -25,11 +25,14 @@ const addUser = async(req, res) => {
             email: req.body.email,
             authSignature: '',
 
-            eligibleToWorkInUS: null,
+            title: '',
+            location: '',
+            availability: '',
             causes: [],
             jobType: '',
             soonestJoinDate: null,
             fluentInEnglish: null,
+            eligibleToWorkInUS: null,
 
             highestEducationLevel: '',
             reasonForCause: '',
@@ -45,7 +48,7 @@ const addUser = async(req, res) => {
             projectDescription: '',
             totalExperience: null,
             desireKeySkills: [],
-            location: '',
+            
 
             linkedInURL: '',
             personalURL: '',
@@ -56,7 +59,7 @@ const addUser = async(req, res) => {
             profilePicUrl: '',
             resumePath: '',
             
-            address: '',
+            // address: '',
           });
   
           //save user's details
