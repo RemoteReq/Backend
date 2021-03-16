@@ -72,10 +72,12 @@ const findPendingPayment = async(req, res)=>{
   try {
     let pendingPaymentList = await Jobs.find({
       addBy: req.employerId, 
-      $or: [
+      hiredStatus: true,
+      hiringPaymentStatus: null,
+      // $or: [
         // {$and: [ {matchesCandidateFlag: true}, {firstPaymentStatus: false}]},
-        {$and: [ {hiredStatus: true}, {hiringPaymentStatus: null}]}
-      ],
+      //   {$and: [ {hiredStatus: true}, {hiringPaymentStatus: null}]}
+      // ],
     });
     return pendingPaymentList;
     
