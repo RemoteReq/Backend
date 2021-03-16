@@ -58,7 +58,7 @@ const addJob = async(req, res) => {
     job.save()
     .then(async(doc) => {
       // res.status(200).json(doc);
-      // await sendMailAfterJobPost(req, res, req.employerId, req.body.title);
+      await sendMailAfterJobPost(req, res, req.employerId, req.body.title);
       await checkCandidateMatch(doc)
     })
     .catch(error => {
@@ -125,7 +125,7 @@ const checkCandidateMatch = async(getJobData)=>{
     getCandidateList = await User.aggregate([
       {
         $match: { $and: [
-          { title: getJobData.title },
+          { title: {'$regex':"^"+getJobData.title, '$options': 'i'}},
           { location: getJobData.location },
           { $or: [ { availability: 'Remote' }, { availability: 'Flexible' }]  },
           { causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
@@ -167,7 +167,12 @@ const checkCandidateMatch = async(getJobData)=>{
           resumePath: 1,
           // address: 1,
           // pincode: 1,
-          jobType: 1
+          jobType: 1,
+          dayssince: {
+            $trunc: {
+              $divide: [{ $subtract: [getJobData.soonestJoinDate, '$soonestJoinDate'] }, 1000 * 60 * 60 * 24]
+            }
+          }
         }
       }
     ])
@@ -177,7 +182,7 @@ const checkCandidateMatch = async(getJobData)=>{
     getCandidateList = await User.aggregate([
       {
         $match: { $and: [
-          { title: getJobData.title },
+          { title: {'$regex':"^"+getJobData.title, '$options': 'i'}},
           { location: getJobData.location },
           { $or: [ { availability: 'On-site' }, { availability: 'Flexible' }]  },
           { causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
@@ -219,7 +224,12 @@ const checkCandidateMatch = async(getJobData)=>{
           resumePath: 1,
           // address: 1,
           // pincode: 1,
-          jobType: 1
+          jobType: 1,
+          dayssince: {
+            $trunc: {
+              $divide: [{ $subtract: [getJobData.soonestJoinDate, '$soonestJoinDate'] }, 1000 * 60 * 60 * 24]
+            }
+          }
         }
       }
     ])
@@ -228,7 +238,7 @@ const checkCandidateMatch = async(getJobData)=>{
     getCandidateList = await User.aggregate([
       {
         $match: { $and: [
-          { title: getJobData.title },
+          { title: {'$regex':"^"+getJobData.title, '$options': 'i'}},
           { location: getJobData.location },
           { causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
           { jobType: getJobData.jobType },
@@ -269,7 +279,12 @@ const checkCandidateMatch = async(getJobData)=>{
           resumePath: 1,
           // address: 1,
           // pincode: 1,
-          jobType: 1
+          jobType: 1,
+          dayssince: {
+            $trunc: {
+              $divide: [{ $subtract: [getJobData.soonestJoinDate, '$soonestJoinDate'] }, 1000 * 60 * 60 * 24]
+            }
+          }
         }
       }
     ])
@@ -344,7 +359,9 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
     if(getCandidateList[i].desireKeySkills.some((val) => getJobData.keySkills.indexOf(val) !== -1)){
       givePoints += minorQuestionPoints;
     }
-    
+    if(getCandidateList[i].dayssince <= 14 && !(getCandidateList[i].dayssince < 0)){
+      givePoints += minorQuestionPoints;
+    }
     getCandidateList[i].matchingPercentage = parseInt(givePoints) + majorQuestionPoints;
     getCandidateList[i].jobId = getJobData._id;
     getCandidateList[i].candidateId = (getCandidateList[i]._id).toString();
@@ -367,7 +384,7 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
       givePoints += minorQuestionPoints;
     } 
     //check annual pay match
-    if(getCandidateList[i].salary <= getJobData.salary){
+    if((getCandidateList[i].salary - 10000)<= getJobData.salary && (getCandidateList[i].salary + 10000) >= getJobData.salary){
       givePoints += minorQuestionPoints;
     }
     if(getCandidateList[i].projectDescription != ''){
@@ -388,6 +405,9 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
     }
     // //check atleast one key skill match or not
     if(getCandidateList[i].desireKeySkills.some((val) => getJobData.keySkills.indexOf(val) !== -1)){
+      givePoints += minorQuestionPoints;
+    }
+    if(getCandidateList[i].dayssince <= 14 && !(getCandidateList[i].dayssince < 0)){
       givePoints += minorQuestionPoints;
     }
     // console.log(parseInt(getCandidateList[i].dayssince))

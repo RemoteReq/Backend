@@ -13,7 +13,7 @@ const userSchema = new Schema({
   email: { type: String, required: true },
   authSignature: {type: String},
 
-  title: { type: String }, //new field. should be Array
+  title: { type: Array }, //new field. should be Array
   location: { type: String },
   zipcode: { type: String },
   availability: { type: String, enum : ['Remote','On-site', 'Flexible', ''] }, //new field
@@ -33,7 +33,7 @@ const userSchema = new Schema({
   projectDescription: { type: String },
   sampleProjectLink: { type: String },  
   relavantCertificates: { type: String },
-  isWorkRemotely: { type: Boolean },
+  // isWorkRemotely: { type: Boolean },
   aboutMe: { type: String },
   totalExperience: { type: Number }, 
   desireKeySkills: { type: Array },  

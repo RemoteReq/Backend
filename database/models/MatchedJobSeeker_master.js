@@ -7,7 +7,7 @@ const { Schema } = mongoose;
 const matchedJobSeekerSchema = new Schema({
   fullName: { type: String },
   email: { type: String },
-  title: { type: String },
+  title: { type: Array },
   location: { type: String },
   availability: { type: String },
   causes: { type: Array },

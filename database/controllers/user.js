@@ -25,7 +25,8 @@ const addUser = async(req, res) => {
             email: req.body.email,
             authSignature: '',
 
-            title: '',
+            // title: '',
+            title: [],
             location: '',
             availability: '',
             causes: [],
