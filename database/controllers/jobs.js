@@ -651,6 +651,16 @@ const deleteMatchedJobSeekers = async(req, res)=>{
   }
 }
 
+const deleteJob = async(req, res)=>{
+  try {    
+    await MatchedJobSeeker.deleteMany({ jobId : req.params.jobId });
+    await Jobs.findByIdAndDelete(req.params.jobId);
+    res.status(200).json('Deleted Successfully');
+  } catch(err) {
+    res.status(500).json(err);
+  }
+}
+
 module.exports = {
   addJob,
   jobsList,
@@ -662,6 +672,7 @@ module.exports = {
   getSingleJob,
   jobAssignToAnotherEmployer,
   editJob,
-  deleteMatchedJobSeekers
+  deleteMatchedJobSeekers,
+  deleteJob
 };
 
