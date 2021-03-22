@@ -62,7 +62,7 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
             projectDescription: 1,
             sampleProjectLink: 1,
             relavantCertificates: 1,
-            isWorkRemotely: 1,
+            // isWorkRemotely: 1,
             aboutMe: 1,
             totalExperience: 1,
             linkedInURL: 1,
@@ -120,7 +120,7 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
             projectDescription: 1,
             sampleProjectLink: 1,
             relavantCertificates: 1,
-            isWorkRemotely: 1,
+            // isWorkRemotely: 1,
             aboutMe: 1,
             totalExperience: 1,
             linkedInURL: 1,
@@ -175,7 +175,7 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
             projectDescription: 1,
             sampleProjectLink: 1,
             relavantCertificates: 1,
-            isWorkRemotely: 1,
+            // isWorkRemotely: 1,
             aboutMe: 1,
             totalExperience: 1,
             linkedInURL: 1,
@@ -229,7 +229,7 @@ const matchingPercentageCalculation = async(getCandidateList, getJobData)=>{
 const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
   let toalPoints = 23;
   const majorQuestionPoints = 85;
-  const numberOfMinorQuestions = 16;
+  const numberOfMinorQuestions = 15;
   const minorQuestionPoints = ( 15 / numberOfMinorQuestions )
   for(var i=0; i<getCandidateList.length; i++){
     let givePoints = (3*minorQuestionPoints); // get auto points for reasonForCause, salary, aboutMe
@@ -239,11 +239,11 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
     }
     
     //check working hours matching
-    var candidateWT = getCandidateList[i].availableWorkHours.split('-');
-    var employerWT = getJobData.workHours.split('-');
-    if( (parseInt(candidateWT[0])>=parseInt(employerWT[0]) && parseInt(candidateWT[0])<=parseInt(employerWT[1])) || (parseInt(candidateWT[1]) >= parseInt(employerWT[0]) && parseInt(candidateWT[1]) <= parseInt(employerWT[1]))){
-      givePoints += minorQuestionPoints;
-    }
+    // var candidateWT = getCandidateList[i].availableWorkHours.split('-');
+    // var employerWT = getJobData.workHours.split('-');
+    // if( (parseInt(candidateWT[0])>=parseInt(employerWT[0]) && parseInt(candidateWT[0])<=parseInt(employerWT[1])) || (parseInt(candidateWT[1]) >= parseInt(employerWT[0]) && parseInt(candidateWT[1]) <= parseInt(employerWT[1]))){
+    //   givePoints += minorQuestionPoints;
+    // }
     //check time zone matching
     if(getJobData.timeZone == getCandidateList[i].timeZone){
       givePoints += minorQuestionPoints;
@@ -259,9 +259,6 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
       givePoints += minorQuestionPoints;
     }
     if(getCandidateList[i].relavantCertificates != ''){
-      givePoints += minorQuestionPoints;
-    }
-    if(getCandidateList[i].isWorkRemotely){
       givePoints += minorQuestionPoints;
     }
     //check experience
@@ -287,11 +284,11 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
 const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
   let toalPoints = 23;
   const majorQuestionPoints = 85;
-  const numberOfMinorQuestions = 16;
+  const numberOfMinorQuestions = 15;
   const minorQuestionPoints = ( 15 / numberOfMinorQuestions )
   
   for(var i=0; i<getCandidateList.length; i++){
-    let givePoints = (6*minorQuestionPoints); // get auto points for reasonForCause, availableWorkDays, availableWorkHours, timeZone, hourlyWage, aboutMe
+    let givePoints = (5*minorQuestionPoints); // get auto points for reasonForCause, availableWorkDays, timeZone, hourlyWage, aboutMe
     //check education matching
     if(getJobData.requiredEducationLevel <= getCandidateList[i].highestEducationLevel){
       givePoints += minorQuestionPoints;
@@ -307,9 +304,6 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
       givePoints += minorQuestionPoints;
     }
     if(getCandidateList[i].relavantCertificates != ''){
-      givePoints += minorQuestionPoints;
-    }
-    if(getCandidateList[i].isWorkRemotely){
       givePoints += minorQuestionPoints;
     }
     //check experience

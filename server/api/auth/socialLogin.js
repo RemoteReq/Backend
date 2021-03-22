@@ -46,7 +46,7 @@ router.get('/google/success', isLoggedIn, async(req, res)=>{
             projectDescription: '',
             sampleProjectLink: '',
             relavantCertificates: '',
-            isWorkRemotely: null,
+            // isWorkRemotely: null,
             aboutMe: '',
             projectDescription: '',
             totalExperience: null,

@@ -25,7 +25,7 @@ const matchedJobSeekerSchema = new Schema({
   projectDescription: { type: String },
   sampleProjectLink: { type: String },  
   relavantCertificates: { type: String },
-  isWorkRemotely: { type: Boolean },
+  // isWorkRemotely: { type: Boolean },
   aboutMe: { type: String },
   totalExperience: { type: Number }, 
   desireKeySkills: { type: Array }, 

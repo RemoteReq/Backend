@@ -56,6 +56,7 @@ router.post('/matchesCandidateByEachJob/:jobId', [
         errors: errors.array() 
         })
     }
+    
     matchesCandidateByEachJob(req,res)
 })
 
