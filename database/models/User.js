@@ -13,12 +13,12 @@ const userSchema = new Schema({
   email: { type: String, required: true },
   authSignature: {type: String},
 
-  title: { type: Array }, //new field. should be Array
+  title: { type: Array }, 
   location: { type: String },
   zipcode: { type: String },
-  availability: { type: String, enum : ['Remote','On-site', 'Flexible', ''] }, //new field
+  availability: { type: [String], enum : ['Remote','On-site', 'Flexible'], default: ['Flexible'] }, 
   causes: { type: Array },
-  jobType: { type: String, enum : ['Full Time','Part Time', ''] }, // full-time/part-time
+  jobType: { type: [String], enum : ['Full Time','Part Time'], default: ['Full Time'] }, // full-time/part-time  
   
   soonestJoinDate: { type: Date }, 
   fluentInEnglish: { type: Boolean },

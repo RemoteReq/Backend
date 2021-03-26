@@ -9,9 +9,9 @@ const matchedJobSeekerSchema = new Schema({
   email: { type: String },
   title: { type: Array },
   location: { type: String },
-  availability: { type: String },
+  availability: { type: Array },
   causes: { type: Array },
-  jobType: { type: String }, // full-time/part-time
+  jobType: { type: Array }, // full-time/part-time
   soonestJoinDate: { type: Date }, 
   fluentInEnglish: { type: Boolean },
   eligibleToWorkInUS: { type: Boolean },

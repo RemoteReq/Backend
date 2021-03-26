@@ -25,12 +25,11 @@ const addUser = async(req, res) => {
             email: req.body.email,
             authSignature: '',
 
-            // title: '',
             title: [],
             location: '',
-            availability: '',
+            // availability: '',
             causes: [],
-            jobType: '',
+            // jobType: '',
             soonestJoinDate: null,
             fluentInEnglish: null,
             eligibleToWorkInUS: null,
@@ -44,7 +43,6 @@ const addUser = async(req, res) => {
             projectDescription: '',
             sampleProjectLink: '',
             relavantCertificates: '',
-            // isWorkRemotely: null,
             aboutMe: '',
             projectDescription: '',
             totalExperience: null,
@@ -59,8 +57,6 @@ const addUser = async(req, res) => {
             refferedBy: '',
             profilePicUrl: '',
             resumePath: '',
-            
-            // address: '',
           });
   
           //save user's details
@@ -292,54 +288,20 @@ const filterJobs = async(req, res)=>{
     let getUserData = await User.findById(req.userId);
     let getJobsList = '';
     let specialPrivilegeIDs = process.env.SPECIAL_PRIVILEGE_IDS.split(",")
-    if(getUserData.availability == 'Remote'){
-      // console.log('Remote')
-      getJobsList = await Jobs.find({ 
-        $and: [ 
-          { title : { $in: getUserData.title}},
-          { location : getUserData.location},
-          { $or: [ { availability: 'Remote' }, { availability: 'Flexible' }]  },
-          { cause : { $in: getUserData.causes}},
-          { jobType: getUserData.jobType },
-          { addBy: { $nin: specialPrivilegeIDs } }
-        ] 
-      })
-      .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch -addBy")
-      .lean()
-      
-      matchingPercentage(req, res, getJobsList, getUserData)
-    }else if(getUserData.availability == 'On-site'){
-      // console.log('On-site')
-      getJobsList = await Jobs.find({ 
-        $and: [ 
-          { title : { $in: getUserData.title}},
-          { location : getUserData.location},
-          { $or: [ { availability: 'On-site' }, { availability: 'Flexible' }]  },
-          { cause : { $in: getUserData.causes}},
-          { jobType: getUserData.jobType },
-          { addBy: { $nin: specialPrivilegeIDs } }
-        ] 
-      })
-      .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch -addBy")
-      .lean()
-      
-      matchingPercentage(req, res, getJobsList, getUserData)
-    }else{
-      // console.log('Flexible')
-      getJobsList = await Jobs.find({ 
-        $and: [ 
-          { title : { $in: getUserData.title}},
-          { location : getUserData.location},
-          { cause : { $in: getUserData.causes}},
-          { jobType: getUserData.jobType },
-          { addBy: { $nin: specialPrivilegeIDs } }
-        ] 
-      })
-      .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch -addBy")
-      .lean()
-      
-      matchingPercentage(req, res, getJobsList, getUserData)
-    }
+    getJobsList = await Jobs.find({ 
+      $and: [ 
+        { title : { $in: getUserData.title}},
+        { location : getUserData.location},
+        { availability : { $in: getUserData.availability}},
+        { cause : { $in: getUserData.causes}},
+        { jobType : { $in: getUserData.jobType}},
+        { addBy: { $nin: specialPrivilegeIDs } }
+      ] 
+    })
+    .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch -addBy")
+    .lean()
+
+    matchingPercentage(req, res, getJobsList, getUserData)
     
   }catch(err){
     console.log(err);
@@ -347,13 +309,21 @@ const filterJobs = async(req, res)=>{
 }
 
 const matchingPercentage = async(req, res, getJobsList, getUserData)=>{
-  let jobListWithPercentageVal = '';
-  if(getUserData.jobType == 'Part Time'){
-    jobListWithPercentageVal = await pointCalculationOfHT(getJobsList, getUserData);
-  }else{
-    jobListWithPercentageVal = await pointCalculationOfFT(getJobsList, getUserData);
-  }
-  // res.send(getUserData)
+  let jobListWithPercentageVal = [];
+  // if(getUserData.jobType == 'Part Time'){
+  //   jobListWithPercentageVal = await pointCalculationOfHT(getJobsList, getUserData);
+  // }else{
+  //   jobListWithPercentageVal = await pointCalculationOfFT(getJobsList, getUserData);
+  // }
+
+  let partTimeJobList = [...getJobsList].filter(data=>{ return data.jobType == 'Part Time' });
+  let partTimeJobsWithPercentageVal = await pointCalculationOfHT(partTimeJobList, getUserData);
+  let fullTimeJobList = [...getJobsList].filter(data=>{ return data.jobType == 'Full Time' });
+  let fullTimeJobsWithPercentageVal = await pointCalculationOfFT(fullTimeJobList, getUserData);
+
+  jobListWithPercentageVal = partTimeJobsWithPercentageVal.concat(fullTimeJobsWithPercentageVal)
+  jobListWithPercentageVal.sort((a, b) => b.matchingPercentage - a.matchingPercentage);
+  
   res.send(jobListWithPercentageVal)
 }
 
@@ -370,12 +340,6 @@ const pointCalculationOfHT = async(getJobsList, getUserData)=>{
       givePoints += minorQuestionPoints;
     }
     
-    //check working hours matching
-    // var candidateWT = getUserData.availableWorkHours.split('-');
-    // var employerWT = getJobsList[i].workHours.split('-');
-    // if( (parseInt(candidateWT[0])>=parseInt(employerWT[0]) && parseInt(candidateWT[0])<=parseInt(employerWT[1])) || (parseInt(candidateWT[1]) >= parseInt(employerWT[0]) && parseInt(candidateWT[1]) <= parseInt(employerWT[1]))){
-    //   givePoints += 1;
-    // }
     //check time zone matching
     if(getJobsList[i].timeZone == getUserData.timeZone){
       givePoints += minorQuestionPoints;

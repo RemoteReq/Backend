@@ -27,177 +27,61 @@ const checkMatchesCandidateList = async(req, res, jobId)=>{
     let getJobData = await Job.findById(jobId).select("-__v");
 
     let getCandidateList= '';
-    if(getJobData.availability == 'Remote'){
-
-      getCandidateList = await User.aggregate([
-        {
-          $match: { $and: [
-            { title: {'$regex':"^"+getJobData.title, '$options': 'i'}},
-            { location: getJobData.location },
-            { $or: [ { availability: 'Remote' }, { availability: 'Flexible' }]  },
-            { causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
-            { jobType: getJobData.jobType },
-            { isDeleteAccount: false }
-          ]}
-        },
-        {
-          $project: {
-            title: 1,
-            availability: 1,
-            causes: 1,
-            desireKeySkills: 1,
-            location: 1,
-            otherLanguages: 1,
-            fullName: 1,
-            email: 1,
-            eligibleToWorkInUS: 1,
-            soonestJoinDate: 1,
-            fluentInEnglish: 1,
-            highestEducationLevel: 1,
-            reasonForCause: 1,
-            availableWorkHours: 1,
-            timeZone: 1,
-            hourlyWage: 1,
-            salary: 1,
-            projectDescription: 1,
-            sampleProjectLink: 1,
-            relavantCertificates: 1,
-            // isWorkRemotely: 1,
-            aboutMe: 1,
-            totalExperience: 1,
-            linkedInURL: 1,
-            personalURL: 1,
-            mobileNum: 1,
-            howLongWorkingRemotely: 1,
-            refferedBy: 1,
-            profilePicUrl: 1,
-            resumePath: 1,
-            // address: 1,
-            // pincode: 1,
-            jobType: 1,
-            dayssince: {
-              $trunc: {
-                $divide: [{ $subtract: [getJobData.soonestJoinDate, '$soonestJoinDate'] }, 1000 * 60 * 60 * 24]
-              }
+    getCandidateList = await User.aggregate([
+      {
+        $match: { $and: [
+          { title: {'$regex':"^"+getJobData.title, '$options': 'i'}},
+          { location: getJobData.location },
+          { availability: {'$regex':"^"+getJobData.availability, '$options': 'i'}},
+          { causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
+          { jobType: {'$regex':"^"+getJobData.jobType, '$options': 'i'} },
+          { isDeleteAccount: false }
+        ]}
+      },
+      {
+        $project: {
+          title: 1,
+          availability: 1,
+          causes: 1,
+          desireKeySkills: 1,
+          location: 1,
+          otherLanguages: 1,
+          fullName: 1,
+          email: 1,
+          eligibleToWorkInUS: 1,
+          soonestJoinDate: 1,
+          fluentInEnglish: 1,
+          highestEducationLevel: 1,
+          reasonForCause: 1,
+          availableWorkHours: 1,
+          timeZone: 1,
+          hourlyWage: 1,
+          salary: 1,
+          projectDescription: 1,
+          sampleProjectLink: 1,
+          relavantCertificates: 1,
+          // isWorkRemotely: 1,
+          aboutMe: 1,
+          totalExperience: 1,
+          linkedInURL: 1,
+          personalURL: 1,
+          mobileNum: 1,
+          howLongWorkingRemotely: 1,
+          refferedBy: 1,
+          profilePicUrl: 1,
+          resumePath: 1,
+          // address: 1,
+          // pincode: 1,
+          jobType: 1,
+          dayssince: {
+            $trunc: {
+              $divide: [{ $subtract: [getJobData.soonestJoinDate, '$soonestJoinDate'] }, 1000 * 60 * 60 * 24]
             }
           }
         }
-      ])
-      
-      return matchingPercentageCalculation(getCandidateList, getJobData);
-      
-    }else if(getJobData.availability == 'On-site'){
-      getCandidateList = await User.aggregate([
-        {
-          $match: { $and: [
-            { title: {'$regex':"^"+getJobData.title, '$options': 'i'}},
-            { location: getJobData.location },
-            { $or: [ { availability: 'On-site' }, { availability: 'Flexible' }]  },
-            { causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
-            { jobType: getJobData.jobType },
-            { isDeleteAccount: false }
-          ]}
-        },
-        {
-          $project: {
-            title: 1,
-            availability: 1,
-            causes: 1,
-            desireKeySkills: 1,
-            location: 1,
-            otherLanguages: 1,
-            fullName: 1,
-            email: 1,
-            eligibleToWorkInUS: 1,
-            soonestJoinDate: 1,
-            fluentInEnglish: 1,
-            highestEducationLevel: 1,
-            reasonForCause: 1,
-            availableWorkHours: 1,
-            timeZone: 1,
-            hourlyWage: 1,
-            salary: 1,
-            projectDescription: 1,
-            sampleProjectLink: 1,
-            relavantCertificates: 1,
-            // isWorkRemotely: 1,
-            aboutMe: 1,
-            totalExperience: 1,
-            linkedInURL: 1,
-            personalURL: 1,
-            mobileNum: 1,
-            howLongWorkingRemotely: 1,
-            refferedBy: 1,
-            profilePicUrl: 1,
-            resumePath: 1,
-            // address: 1,
-            // pincode: 1,
-            jobType: 1,
-            dayssince: {
-              $trunc: {
-                $divide: [{ $subtract: [getJobData.soonestJoinDate, '$soonestJoinDate'] }, 1000 * 60 * 60 * 24]
-              }
-            }
-          }
-        }
-      ])
-      return matchingPercentageCalculation(getCandidateList, getJobData);
-    }else{
-      getCandidateList = await User.aggregate([
-        {
-          $match: { $and: [
-            { title: {'$regex':"^"+getJobData.title, '$options': 'i'}},
-            { location: getJobData.location },
-            { causes: {'$regex':"^"+getJobData.cause, '$options': 'i'}},
-            { jobType: getJobData.jobType },
-            { isDeleteAccount: false }
-          ]}
-        },
-        {
-          $project: {
-            title: 1,
-            availability: 1,
-            causes: 1,
-            desireKeySkills: 1,
-            location: 1,
-            otherLanguages: 1,
-            fullName: 1,
-            email: 1,
-            eligibleToWorkInUS: 1,
-            soonestJoinDate: 1,
-            fluentInEnglish: 1,
-            highestEducationLevel: 1,
-            reasonForCause: 1,
-            availableWorkHours: 1,
-            timeZone: 1,
-            hourlyWage: 1,
-            salary: 1,
-            projectDescription: 1,
-            sampleProjectLink: 1,
-            relavantCertificates: 1,
-            // isWorkRemotely: 1,
-            aboutMe: 1,
-            totalExperience: 1,
-            linkedInURL: 1,
-            personalURL: 1,
-            mobileNum: 1,
-            howLongWorkingRemotely: 1,
-            refferedBy: 1,
-            profilePicUrl: 1,
-            resumePath: 1,
-            // address: 1,
-            // pincode: 1,
-            jobType: 1,
-            dayssince: {
-              $trunc: {
-                $divide: [{ $subtract: [getJobData.soonestJoinDate, '$soonestJoinDate'] }, 1000 * 60 * 60 * 24]
-              }
-            }
-          }
-        }
-      ])
-      return matchingPercentageCalculation(getCandidateList, getJobData);
-    }
+      }
+    ])
+    return matchingPercentageCalculation(getCandidateList, getJobData);
 
   } catch(err) {
       console.log(err);
