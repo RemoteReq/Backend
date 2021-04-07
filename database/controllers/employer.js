@@ -241,7 +241,6 @@ const matchesCandidateByEachJob = async(req, res)=>{
           projectDescription: 1,
           sampleProjectLink: 1,
           relavantCertificates: 1,
-          // isWorkRemotely: 1,
           aboutMe: 1,
           totalExperience: 1,
           linkedInURL: 1,
@@ -252,7 +251,7 @@ const matchesCandidateByEachJob = async(req, res)=>{
           profilePicUrl: 1,
           resumePath: 1,
           // address: 1,
-          // pincode: 1,
+          zipcode: 1,
           jobType: 1,
           dayssince: {
             $trunc: {
@@ -322,12 +321,6 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
       givePoints += minorQuestionPoints;
     }
     
-    //check working hours matching
-    // var candidateWT = getCandidateList[i].availableWorkHours.split('-');
-    // var employerWT = getJobData.workHours.split('-');
-    // if( (parseInt(candidateWT[0])>=parseInt(employerWT[0]) && parseInt(candidateWT[0])<=parseInt(employerWT[1])) || (parseInt(candidateWT[1]) >= parseInt(employerWT[0]) && parseInt(candidateWT[1]) <= parseInt(employerWT[1]))){
-    //   givePoints += minorQuestionPoints;
-    // }
     //check time zone matching
     if(getJobData.timeZone == getCandidateList[i].timeZone){
       givePoints += minorQuestionPoints;
@@ -420,9 +413,13 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
 
 const deleteAccount = async(req, res)=>{
   try{
-    // console.log(req.employerId)
-    let updateData = await Employer.findByIdAndUpdate(req.employerId, { $set: {isDeleteAccount: true}});
-    res.status(200).json("Removed your account");
+    let employer = await Employer.findOne({ username: req.query.username});
+    if(employer){
+      let updateData = await Employer.findByIdAndUpdate(req.employerId, { $set: {isDeleteAccount: true}});
+      res.status(200).json("Deleted Successfully");
+    }else{
+      res.status(200).json("Invalid username");
+    }
   } catch(err) {
       console.log(err);
   }

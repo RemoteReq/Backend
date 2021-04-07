@@ -26,14 +26,13 @@ const userSchema = new Schema({
 
   highestEducationLevel: { type: Number },
   reasonForCause: { type: String },
-  availableWorkHours: { type: String }, //for part-timer
+  availableWorkHours: { type: Number }, //for part-timer
   timeZone: { type: String }, //for part-timer
   hourlyWage: { type: Number }, //for part-timer
   salary: { type: Number }, //Annual salary Expectation for full-timer
   projectDescription: { type: String },
   sampleProjectLink: { type: String },  
   relavantCertificates: { type: String },
-  // isWorkRemotely: { type: Boolean },
   aboutMe: { type: String },
   totalExperience: { type: Number }, 
   desireKeySkills: { type: Array },  
@@ -51,6 +50,7 @@ const userSchema = new Schema({
   profileCompleteStatus: { type: Boolean, default: false },
 
   // address: { type: String },
+  zipcode: { type: String }
 });
 
 // Model to export

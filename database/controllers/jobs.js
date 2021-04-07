@@ -154,7 +154,6 @@ const checkCandidateMatch = async(getJobData)=>{
         projectDescription: 1,
         sampleProjectLink: 1,
         relavantCertificates: 1,
-        // isWorkRemotely: 1,
         aboutMe: 1,
         totalExperience: 1,
         linkedInURL: 1,
@@ -165,7 +164,7 @@ const checkCandidateMatch = async(getJobData)=>{
         profilePicUrl: 1,
         resumePath: 1,
         // address: 1,
-        // pincode: 1,
+        zipcode: 1,
         jobType: 1,
         dayssince: {
           $trunc: {
@@ -211,12 +210,6 @@ const getPointsForHalfTimers = async(getCandidateList, getJobData)=>{
       givePoints += minorQuestionPoints;
     }
     
-    //check working hours matching
-    // var candidateWT = getCandidateList[i].availableWorkHours.split('-');
-    // var employerWT = getJobData.workHours.split('-');
-    // if( (parseInt(candidateWT[0])>=parseInt(employerWT[0]) && parseInt(candidateWT[0])<=parseInt(employerWT[1])) || (parseInt(candidateWT[1]) >= parseInt(employerWT[0]) && parseInt(candidateWT[1]) <= parseInt(employerWT[1]))){
-    //   givePoints += minorQuestionPoints;
-    // }
     //check time zone matching
     if(getJobData.timeZone == getCandidateList[i].timeZone){
       givePoints += minorQuestionPoints;
@@ -365,23 +358,6 @@ const jobsList = async(req, res)=>{
   }
 }
 
-// const createClientForGateway = async(req, res)=>{
-//   gateway.customer.create({
-//     firstName: req.body.firstName,
-//     lastName: req.body.lastName,
-//     company: req.body.company,
-//     email: req.body.email,
-//     phone: req.body.phone,
-//     // fax: "614.555.5678",
-//     // website: "www.example.com"
-//   }).then(result =>{
-//       result.customer.id;
-//       res.status(200).json(result);
-//   })
-//   .catch(err =>{
-//     res.status(500).json(err);
-//   });
-// }
 
 const clientTokenForPayment = async(req, res)=>{
   gateway.clientToken.generate({

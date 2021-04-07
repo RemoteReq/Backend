@@ -17,15 +17,13 @@ const matchedJobSeekerSchema = new Schema({
   eligibleToWorkInUS: { type: Boolean },
   highestEducationLevel: { type: Number },
   reasonForCause: { type: String },
-  // availableWorkDays: { type: Array }, //for part-timer
-  availableWorkHours: { type: String }, //for part-timer
+  availableWorkHours: { type: Number }, //for part-timer
   timeZone: { type: String }, //for part-timer
   hourlyWage: { type: Number }, //for part-timer
   salary: { type: Number }, //Annual salary Expectation for full-timer
   projectDescription: { type: String },
   sampleProjectLink: { type: String },  
   relavantCertificates: { type: String },
-  // isWorkRemotely: { type: Boolean },
   aboutMe: { type: String },
   totalExperience: { type: Number }, 
   desireKeySkills: { type: Array }, 
@@ -39,6 +37,7 @@ const matchedJobSeekerSchema = new Schema({
   profilePicUrl: { type: String },
   resumePath: { type: String },
   // address: { type: String },
+  zipcode: { type: String },
   matchingPercentage: { type: Number },
   jobId: { type: String },
   candidateId: { type: String },

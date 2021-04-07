@@ -39,7 +39,7 @@ router.get('/google/success', isLoggedIn, async(req, res)=>{
 
             highestEducationLevel: '',
             reasonForCause: '',
-            availableWorkHours: '',
+            availableWorkHours: null,
             timeZone: '',
             hourlyWage: null,
             salary: null,
@@ -63,6 +63,7 @@ router.get('/google/success', isLoggedIn, async(req, res)=>{
             resumePath: '',
             
             // address: '',
+            zipcode: ''
         });
 
         //save user's details

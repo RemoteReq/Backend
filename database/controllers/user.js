@@ -27,16 +27,14 @@ const addUser = async(req, res) => {
 
             title: [],
             location: '',
-            // availability: '',
             causes: [],
-            // jobType: '',
             soonestJoinDate: null,
             fluentInEnglish: null,
             eligibleToWorkInUS: null,
 
             highestEducationLevel: '',
             reasonForCause: '',
-            availableWorkHours: '',
+            availableWorkHours: null,
             timeZone: '',
             hourlyWage: null,
             salary: null,
@@ -57,6 +55,7 @@ const addUser = async(req, res) => {
             refferedBy: '',
             profilePicUrl: '',
             resumePath: '',
+            zipcode: ''
           });
   
           //save user's details
@@ -310,11 +309,6 @@ const filterJobs = async(req, res)=>{
 
 const matchingPercentage = async(req, res, getJobsList, getUserData)=>{
   let jobListWithPercentageVal = [];
-  // if(getUserData.jobType == 'Part Time'){
-  //   jobListWithPercentageVal = await pointCalculationOfHT(getJobsList, getUserData);
-  // }else{
-  //   jobListWithPercentageVal = await pointCalculationOfFT(getJobsList, getUserData);
-  // }
 
   let partTimeJobList = [...getJobsList].filter(data=>{ return data.jobType == 'Part Time' });
   let partTimeJobsWithPercentageVal = await pointCalculationOfHT(partTimeJobList, getUserData);
@@ -458,8 +452,14 @@ const resetPassword = async(req, res)=>{
 
 const deleteAccount = async(req, res)=>{
   try{
-    let updateData = await User.findByIdAndUpdate(req.userId, { $set: {isDeleteAccount: true}});
-    res.status(200).json("Removed your account");
+    let user = await User.findOne({ username: req.query.username});
+    if(user){
+      let updateData = await User.findByIdAndUpdate(req.userId, { $set: {isDeleteAccount: true}});
+      res.status(200).json("Deleted Successfully");
+    }else{
+      res.status(200).json("Invalid username");
+    }
+    
   } catch(err) {
       console.log(err);
   }
