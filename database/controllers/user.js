@@ -452,12 +452,13 @@ const resetPassword = async(req, res)=>{
 
 const deleteAccount = async(req, res)=>{
   try{
-    let user = await User.findOne({ username: req.query.username});
-    if(user){
+    let user = await User.findById(req.userId);
+    let passwordverify = await bcrypt.compare(req.query.password, user.password);
+    if(passwordverify){
       let updateData = await User.findByIdAndUpdate(req.userId, { $set: {isDeleteAccount: true}});
       res.status(200).json("Deleted Successfully");
     }else{
-      res.status(200).json("Invalid username");
+      res.status(400).json("Incorrect Password");
     }
     
   } catch(err) {

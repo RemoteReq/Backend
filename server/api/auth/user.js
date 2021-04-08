@@ -143,7 +143,7 @@ function uploadFile(req, res){
 router.post('/getSingleUserDetails', getSingleUserDetails)
 
 router.post('/deleteAccount', [
-    check('username','User Name is required').not().isEmpty()
+    check('password','Password is required').not().isEmpty()
 ], (req, res)=>{
   const errors = validationResult(req)
   if (!errors.isEmpty()) {

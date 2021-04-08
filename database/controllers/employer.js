@@ -413,12 +413,13 @@ const getPointsForFullTimers = async(getCandidateList, getJobData)=>{
 
 const deleteAccount = async(req, res)=>{
   try{
-    let employer = await Employer.findOne({ username: req.query.username});
-    if(employer){
+    let employer = await Employer.findById(req.employerId);
+    let passwordverify = await bcrypt.compare(req.query.password, employer.password);
+    if(passwordverify){
       let updateData = await Employer.findByIdAndUpdate(req.employerId, { $set: {isDeleteAccount: true}});
       res.status(200).json("Deleted Successfully");
     }else{
-      res.status(200).json("Invalid username");
+      res.status(400).json("Incorrect Password");
     }
   } catch(err) {
       console.log(err);
