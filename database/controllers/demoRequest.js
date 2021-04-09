@@ -1,4 +1,5 @@
 const DemoRequest = require('../models/DemoRequest');
+var nodemailer = require('nodemailer');
 
 const addDemoRequest = async(req, res) => {
   
@@ -12,7 +13,8 @@ const addDemoRequest = async(req, res) => {
 
   
   demoRequest.save()
-  .then(doc => {
+  .then(async(doc) => {
+    await sendMailOfDemoRequest(req, res);
     res.status(200).json(doc);
     // res.status(200).json('Your request is sucessfully accepted');
   })
@@ -30,6 +32,36 @@ const getDemoReqeusts = async(req, res)=>{
   } catch(err) {
     res.status(500).json(err);
   }
+}
+
+const sendMailOfDemoRequest = async(req, res)=>{
+
+  var transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD
+      }
+  });
+
+  var mailOptions = {
+    from: process.env.EMAIL_USERNAME,
+    to: req.body.emailId,
+    subject: 'Demo Request - RemoteReq',
+    html: 'Thank You'
+    
+  };
+
+  transporter.sendMail(mailOptions, async function(error, info){
+    if (error) {
+      console.log("error: Unable to send email.", error);
+    } else {
+      console.log('mail send for demo request');
+    }
+  });
+
 }
 
 module.exports = {
