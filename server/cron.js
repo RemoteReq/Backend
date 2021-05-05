@@ -114,7 +114,7 @@ if(process.env.HOST_TYPE == 'live'){
           })
     });
 
-    cron.schedule('*/10 * * * *', () => { // check hiring or not every 10 minutes
+    cron.schedule('* */23 * * *', () => { // check hiring or not every 10 minutes
         unirest
           .post(API_URL+'api/scheduleJob/checkHiredOrNot')
           .headers({'Content-Type': 'application/json'})
