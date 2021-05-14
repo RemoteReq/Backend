@@ -5,6 +5,8 @@ var jwt = require('jsonwebtoken');
 const secretKeyForResetToken = 'remoteReq reset key for users'
 const secretKeyForResetTokenForEmp = 'remoteReq reset key for employers'
 
+// Will need Google Token to handle API requests?
+
 // import handler
 const { verifyCredentials, generateResetToken, resetPassword } = require('../../../database/controllers/user.js');
 const { employerCredVerify, generateResetTokenForEmp, resetPasswordForEmp } = require('../../../database/controllers/employer');
