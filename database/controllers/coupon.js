@@ -10,7 +10,7 @@ const addCoupon = async (req, res) => {
 
   coupon.save();
 
-  res.status(200).send();
+  res.status(200).send('coupon post successful!');
 }
 
 module.exports ={
