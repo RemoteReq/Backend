@@ -18,10 +18,11 @@ const global = require('./api/auth/global');
 const socialLogin = require('./api/auth/socialLogin');
 const user = require('./api/auth/user');
 const signin = require('./api/auth/signIn.js');
-const jobs = require('./api/dashboard/jobs.js')
-const employers = require('./api/Employer/employer')
-const scheduleJob = require('./api/schedulejob/scheduleJob')
-const demoRequestJob = require('./api/auth/demoRequest')
+const jobs = require('./api/dashboard/jobs.js');
+const employers = require('./api/Employer/employer');
+const scheduleJob = require('./api/schedulejob/scheduleJob');
+const demoRequestJob = require('./api/auth/demoRequest');
+const admin = require('./api/admin/admin.js');
 
 //CORS
 app.use(cors())
@@ -53,6 +54,7 @@ app.use('/api/scheduleJob', scheduleJob);
 app.use('/api/user', tokenValidityChecking, user);
 app.use('/api/jobs', tokenValidityCheckingForEmp, jobs);
 app.use('/api/employers', tokenValidityCheckingForEmp, employers);
+app.use('/api/admin', admin);
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
