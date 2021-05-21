@@ -13,6 +13,20 @@ const addCoupon = async (req, res) => {
   res.status(200).send('coupon post successful!');
 }
 
+const getCoupon = async (req, res) => {
+
+  const coupon = await Coupon.find({}).sort({_id: -1}).limit(1).then((coupons) => {
+    console.log(coupons[0]);
+  })
+
+  res.status(200).send(coupon);
+}
+
+const addCoupon = async (req, res) => {
+  
+}
+
 module.exports ={
   addCoupon,
+  getCoupon,
 }
