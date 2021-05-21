@@ -7,40 +7,37 @@ const { Schema } = mongoose;
 const matchedJobSeekerSchema = new Schema({
   fullName: { type: String },
   email: { type: String },
-  eligibleToWorkInUS: { type: Boolean },
+  title: { type: Array },
+  location: { type: String },
+  availability: { type: Array },
   causes: { type: Array },
-  jobType: { type: String }, // full-time/part-time
+  jobType: { type: Array }, // full-time/part-time
   soonestJoinDate: { type: Date }, 
   fluentInEnglish: { type: Boolean },
+  eligibleToWorkInUS: { type: Boolean },
   highestEducationLevel: { type: Number },
   reasonForCause: { type: String },
-  // availableWorkDays: { type: Array }, //for part-timer
-  availableWorkHours: { type: String }, //for part-timer
+  availableWorkHours: { type: Number }, //for part-timer
   timeZone: { type: String }, //for part-timer
   hourlyWage: { type: Number }, //for part-timer
   salary: { type: Number }, //Annual salary Expectation for full-timer
   projectDescription: { type: String },
   sampleProjectLink: { type: String },  
   relavantCertificates: { type: String },
-  isWorkRemotely: { type: Boolean },
   aboutMe: { type: String },
   totalExperience: { type: Number }, 
   desireKeySkills: { type: Array }, 
-  location: { type: String },
+  
   linkedInURL: { type: String },
   personalURL: { type: String },
   mobileNum: { type: String },
   howLongWorkingRemotely: { type: Number },
   otherLanguages: { type: Array },
   refferedBy: { type: String },
-  // gender: { type: String },
-  // race: { type: String },
-  // veteranStatus: { type: Boolean },
   profilePicUrl: { type: String },
   resumePath: { type: String },
-  // dob: { type: Date },
-  address: { type: String },
-  // desireIndustryType: { type: String },
+  // address: { type: String },
+  zipcode: { type: String },
   matchingPercentage: { type: Number },
   jobId: { type: String },
   candidateId: { type: String },

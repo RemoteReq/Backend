@@ -81,12 +81,12 @@ router.post('/updateUserProfile',[
   // check('veteranStatus','veteranStatus is required').not().isEmpty()
 ], (req,res)=>{
   
-  const errors = validationResult(req)
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ 
-      errors: errors.array() 
-    })
-  }
+  // const errors = validationResult(req)
+  // if (!errors.isEmpty()) {
+  //   return res.status(422).json({ 
+  //     errors: errors.array() 
+  //   })
+  // }
   updateUserProfile(req,res)
 });
 
@@ -142,7 +142,17 @@ function uploadFile(req, res){
 
 router.post('/getSingleUserDetails', getSingleUserDetails)
 
-router.post('/deleteAccount', deleteAccount)
+router.post('/deleteAccount', [
+    check('password','Password is required').not().isEmpty()
+], (req, res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ 
+      errors: errors.array() 
+    })
+  }
+  deleteAccount(req, res)
+})
 
 router.post('/uploadResume', upload.single('uploadResume'), (req,res)=>{
   uploadResume(req,res)

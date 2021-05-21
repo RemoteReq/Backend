@@ -39,14 +39,14 @@ router.get('/google/success', isLoggedIn, async(req, res)=>{
 
             highestEducationLevel: '',
             reasonForCause: '',
-            availableWorkHours: '',
+            availableWorkHours: null,
             timeZone: '',
             hourlyWage: null,
             salary: null,
             projectDescription: '',
             sampleProjectLink: '',
             relavantCertificates: '',
-            isWorkRemotely: null,
+            // isWorkRemotely: null,
             aboutMe: '',
             projectDescription: '',
             totalExperience: null,
@@ -62,7 +62,8 @@ router.get('/google/success', isLoggedIn, async(req, res)=>{
             profilePicUrl: req.user._json.picture,
             resumePath: '',
             
-            address: '',
+            // address: '',
+            zipcode: ''
         });
 
         //save user's details

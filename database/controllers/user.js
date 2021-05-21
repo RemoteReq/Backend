@@ -25,27 +25,27 @@ const addUser = async(req, res) => {
             email: req.body.email,
             authSignature: '',
 
-            eligibleToWorkInUS: null,
+            title: [],
+            location: '',
             causes: [],
-            jobType: '',
             soonestJoinDate: null,
             fluentInEnglish: null,
+            eligibleToWorkInUS: null,
 
             highestEducationLevel: '',
             reasonForCause: '',
-            availableWorkHours: '',
+            availableWorkHours: null,
             timeZone: '',
             hourlyWage: null,
             salary: null,
             projectDescription: '',
             sampleProjectLink: '',
             relavantCertificates: '',
-            isWorkRemotely: null,
             aboutMe: '',
             projectDescription: '',
             totalExperience: null,
             desireKeySkills: [],
-            location: '',
+            
 
             linkedInURL: '',
             personalURL: '',
@@ -55,8 +55,7 @@ const addUser = async(req, res) => {
             refferedBy: '',
             profilePicUrl: '',
             resumePath: '',
-            
-            address: '',
+            zipcode: ''
           });
   
           //save user's details
@@ -234,12 +233,43 @@ const updateUserProfile = async(req, res)=>{
     // console.log(getUserData.eligibleToWorkInUS)
     if(getUserData.eligibleToWorkInUS !== null && getUserData.causes.length !== 0 && getUserData.soonestJoinDate !== null && getUserData.jobType !== '' && getUserData.fluentInEnglish !== null){
       await User.findByIdAndUpdate(req.userId, { $set: { profileCompleteStatus: true }});
+      await sendMailAfterUpdateProfile(getUserData.fullName, getUserData.email);
       getUserData = await User.findById(req.userId).select("-_id -__v -password -authSignature -isEmailVerify -isDeleteAccount");
     }
     res.status(200).json(getUserData);
   } catch(err) {
       console.log(err);
   }
+}
+
+const sendMailAfterUpdateProfile = (fullname, emailId)=>{
+  let firstName = fullname.split(" ")[0];
+  var transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    // service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD
+    }
+  });
+
+  var mailOptions = {
+    from: process.env.EMAIL_USERNAME,
+    to: emailId,
+    subject: 'Thank you for completing your job seeker questionnaire - RemoteReq',
+    html: '<div style="font-family: \'Open Sans\', sans-serif; padding: 15px;"><p>Hey <b>'+firstName+'</b>,</p><p>Thank you for completing your job seeker questionnaire.</p><p>Our small but mighty team is working daily to put your profile in front of potential employers. For some job seekers, this process will move quickly, even immediately. For others, it may take a while.</p><p>Our supply of jobs will ebb and flow with the hiring needs of our employer partners. We work in service of them, and you. Both responsibilities we take seriously.</p><p>Also, we are exploring new relationships and strategies to bring you even more opportunities in the coming weeks. Stay tuned for more updates.</p><p>Lastly, we appreciate your passion, and ask for your patience. We encourage you to visit the <b>Job Seeker section</b> of our <u style="color:blue">Frequently Asked Questions</u> for more information about what we do, and what you can expect.</p><p>Thank you, again, for joining our network of remote talent. More to come soon.</p><p>In solidarity,</p><p><img src="https://remotereq.s3.us-east-2.amazonaws.com/remotereqlogo.JPG"></p><p style="font-size:11px; margin-top: -15px;">Work from Anywhere. Change the World.</p><h5 style="font-weight:normal">e: <a href="javascript:void(0)" >remotereq@gmail.com</a><br> w: <a target="_blank" href="www.remotereq.com">www.remotereq.com</a></h5><ul style="list-style: none;padding-left: 0;"><li style="float: left;margin-right: 3px;"><a href="https://www.facebook.com/RemoteReq-1833060860134583" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/facebook-512.png" style="width: 100%;"/> </a></li><li style="float: left;margin-right: 3px;"><a href="https://www.linkedin.com/company/remotereq" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/linkedin-512.png"  style="width: 100%;"/></a></li><li style="float: left;margin-right: 3px;"><a href="" target="_blank" style="width: 25px; height: 25px; display: inline-block;"><img src="https://cdn4.iconfinder.com/data/icons/miu-flat-social/60/twitter-512.png" style="width: 100%;"/></a></li></ul></div>'
+  };
+
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log("error: Unable to send email.", error);
+    } else {
+      console.log('Email sent after update profile');
+    }
+  });
+
 }
 
 const listUsers = async(req, res)=>{
@@ -256,64 +286,21 @@ const filterJobs = async(req, res)=>{
   try{
     let getUserData = await User.findById(req.userId);
     let getJobsList = '';
-    if(getUserData.eligibleToWorkInUS){
-      if(getUserData.fluentInEnglish){
-        getJobsList = await Jobs.find({ 
-          $and: [ 
-            { cause : { $in: getUserData.causes}},
-            { jobType: getUserData.jobType },
-            { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
-            { expireStatus: false }
-          ] 
-        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
-        .lean()
-        
-        matchingPercentage(req, res, getJobsList, getUserData)
-      }else{
-        getJobsList = await Jobs.find({ 
-          $and: [ 
-            { cause : { $in: getUserData.causes}},
-            { jobType: getUserData.jobType },
-            { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
-            { fluentInEnglish: getUserData.fluentInEnglish },
-            { expireStatus: false }
-          ] 
-        })
-        .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
-        .lean()  //lean helps addition of new fields in find query
+    let specialPrivilegeIDs = process.env.SPECIAL_PRIVILEGE_IDS.split(",")
+    getJobsList = await Jobs.find({ 
+      $and: [ 
+        { title : { $in: getUserData.title}},
+        { location : getUserData.location},
+        { availability : { $in: getUserData.availability}},
+        { cause : { $in: getUserData.causes}},
+        { jobType : { $in: getUserData.jobType}},
+        { addBy: { $nin: specialPrivilegeIDs } }
+      ] 
+    })
+    .select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -numberOfCandidate -percentageMatch -addBy")
+    .lean()
 
-        matchingPercentage(req, res, getJobsList, getUserData)
-      }
-    }else{
-      if(getUserData.fluentInEnglish){
-        getJobsList = await Jobs.find({ 
-          $and: [ 
-            { cause : { $in: getUserData.causes}},
-            { jobType: getUserData.jobType },
-            { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
-            { eligibleToWorkInUS: getUserData.eligibleToWorkInUS },
-            { expireStatus: false }
-          ] 
-        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
-        .lean()
-        
-        matchingPercentage(req, res, getJobsList, getUserData)
-      }else{
-        getJobsList = await Jobs.find({ 
-          $and: [ 
-            { cause : { $in: getUserData.causes}},
-            { jobType: getUserData.jobType },
-            { soonestJoinDate: { $gte: getUserData.soonestJoinDate } },
-            { eligibleToWorkInUS: getUserData.eligibleToWorkInUS },
-            { fluentInEnglish: getUserData.fluentInEnglish },
-            { expireStatus: false }
-          ] 
-        }).select("-__v -transactionDetails -expireDate -expireStatus -seventhDayAfterExpireDate -hiredStatus -hiringPaymentStatus -addBy -numberOfCandidate -percentageMatch")
-        .lean()
-        
-        matchingPercentage(req, res, getJobsList, getUserData)
-      }
-    }
+    matchingPercentage(req, res, getJobsList, getUserData)
     
   }catch(err){
     console.log(err);
@@ -321,113 +308,117 @@ const filterJobs = async(req, res)=>{
 }
 
 const matchingPercentage = async(req, res, getJobsList, getUserData)=>{
-  let jobListWithPercentageVal = '';
-  if(getUserData.jobType == 'Part Time'){
-    jobListWithPercentageVal = await pointCalculationOfHT(getJobsList, getUserData);
-  }else{
-    jobListWithPercentageVal = await pointCalculationOfFT(getJobsList, getUserData);
-  }
-  // res.send(getUserData)
+  let jobListWithPercentageVal = [];
+
+  let partTimeJobList = [...getJobsList].filter(data=>{ return data.jobType == 'Part Time' });
+  let partTimeJobsWithPercentageVal = await pointCalculationOfHT(partTimeJobList, getUserData);
+  let fullTimeJobList = [...getJobsList].filter(data=>{ return data.jobType == 'Full Time' });
+  let fullTimeJobsWithPercentageVal = await pointCalculationOfFT(fullTimeJobList, getUserData);
+
+  jobListWithPercentageVal = partTimeJobsWithPercentageVal.concat(fullTimeJobsWithPercentageVal)
+  jobListWithPercentageVal.sort((a, b) => b.matchingPercentage - a.matchingPercentage);
+  
   res.send(jobListWithPercentageVal)
 }
 
 const pointCalculationOfHT = async(getJobsList, getUserData)=>{
-  let toalPoints = 23;
+  // let toalPoints = 23;
+  const majorQuestionPoints = 85;
+  const numberOfMinorQuestions = 15;
+  const minorQuestionPoints = ( 15 / numberOfMinorQuestions );
+
   for(var i=0; i<getJobsList.length; i++){
-    var givePoints = 3;
+    var givePoints = (3*minorQuestionPoints);
     //check education matching
     if(getJobsList[i].requiredEducationLevel <= getUserData.highestEducationLevel){
-      givePoints += 1;
+      givePoints += minorQuestionPoints;
     }
     
-    //check working hours matching
-    var candidateWT = getUserData.availableWorkHours.split('-');
-    var employerWT = getJobsList[i].workHours.split('-');
-    if( (parseInt(candidateWT[0])>=parseInt(employerWT[0]) && parseInt(candidateWT[0])<=parseInt(employerWT[1])) || (parseInt(candidateWT[1]) >= parseInt(employerWT[0]) && parseInt(candidateWT[1]) <= parseInt(employerWT[1]))){
-      givePoints += 1;
-    }
     //check time zone matching
     if(getJobsList[i].timeZone == getUserData.timeZone){
-      givePoints += 1;
+      givePoints += minorQuestionPoints;
     }
     //check hourly pay match
     if(getUserData.hourlyWage <= getJobsList[i].hourlyWage){
-      givePoints += 1;
+      givePoints += minorQuestionPoints;
     }
     if(getUserData.projectDescription != ''){
-      givePoints += 1;
+      givePoints += minorQuestionPoints;
     }
     if(getUserData.sampleProjectLink != ''){
-      givePoints += 1;
+      givePoints += minorQuestionPoints;
     }
     if(getUserData.relavantCertificates != ''){
-      givePoints += 1;
-    }
-    if(getUserData.isWorkRemotely){
-      givePoints += 1;
+      givePoints += minorQuestionPoints;
     }
     //check experience
     if(getUserData.totalExperience>=getJobsList[i].minExperience){
-      givePoints += 4;
+      givePoints += minorQuestionPoints;
     }
     //check atleast one key skill match or not
     if(getUserData.desireKeySkills.some((val) => getJobsList[i].keySkills.indexOf(val) !== -1)){
-      givePoints += 4;
+      givePoints += minorQuestionPoints;
     }
-    //check location
-    // if(getUserData.location.indexOf(getJobsList[i].location) != -1){
-    //   givePoints += 4;
-    // }
-    if(getUserData.location == getJobsList[i].location){
-      givePoints += 4;
-    }
-    // getJobsList[i].givePoints = givePoints
-    getJobsList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
+    //check join date less than 14 days
+    if(Date.parse(getUserData.soonestJoinDate) < Date.parse(getJobsList[i].soonestJoinDate)){
+      const date1 = new Date(getUserData.soonestJoinDate);
+      const date2 = new Date(getJobsList[i].soonestJoinDate);
+      const diffTime = Math.abs(date2 - date1);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+      if(diffDays <=14){
+        givePoints += minorQuestionPoints;
+      }
+   }
+    
+    getJobsList[i].matchingPercentage = parseInt(givePoints) + majorQuestionPoints;
   }
   return getJobsList;
 }
 
 const pointCalculationOfFT = async(getJobsList, getUserData)=>{
-  let toalPoints = 23;
+  // let toalPoints = 23;
+  const majorQuestionPoints = 85;
+  const numberOfMinorQuestions = 15;
+  const minorQuestionPoints = ( 15 / numberOfMinorQuestions );
   for(var i=0; i<getJobsList.length; i++){
-    var givePoints = 6; // get auto points for reasonForCause, availableWorkDays, availableWorkHours, timeZone, hourlyWage, aboutMe
+    var givePoints = (5*minorQuestionPoints); // get auto points for reasonForCause, availableWorkDays, timeZone, hourlyWage, aboutMe
     //check education matching
     if(getJobsList[i].requiredEducationLevel <= getUserData.highestEducationLevel){
-      givePoints += 1;
+      givePoints += minorQuestionPoints;
     }
     //check annual pay match
-    if(getUserData.salary <= getJobsList[i].salary){
-      givePoints += 1;
+    if((getUserData.salary - 10000) <= getJobsList[i].salary && (getUserData.salary + 10000) >= getJobsList[i].salary){
+      givePoints += minorQuestionPoints;
     }
     if(getUserData.projectDescription != ''){
-      givePoints += 1;
+      givePoints += minorQuestionPoints;
     }
     if(getUserData.sampleProjectLink != ''){
-      givePoints += 1;
+      givePoints += minorQuestionPoints;
     }
     if(getUserData.relavantCertificates != ''){
-      givePoints += 1;
+      givePoints += minorQuestionPoints;
     }
-    if(getUserData.isWorkRemotely){
-      givePoints += 1;
-    }
+   
     //check experience
     if(getUserData.totalExperience>=getJobsList[i].minExperience){
-      givePoints += 4;
+      givePoints += minorQuestionPoints;
     }
     //check atleast one key skill match or not
     if(getUserData.desireKeySkills.some((val) => getJobsList[i].keySkills.indexOf(val) !== -1)){
-      givePoints += 4;
-    }
-    //check location
-    // if(getUserData.location.indexOf(getJobsList[i].location) != -1){
-    //   givePoints += 4;
-    // }
-    if(getUserData.location == getJobsList[i].location){
-      givePoints += 4;
+      givePoints += minorQuestionPoints;
     }
     
-    getJobsList[i].matchingPercentage = parseInt((givePoints/toalPoints)*100)
+    if(Date.parse(getUserData.soonestJoinDate) < Date.parse(getJobsList[i].soonestJoinDate)){
+      const date1 = new Date(getUserData.soonestJoinDate);
+      const date2 = new Date(getJobsList[i].soonestJoinDate);
+      const diffTime = Math.abs(date2 - date1);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+      if(diffDays <=14){
+        givePoints += minorQuestionPoints;
+      }
+   }
+    getJobsList[i].matchingPercentage = parseInt(givePoints) + majorQuestionPoints;
   }
   return getJobsList;
 }
@@ -461,8 +452,15 @@ const resetPassword = async(req, res)=>{
 
 const deleteAccount = async(req, res)=>{
   try{
-    let updateData = await User.findByIdAndUpdate(req.userId, { $set: {isDeleteAccount: true}});
-    res.status(200).json("Removed your account");
+    let user = await User.findById(req.userId);
+    let passwordverify = await bcrypt.compare(req.query.password, user.password);
+    if(passwordverify){
+      let updateData = await User.findByIdAndUpdate(req.userId, { $set: {isDeleteAccount: true}});
+      res.status(200).json("Deleted Successfully");
+    }else{
+      res.status(400).json("Incorrect Password");
+    }
+    
   } catch(err) {
       console.log(err);
   }

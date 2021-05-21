@@ -39,7 +39,17 @@ const {listEmployers,
 
 router.post('/list', listEmployers)
 
-router.post('/deleteAccount', deleteAccount)
+router.post('/deleteAccount', [
+  check('password','Password is required').not().isEmpty()
+], (req, res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ 
+      errors: errors.array() 
+    })
+  }
+  deleteAccount(req, res)
+})
 
 router.post('/getSingleEmployer', getSingleEmployerDetails)
 
@@ -56,6 +66,7 @@ router.post('/matchesCandidateByEachJob/:jobId', [
         errors: errors.array() 
         })
     }
+    
     matchesCandidateByEachJob(req,res)
 })
 

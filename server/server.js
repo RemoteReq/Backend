@@ -1,15 +1,18 @@
 require('dotenv').config();
 const express = require('express');
-var cors = require('cors')
+var cors = require('cors');
 
 // middleware
 const history = require('connect-history-api-fallback');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-require('../gateway/passportSetup')
+require('../gateway/passportSetup');
 
 const app = express();
 const PORT = process.env.PORT;
+
+//CORS
+app.use(cors());
 
 // import route handlers
 const signup = require('./api/auth/signUp.js');
@@ -31,9 +34,10 @@ app.use(cors())
 // app.use(history());
 
 // express middleware
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-const {tokenValidityChecking, tokenValidityCheckingForEmp} = require('./authentication')
+// app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
+const {tokenValidityChecking, tokenValidityCheckingForEmp} = require('./authentication');
 app.use(require('express-session')({
   secret: process.env.GOOGLE_SESSION_SECRET,
   resave: true,
@@ -55,6 +59,10 @@ app.use('/api/user', tokenValidityChecking, user);
 app.use('/api/jobs', tokenValidityCheckingForEmp, jobs);
 app.use('/api/employers', tokenValidityCheckingForEmp, employers);
 app.use('/api/admin', admin);
+
+app.get('/api/test', (req, res) => {
+  return res.status(200).send('gotcha!')
+})
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);

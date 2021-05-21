@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+
 const { check, validationResult } = require('express-validator');
 // const gateway = require('../../../gateway/connection')
 // console.log('gateway', gateway)
@@ -48,7 +49,11 @@ const { addJob, jobsList,
   clientTokenForPayment,
   checkoutForAddjob,
   checkoutAfterHired,
-  getSingleJob
+  getSingleJob,
+  jobAssignToAnotherEmployer,
+  editJob,
+  deleteMatchedJobSeekers,
+  deleteJob
  } = require('../../../database/controllers/jobs.js');
 
 router.post('/getAll', jobsList);
@@ -69,6 +74,7 @@ router.post('/add', upload.fields([{
   check('numberOfCandidate','Number of Candidates is required').not().isEmpty(),
   check('percentageMatch','Percentage match value is required').not().isEmpty(),
   check('eligibleToWorkInUS','eligibleToWorkInUS value is required').not().isEmpty(),
+  check('availability','Availability is required').not().isEmpty(),
   check('cause','Causes of impact is required').not().isEmpty(),
   check('jobType','Working Type is required').not().isEmpty(),
   check('soonestJoinDate','Joining Date is required').not().isEmpty(),
@@ -92,8 +98,26 @@ router.post('/add', upload.fields([{
     let descPath = await uploadJobDescFile(req, res)
     req.body.jobDescriptionPath = descPath
   }
-  
+  // console.log(req.body); return
   addJob(req,res)
+});
+
+router.post('/editJob/:jobId', upload.fields([{
+  name: 'companyLogo', maxCount: 1
+}, {
+  name: 'jobDescription', maxCount: 1
+}]), async(req,res)=>{
+
+  if(req.files.companyLogo){
+    let logoPath = await uploadCompanyLogo(req,res)
+    req.body.companyLogoPath = logoPath;
+  }
+  if(req.files.jobDescription){
+    let descPath = await uploadJobDescFile(req, res)
+    req.body.jobDescriptionPath = descPath
+  }
+  
+  editJob(req, res)
 });
 
 // router.post("/createClientForGateway", [
@@ -250,6 +274,50 @@ router.post('/getJobById/:jobId', [
       })
   }
   getSingleJob(req,res)
+})
+
+router.post('/jobAssignToAnotherEmployer',[
+  check('jobId','Job Id is required').not().isEmpty(),
+  check('email','Email is required').not().isEmpty(),
+], (req, res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+      return res.status(422).json({ 
+      errors: errors.array() 
+      })
+  }
+  jobAssignToAnotherEmployer(req,res)
+})
+
+router.post('/deleteMatchedJobSeekers',[
+  check('jobId','Job Id is required').not().isEmpty(),
+  check('candidatesId','Candidates Id is required').not().isEmpty()
+], (req, res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+      return res.status(422).json({ 
+      errors: errors.array() 
+      })
+  }
+  
+  if(req.body.candidatesId.length>5){
+    res.status(400).json('Can\'t remove more than 5 candidates');
+    return false;
+  }
+  deleteMatchedJobSeekers(req,res)
+})
+
+router.post('/delete/:jobId',[
+  check('jobId','Job Id is required').not().isEmpty(),
+], (req, res)=>{
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+      return res.status(422).json({ 
+      errors: errors.array() 
+      })
+  }
+  
+  deleteJob(req,res)
 })
 
 module.exports = router;
