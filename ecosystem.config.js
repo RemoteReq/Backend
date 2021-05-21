@@ -18,7 +18,7 @@ module.exports = {
       key: '/home/ryden/.ssh/Heavy-Storm.pem',
       user: 'ubuntu',
       host: '3.139.183.13',
-      ref: 'origin/Automate',
+      ref: 'origin/development',
       repo: 'git@github.com:RemoteReq/Backend.git',
       path: '/home/ubuntu/',
       'pre-deploy-local': "echo 'beginning dev server deployment'",
