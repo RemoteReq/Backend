@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 //CORS
-app.use(cors());
+// app.use(cors());
 
 // import route handlers
 const signup = require('./api/auth/signUp.js');
@@ -28,7 +28,7 @@ const demoRequestJob = require('./api/auth/demoRequest');
 const admin = require('./api/admin/admin.js');
 
 //CORS
-app.use(cors());
+// app.use(cors());
 
 // Use history to intecept client requests and forward to React Router history
 // app.use(history());
