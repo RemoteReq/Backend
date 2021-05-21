@@ -25,13 +25,10 @@ const jobs = require('./api/dashboard/jobs.js');
 const employers = require('./api/Employer/employer');
 const scheduleJob = require('./api/schedulejob/scheduleJob');
 const demoRequestJob = require('./api/auth/demoRequest');
-<<<<<<< HEAD
-=======
 const admin = require('./api/admin/admin.js');
 
 //CORS
 app.use(cors())
->>>>>>> devlopment
 
 // Use history to intecept client requests and forward to React Router history
 // app.use(history());
