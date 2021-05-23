@@ -12,7 +12,7 @@ module.exports = {
       repo: 'git@github.com:RemoteReq/Backend.git',
       path: '/home/ubuntu/',
       'pre-deploy-local': "echo 'beginning production deployment'",
-      'post-deploy': 'npm install && pm2 startOrRestart ecosystem.config.js --env production',
+      'post-deploy': '&& pm2 startOrRestart ecosystem.config.js --env production',
     },
     development: {
       key: '/home/ryden/.ssh/Heavy-Storm.pem',
@@ -22,7 +22,7 @@ module.exports = {
       repo: 'git@github.com:RemoteReq/Backend.git',
       path: '/home/ubuntu/',
       'pre-deploy-local': "echo 'beginning dev server deployment'",
-      'post-deploy': 'npm install && pm2 startOrRestart ecosystem.config.js --env development',
+      'post-deploy': 'pm2 startOrRestart ecosystem.config.js --env development',
     },
   },
 };
