@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 //CORS
-app.use(cors());
+app.use(cors({origin: true}));
 
 // import route handlers
 const signup = require('./api/auth/signUp.js');
