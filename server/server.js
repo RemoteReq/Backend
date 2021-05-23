@@ -10,19 +10,6 @@ require('../gateway/passportSetup');
 const app = express();
 const PORT = process.env.PORT;
 
-// const corsOpts = {
-//   origin: '*',
-
-//   methods: [
-//     'GET',
-//     'POST',
-//   ],
-
-//   allowedHeaders: [
-//     'Content-Type',
-//   ],
-// };
-
 //CORS
 app.use(cors());
 

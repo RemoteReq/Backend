@@ -2,6 +2,18 @@ const Coupon = require('../models/Coupon.js');
 
 const addCoupon = async (req, res) => {
 
+  // check if coupon code already exist
+
+  let existingCoupon = await Coupon.findOne({
+    "code": req.body.code, 
+    "amount": req.body.amount,
+    "discountType": req.body.discountType,
+  })
+
+  if (existingCoupon) {
+    res.status(200).send(existingCoupon);
+  }
+
   const coupon = new Coupon({
     code: req.body.code,
     amount: req.body.amount,
@@ -10,7 +22,7 @@ const addCoupon = async (req, res) => {
 
   coupon.save();
 
-  res.status(200).send('coupon post successful!');
+  res.status(200).send('coupon post successful!', {coupon: coupon});
 }
 
 const getCoupon = async (req, res) => {
