@@ -3,7 +3,6 @@ const express = require('express');
 var cors = require('cors');
 
 // middleware
-const history = require('connect-history-api-fallback');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 require('../gateway/passportSetup');
@@ -12,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 //CORS
-// app.use(cors());
+app.use(cors());
 
 // import route handlers
 const signup = require('./api/auth/signUp.js');
@@ -26,12 +25,6 @@ const employers = require('./api/Employer/employer');
 const scheduleJob = require('./api/schedulejob/scheduleJob');
 const demoRequestJob = require('./api/auth/demoRequest');
 const admin = require('./api/admin/admin.js');
-
-//CORS
-app.use(cors());
-
-// Use history to intecept client requests and forward to React Router history
-// app.use(history());
 
 // express middleware
 app.use(bodyParser.json());
