@@ -2,40 +2,41 @@ const Coupon = require('../models/Coupon.js');
 
 const addCoupon = async (req, res) => {
 
-  // check if coupon code already exist
+  // delete all coupons before adding a new one
 
-  let existingCoupon = await Coupon.findOne({
-    "code": req.body.code, 
-    "amount": req.body.amount,
-    "discountType": req.body.discountType,
-  })
-
-  if (existingCoupon) {
-    res.status(200).send(existingCoupon);
-  }
+  await Coupon.deleteMany({});
 
   const coupon = new Coupon({
     code: req.body.code,
     amount: req.body.amount,
     discountType: req.body.discountType,
   });
-
+  
   coupon.save();
+  
+  res.status(200).send('coupon post successful!');
 
-  res.status(200).send('coupon post successful!', {coupon: coupon});
 }
 
-const getCoupon = async (req, res) => {
+const getLatestCoupon = async (req, res) => {
 
-  const coupon = await Coupon.find({}).sort({_id: -1}).limit(1).then((coupons) => {
-    console.log(coupons[0]);
-  })
+  const coupon = await Coupon.find({});
 
   res.status(200).send(coupon);
+}
+
+const checkCoupon = async (req, res) => {
+
+  const {code} = req.body;
+
+  const check = await Coupon.findOne({"code": code}).then(item => {
+    console.log(item);
+  })
 }
 
 
 module.exports ={
   addCoupon,
-  getCoupon,
+  getLatestCoupon,
+  checkCoupon,
 }
