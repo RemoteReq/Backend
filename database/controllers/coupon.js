@@ -22,9 +22,6 @@ const getCoupon = async (req, res) => {
   res.status(200).send(coupon);
 }
 
-const addCoupon = async (req, res) => {
-  
-}
 
 module.exports ={
   addCoupon,
