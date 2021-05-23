@@ -15,7 +15,7 @@ router.get('/latestCoupon', (req, res) => {
   getLatestCoupon(req, res);
 })
 
-router.get('/checkCoupon', (req, res) => {
+router.post('/checkCoupon', (req, res) => {
   checkCoupon(req, res);
 })
 

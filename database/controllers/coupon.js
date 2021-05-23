@@ -31,6 +31,8 @@ const checkCoupon = async (req, res) => {
 
   const check = await Coupon.findOne({"code": code}).then(item => {
     console.log(item);
+
+    res.status(200).send(item);
   })
 }
 
