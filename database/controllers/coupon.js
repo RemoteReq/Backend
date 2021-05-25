@@ -10,6 +10,8 @@ const addCoupon = async (req, res) => {
     code: req.body.code,
     amount: req.body.amount,
     discountType: req.body.discountType,
+    appliesToAccessFee: req.body.appliesToAccessFee,
+    appliesToHireFee: req.body.appliesToHireFee,
   });
   
   coupon.save();
