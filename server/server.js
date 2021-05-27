@@ -1,9 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-var cors = require('cors');
+const cors = require('cors');
 
 // middleware
-const history = require('connect-history-api-fallback');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 require('../gateway/passportSetup');
@@ -25,9 +24,7 @@ const jobs = require('./api/dashboard/jobs.js');
 const employers = require('./api/Employer/employer');
 const scheduleJob = require('./api/schedulejob/scheduleJob');
 const demoRequestJob = require('./api/auth/demoRequest');
-
-// Use history to intecept client requests and forward to React Router history
-// app.use(history());
+const admin = require('./api/admin/admin.js');
 
 // express middleware
 app.use(bodyParser.json());
@@ -54,6 +51,7 @@ app.use('/api/scheduleJob', scheduleJob);
 app.use('/api/user', tokenValidityChecking, user);
 app.use('/api/jobs', tokenValidityCheckingForEmp, jobs);
 app.use('/api/employers', tokenValidityCheckingForEmp, employers);
+app.use('/api/admin', admin);
 
 app.get('/api/test', (req, res) => {
   return res.status(200).send('gotcha!')
