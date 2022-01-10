@@ -190,7 +190,7 @@ const matchingPercentageCalculation = async(getCandidateList, getJobData)=>{
   
   getPointsCandidateList.sort((a, b) => b.matchingPercentage - a.matchingPercentage);
   let filteredList = getPointsCandidateList.filter(data => data.matchingPercentage >= getJobData.percentageMatch).slice(0, getJobData.numberOfCandidate)
-  // res.status(200).json(filteredList);
+  res.status(200).json(filteredList);
 
   if(filteredList.length>0){
     await savedMatchedCandidateList(filteredList)
