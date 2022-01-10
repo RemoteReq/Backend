@@ -57,7 +57,7 @@ const addJob = async(req, res) => {
     //save user's details
     job.save()
     .then(async(doc) => {
-      // res.status(200).json(doc);
+      res.status(200).json(doc);
       await sendMailAfterJobPost(req, res, req.employerId, req.body.title);
       await checkCandidateMatch(doc)
     })

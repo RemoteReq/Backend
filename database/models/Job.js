@@ -44,17 +44,17 @@ const jobSchema = new Schema({
   eligibleToWorkInUS: { type: Boolean },
 
   requiredEducationLevel: { type: Number },
-  workDays: { type: Array }, 
-  workHours: { type: String }, 
   timeZone: { type: String },
   hourlyWage: { type: Number}, //for part-timer
   salary: { type: Number, required: true }, // for full-timer
-  requireCertification: { type: String },
-  otherLanguages: { type: Array },
   minExperience: {type: Number, required: true},
-  // maxExperience: { type: Number, required: true },
   keySkills: { type: Array, required: true },
   
+  // requireCertification: { type: String },
+  // otherLanguages: { type: Array },
+  // workDays: { type: Array }, 
+  // workHours: { type: String }, 
+  // maxExperience: { type: Number, required: true },
 });
 
 // Model to export
